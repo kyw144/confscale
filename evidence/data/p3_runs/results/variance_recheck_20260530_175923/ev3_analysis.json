@@ -1,0 +1,222 @@
+{
+  "anchors": {
+    "confscale-aci|G": {
+      "K": 8,
+      "values": [
+        0.6667,
+        0.6833,
+        0.7333,
+        0.7,
+        0.7333,
+        0.6667,
+        0.6667,
+        0.7
+      ],
+      "mean": 0.69375,
+      "sd": 0.02805820480969616
+    },
+    "confscale-pid|G": {
+      "K": 8,
+      "values": [
+        0.7333,
+        0.7,
+        0.7333,
+        0.6667,
+        0.7667,
+        0.75,
+        0.75,
+        0.7
+      ],
+      "mean": 0.7250000000000001,
+      "sd": 0.0333285806135558
+    },
+    "confscale-rolling-origin|A": {
+      "K": 8,
+      "values": [
+        0.5245901639344263,
+        0.5573770491803278,
+        0.5245901639344263,
+        0.5409836065573771,
+        0.5245901639344263,
+        0.5081967213114754,
+        0.5409836065573771,
+        0.5573770491803278
+      ],
+      "mean": 0.5348360655737705,
+      "sd": 0.017387871668521637
+    }
+  },
+  "variance_table": [
+    {
+      "cell": "confscale-aci|G",
+      "within_batch_n": 3,
+      "within_batch_mean": 0.6888666666666667,
+      "within_batch_sd": 0.009641749495466714,
+      "between_run_K": 8,
+      "between_run_mean": 0.69375,
+      "between_run_sd": 0.02805820480969616,
+      "variance_ratio": 2.910074029914214
+    },
+    {
+      "cell": "confscale-pid|G",
+      "within_batch_n": 3,
+      "within_batch_mean": 0.7000000000000001,
+      "within_batch_sd": 0.04408956792711851,
+      "between_run_K": 8,
+      "between_run_mean": 0.7250000000000001,
+      "between_run_sd": 0.0333285806135558,
+      "variance_ratio": 0.7559289460184556
+    },
+    {
+      "cell": "confscale-rolling-origin|A",
+      "within_batch_n": 3,
+      "within_batch_mean": 0.6055555555555555,
+      "within_batch_sd": 0.025458753860865747,
+      "between_run_K": 8,
+      "between_run_mean": 0.5348360655737705,
+      "between_run_sd": 0.017387871668521637,
+      "variance_ratio": 0.6829820408158165
+    }
+  ],
+  "rederived": {
+    "confscale-aci|G": {
+      "comparison": "confscale-aci-laddered vs confscale-aci",
+      "pattern": "G",
+      "ladder_n": 5,
+      "ladder_mean": 0.87666,
+      "ladder_sd": 0.018992709127452045,
+      "raw_K": 8,
+      "raw_mean": 0.69375,
+      "raw_sd": 0.02805820480969616,
+      "welch_t": 14.00581738240533,
+      "welch_p": 2.778412027468696e-08,
+      "cohens_d": 7.274862980317921
+    },
+    "confscale-pid|G": {
+      "comparison": "confscale-pid-laddered vs confscale-pid",
+      "pattern": "G",
+      "ladder_n": 5,
+      "ladder_mean": 0.8833400000000001,
+      "ladder_sd": 0.016650015015008242,
+      "raw_K": 8,
+      "raw_mean": 0.7250000000000001,
+      "raw_sd": 0.0333285806135558,
+      "welch_t": 11.359548592597372,
+      "welch_p": 2.601688489589664e-07,
+      "cohens_d": 5.571493914733117
+    }
+  },
+  "holm": {
+    "family": [
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "F",
+        "p_raw": 0.03392383500372368,
+        "p_holm": 0.2035430100223421,
+        "survives_0.05": false,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "G",
+        "p_raw": 2.601688489589664e-07,
+        "p_holm": 2.081350791671731e-06,
+        "survives_0.05": true,
+        "substituted_K8": true
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "H",
+        "p_raw": 0.06422063224996918,
+        "p_holm": 0.32110316124984595,
+        "survives_0.05": false,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "F",
+        "p_raw": 0.09159822049925159,
+        "p_holm": 0.36639288199700637,
+        "survives_0.05": false,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "G",
+        "p_raw": 2.778412027468696e-08,
+        "p_holm": 2.5005708247218265e-07,
+        "survives_0.05": true,
+        "substituted_K8": true
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "H",
+        "p_raw": 0.0005213853925956269,
+        "p_holm": 0.003649697748169388,
+        "survives_0.05": true,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "F",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "G",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted_K8": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "H",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted_K8": false
+      }
+    ],
+    "n_survivors": 3
+  },
+  "flip_test": {
+    "ACI_G": {
+      "original_p_holm": 1.521170016082022e-05,
+      "new_p_holm": 2.5005708247218265e-07,
+      "survives": true,
+      "verdict": "ROBUST (still survives Holm @0.05)"
+    },
+    "PID_G": {
+      "original_p_holm": 0.09147362782914539,
+      "new_p_holm": 2.081350791671731e-06,
+      "survives": true,
+      "verdict": "NOW SIGNIFICANT under Holm @0.05"
+    }
+  },
+  "ro_a": {
+    "K": 8,
+    "values": [
+      0.5245901639344263,
+      0.5573770491803278,
+      0.5245901639344263,
+      0.5409836065573771,
+      0.5245901639344263,
+      0.5081967213114754,
+      0.5409836065573771,
+      0.5573770491803278
+    ],
+    "mean": 0.5348360655737705,
+    "sd": 0.017387871668521637,
+    "min": 0.5081967213114754,
+    "max": 0.5573770491803278,
+    "range_pp": 4.91803278688524,
+    "verdict": "REMOVED/REDUCED (range < 0.15) \u2014 23 pp swing not reproduced under per-rep reset"
+  },
+  "self_test": {
+    "holm_reproduces_original": true
+  }
+}

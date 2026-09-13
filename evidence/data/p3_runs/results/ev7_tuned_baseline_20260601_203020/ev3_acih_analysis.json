@@ -1,0 +1,224 @@
+{
+  "acih_k8": {
+    "K": 8,
+    "values": [
+      0.85,
+      0.8333,
+      0.8167,
+      0.8333,
+      0.85,
+      0.8333,
+      0.8667,
+      0.8667
+    ],
+    "mean": 0.84375,
+    "sd": 0.017691160020110126
+  },
+  "variance": {
+    "within_batch_n": 3,
+    "within_batch_mean": 0.8055666666666667,
+    "within_batch_sd": 0.009641749495466714,
+    "between_run_K": 8,
+    "between_run_mean": 0.84375,
+    "between_run_sd": 0.017691160020110126,
+    "variance_ratio": 1.8348495808180894
+  },
+  "rederived": {
+    "comparison": "confscale-aci-laddered vs confscale-aci",
+    "pattern": "H",
+    "ladder_n": 5,
+    "ladder_mean": 0.8866400000000001,
+    "ladder_sd": 0.007468467044849319,
+    "raw_K": 8,
+    "raw_mean": 0.84375,
+    "raw_sd": 0.017691160020110126,
+    "welch_t": 6.048785166195964,
+    "welch_p": 0.00011778686567410701,
+    "cohens_d": 2.895263356168524
+  },
+  "self_test": {
+    "holm_reproduces_original": true
+  },
+  "holm_original_family": {
+    "family": [
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "F",
+        "p_raw": 0.03392383500372368,
+        "p_holm": 0.2035430100223421,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "G",
+        "p_raw": 0.013067661118449342,
+        "p_holm": 0.09147362782914539,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "H",
+        "p_raw": 0.06422063224996918,
+        "p_holm": 0.32110316124984595,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "F",
+        "p_raw": 0.09159822049925159,
+        "p_holm": 0.36639288199700637,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "G",
+        "p_raw": 1.6901889067578022e-06,
+        "p_holm": 1.521170016082022e-05,
+        "survives_0.05": true,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "H",
+        "p_raw": 0.00011778686567410701,
+        "p_holm": 0.0009422949253928561,
+        "survives_0.05": true,
+        "substituted": true
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "F",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "G",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "H",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      }
+    ],
+    "n_survivors": 2,
+    "acih": {
+      "comparison": "confscale-aci-laddered vs confscale-aci",
+      "pattern": "H",
+      "p_raw": 0.00011778686567410701,
+      "p_holm": 0.0009422949253928561,
+      "survives_0.05": true,
+      "substituted": true
+    }
+  },
+  "holm_authoritative_family": {
+    "family": [
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "F",
+        "p_raw": 0.03392383500372368,
+        "p_holm": 0.2035430100223421,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "G",
+        "p_raw": 2.601688489589664e-07,
+        "p_holm": 2.081350791671731e-06,
+        "survives_0.05": true,
+        "substituted": true
+      },
+      {
+        "comparison": "confscale-pid-laddered vs confscale-pid",
+        "pattern": "H",
+        "p_raw": 0.06422063224996918,
+        "p_holm": 0.32110316124984595,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "F",
+        "p_raw": 0.09159822049925159,
+        "p_holm": 0.36639288199700637,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "G",
+        "p_raw": 2.778412027468696e-08,
+        "p_holm": 2.5005708247218265e-07,
+        "survives_0.05": true,
+        "substituted": true
+      },
+      {
+        "comparison": "confscale-aci-laddered vs confscale-aci",
+        "pattern": "H",
+        "p_raw": 0.00011778686567410701,
+        "p_holm": 0.0008245080597187491,
+        "survives_0.05": true,
+        "substituted": true
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "F",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "G",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      },
+      {
+        "comparison": "confscale-rolling-origin-laddered vs confscale-rolling-origin",
+        "pattern": "H",
+        "p_raw": 1.0,
+        "p_holm": 1.0,
+        "survives_0.05": false,
+        "substituted": false
+      }
+    ],
+    "n_survivors": 3,
+    "acih": {
+      "comparison": "confscale-aci-laddered vs confscale-aci",
+      "pattern": "H",
+      "p_raw": 0.00011778686567410701,
+      "p_holm": 0.0008245080597187491,
+      "survives_0.05": true,
+      "substituted": true
+    },
+    "g_k8_folded": {
+      "confscale-aci-laddered vs confscale-aci|G": 2.778412027468696e-08,
+      "confscale-pid-laddered vs confscale-pid|G": 2.601688489589664e-07
+    }
+  },
+  "verdict": {
+    "original_p_holm_n3": 0.004171083140765015,
+    "k8_p_holm_original_family": 0.0009422949253928561,
+    "k8_p_holm_authoritative_family": 0.0008245080597187491,
+    "variance_ratio_K8_over_n3": 1.8348495808180894,
+    "survives": true,
+    "verdict": "SURVIVES Holm @0.05 under K=8 \u2014 ACI-H restated as significant; the n=3 caveat on \u00a76.5 is closed (as it was for G)."
+  }
+}

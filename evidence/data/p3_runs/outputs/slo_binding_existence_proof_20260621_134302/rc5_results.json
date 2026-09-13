@@ -1,0 +1,241 @@
+{
+  "card": "P3-C-T5d",
+  "started": "2026-06-21T10:51:53.296338+00:00",
+  "worker_patch": {
+    "target": "80m",
+    "per_ctx": {
+      "kind-p3-experiments-w0": {
+        "pre": "500m",
+        "post": "80m",
+        "ok": true
+      },
+      "kind-p3-experiments-w1": {
+        "pre": "500m",
+        "post": "80m",
+        "ok": true
+      },
+      "kind-p3-experiments-w2": {
+        "pre": "500m",
+        "post": "80m",
+        "ok": true
+      }
+    },
+    "ok": true
+  },
+  "stage_a": {
+    "bound": true,
+    "bar": 1.3,
+    "ratios": {
+      "150": {
+        "ratio": 3.777,
+        "p95_lo": 5035.9,
+        "n_lo": 2,
+        "p95_hi": 1333.2,
+        "n_hi": 20,
+        "responsive": true,
+        "floor_ms": 1324.5
+      },
+      "100": {
+        "ratio": 5.765,
+        "p95_lo": 4956.8,
+        "n_lo": 2,
+        "p95_hi": 859.8,
+        "n_hi": 20,
+        "responsive": true,
+        "floor_ms": 859.4
+      }
+    },
+    "n_rows": 16
+  },
+  "state": "done_stage_b_restored",
+  "elapsed_h": 3.702,
+  "cell_stats": {
+    "confscale-aci/F": {
+      "mean": 695.5333333333333,
+      "sd": 15.11301867044879,
+      "n": 3,
+      "vals": [
+        712.1,
+        682.5,
+        692.0
+      ]
+    },
+    "confscale-aci/G": {
+      "mean": 1150.9666666666667,
+      "sd": 31.24041186241522,
+      "n": 3,
+      "vals": [
+        1184.2,
+        1146.5,
+        1122.2
+      ]
+    },
+    "confscale-pid/G": {
+      "mean": 1133.9333333333334,
+      "sd": 7.965132348764348,
+      "n": 3,
+      "vals": [
+        1128.7,
+        1143.1,
+        1130.0
+      ]
+    },
+    "confscale-pid/F": {
+      "mean": 675.6,
+      "sd": 14.117011015083888,
+      "n": 3,
+      "vals": [
+        660.4,
+        688.3,
+        678.1
+      ]
+    },
+    "hpa-qr-monitored/F": {
+      "mean": 907.1333333333333,
+      "sd": 17.081373871364452,
+      "n": 3,
+      "vals": [
+        898.6,
+        926.8,
+        896.0
+      ]
+    },
+    "hpa-qr-monitored/G": {
+      "mean": 1197.8333333333333,
+      "sd": 30.01771699069291,
+      "n": 3,
+      "vals": [
+        1164.1,
+        1221.6,
+        1207.8
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "PASS",
+    "why": "bound (ratio>=1.30) AND 4 (method,pattern) clear the pooled-std margin: confscale-aci/F 695.5<907.1 by 211.6>22.8; confscale-pid/F 675.6<907.1 by 231.5>22.2; confscale-aci/G 1151.0<1197.8 by 46.9>43.3; confscale-pid/G 1133.9<1197.8 by 63.9>31.1",
+    "bound": true,
+    "contrasts": [
+      {
+        "pattern": "F",
+        "method": "confscale-aci",
+        "mean_recal": 695.5,
+        "sd_recal": 15.1,
+        "mean_base": 907.1,
+        "sd_base": 17.1,
+        "margin_ms": 211.6,
+        "pooled_sd_ms": 22.8,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "F",
+        "method": "confscale-pid",
+        "mean_recal": 675.6,
+        "sd_recal": 14.1,
+        "mean_base": 907.1,
+        "sd_base": 17.1,
+        "margin_ms": 231.5,
+        "pooled_sd_ms": 22.2,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "G",
+        "method": "confscale-aci",
+        "mean_recal": 1151.0,
+        "sd_recal": 31.2,
+        "mean_base": 1197.8,
+        "sd_base": 30.0,
+        "margin_ms": 46.9,
+        "pooled_sd_ms": 43.3,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "G",
+        "method": "confscale-pid",
+        "mean_recal": 1133.9,
+        "sd_recal": 8.0,
+        "mean_base": 1197.8,
+        "sd_base": 30.0,
+        "margin_ms": 63.9,
+        "pooled_sd_ms": 31.1,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      }
+    ],
+    "cleared": [
+      {
+        "pattern": "F",
+        "method": "confscale-aci",
+        "mean_recal": 695.5,
+        "sd_recal": 15.1,
+        "mean_base": 907.1,
+        "sd_base": 17.1,
+        "margin_ms": 211.6,
+        "pooled_sd_ms": 22.8,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "F",
+        "method": "confscale-pid",
+        "mean_recal": 675.6,
+        "sd_recal": 14.1,
+        "mean_base": 907.1,
+        "sd_base": 17.1,
+        "margin_ms": 231.5,
+        "pooled_sd_ms": 22.2,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "G",
+        "method": "confscale-aci",
+        "mean_recal": 1151.0,
+        "sd_recal": 31.2,
+        "mean_base": 1197.8,
+        "sd_base": 30.0,
+        "margin_ms": 46.9,
+        "pooled_sd_ms": 43.3,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      },
+      {
+        "pattern": "G",
+        "method": "confscale-pid",
+        "mean_recal": 1133.9,
+        "sd_recal": 8.0,
+        "mean_base": 1197.8,
+        "sd_base": 30.0,
+        "margin_ms": 63.9,
+        "pooled_sd_ms": 31.1,
+        "clears_pooled_std": true,
+        "nominally_lower": true
+      }
+    ],
+    "nominal_within": []
+  },
+  "worker_restore": {
+    "target": "500m",
+    "per_ctx": {
+      "kind-p3-experiments-w0": {
+        "post": "500m",
+        "ok": true,
+        "verified": true
+      },
+      "kind-p3-experiments-w1": {
+        "post": "500m",
+        "ok": true,
+        "verified": true
+      },
+      "kind-p3-experiments-w2": {
+        "post": "500m",
+        "ok": true,
+        "verified": true
+      }
+    },
+    "ok": true
+  }
+}

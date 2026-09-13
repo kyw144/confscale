@@ -1,0 +1,69 @@
+# P3 Experiment Matrix Configuration
+# Defines which methods × workloads × replicates to run.
+#
+# Usage:
+#   python run_matrix.py --config matrix.yaml
+#   python run_matrix.py --config matrix.yaml --dry-run   # validate only
+
+# ── Methods ──────────────────────────────────────────────────────────────
+# All 8 methods fully implemented and registered in methods.py.
+# 5 baselines + 3 confidence-aware (BE/SCP/QR with SCP as default).
+#
+# Each method auto-selects the correct model directory based on workload
+# pattern: A→diurnal, B→bursty, C→batch_ramp, D→signaling.
+#
+# To add method-specific params, use dict form:
+#   - name: hpa-reactive
+#     min_replicas: 1
+#     max_replicas: 30
+
+methods:
+  # Baselines (5)
+  - hpa-reactive
+  - hpa-predictive
+  - hpa-predictive-safety
+  - keda
+  - base-inspired
+  # Confidence-aware (3) — SCP is default, BE/QR available for comparison
+  - confscale-scp
+  - confscale-be
+  - confscale-qr
+
+# ── Workloads ────────────────────────────────────────────────────────────
+# A — Diurnal Sinusoidal (stable, predictable)
+# B — Bursty Spikes (high uncertainty)
+# C — Batch-Ramp (sustained load change)
+# D — Signaling Pulse (intermittent, sharp transitions)
+
+workloads:
+  - A
+  - B
+  - C
+  - D
+
+# ── Replicates ───────────────────────────────────────────────────────────
+replicates: 3
+
+# ── Run Parameters ───────────────────────────────────────────────────────
+duration_s: 3600       # 60 minutes per run
+complexity: 50000      # Sieve of Eratosthenes size (CPU workload)
+                       # Reduced from 100000 after gunicorn profiling:
+                       # capacity=10 RPS/replica at c=50000
+cooldown_s: 60         # Wait between runs for cluster stabilization
+
+# ── Target ───────────────────────────────────────────────────────────────
+frontend_url: http://localhost:30080
+
+# ── SLO Model ────────────────────────────────────────────────────────────
+# Single-replica capacity: 10.0 RPS (from service_model.json, R²=0.988)
+# SLO target: p95 < 200ms (E2E, measured from workload_gen trace CSV)
+# Matches profiler/profile.py:55, profiler/fit_slo_model.py:34,
+# collector/queries.py:330 default, and analysis/metrics.py:35.
+# See: outputs/profiling/service_model.json (slo_target_ms: 200)
+
+# ── Quick-test mode (override for fast validation) ────────────────────────
+# Uncomment and set smaller values for smoke testing:
+# duration_s: 120       # 2 minutes per run
+# replicates: 1
+# workloads: [A]
+# methods: [hpa-reactive]

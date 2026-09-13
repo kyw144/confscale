@@ -1,0 +1,33 @@
+# Stage 3 — Scale (calibration-aware predictive autoscaling)
+#
+# Versions pinned to match the working research-agent environment used
+# to produce the 124-cell + 36-cell datasets (2026-05-11..05-14).
+# Python 3.12 (use uv: `uv venv ../.venv --python 3.12`).
+
+# --- numerical / data ---
+numpy==2.4.3
+pandas==3.0.2
+scipy==1.17.1
+
+# --- modelling ---
+torch==2.11.0
+
+# --- analysis & plotting ---
+matplotlib==3.10.9
+seaborn==0.13.2
+
+# --- runtime / experiment infrastructure ---
+prometheus_client==0.25.0
+prometheus-api-client==0.7.2
+PyYAML==6.0.3
+requests==2.33.1
+kubernetes==35.0.0
+
+# --- workload generator (Locust-based) ---
+locust==2.43.4
+gevent==25.9.1
+geventhttpclient==2.3.9
+
+# --- collector / compute-service Flask apps ---
+Flask==3.1.3
+flask-cors==6.0.2

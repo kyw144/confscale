@@ -1,0 +1,224 @@
+{
+  "analysis": "h1-binds: how often the max-over-horizon scaling decision is driven by the frozen h1 bound",
+  "item": "paper3_claims_update item 9",
+  "cell": "MS_7129 volatility (locked)",
+  "windows": {
+    "train": [
+      120,
+      840
+    ],
+    "ref": [
+      480,
+      720
+    ],
+    "deploy": [
+      840,
+      960
+    ]
+  },
+  "R": 6,
+  "n_deploy": 59,
+  "sanity_bias_pct": -2.3,
+  "actuator": "compute_target_replicas: effective_rate = float(np.max(ci_upper)) (ci-upper / risk-quantile / tier-3 policy; exported gauge 'max over forecast horizon'). K=2 -> arbitrates max(ci_upper[0]_recalibrated, ci_upper[1]_frozen). Recalibration is h0-only by code (controller.py \u00a71c/\u00a71d); h1 stays frozen-SCP.",
+  "metric_def": "PRIMARY h1-binds = fraction of deploy cycles with ci_upper[1]_frozen >= ci_upper[0]_recal (max picks frozen h1 -> h0 recalibration invisible). COMPLEMENT on h0-binding cycles: does ci_upper[0]_recal exceed ci_upper[0]_frozen, and by how much.",
+  "read_bands": {
+    "footnote": "<15%",
+    "material": "15-40%",
+    "prominent": ">40%"
+  },
+  "frozen_q_hat": {
+    "q0": 0.110929,
+    "q1": 0.124224,
+    "note": "normalized residual space; ci_upper[h]=fc[h]+sigma*q_hat[h]"
+  },
+  "methods": {
+    "frozen": {
+      "h1_binds_pct": {
+        "mean": 72.6,
+        "sd": 38.8,
+        "per_rep": [
+          100.0,
+          100.0,
+          18.6,
+          100.0,
+          100.0,
+          16.9
+        ]
+      },
+      "read_band": "PROMINENT (>40%): mechanism largely invisible to scaling on this cell; per-horizon q\u0302[1] recal is the named fix",
+      "h0_binds_pct_mean": 27.4,
+      "crosscheck_vs_recal_volatility_json": {
+        "cov_h0": [
+          70.1,
+          3.5
+        ],
+        "cov_h1_mean": 72.9,
+        "width_h0_mean": 0.0312,
+        "max_ladder_level": 0
+      },
+      "decomposition_mean_rps": {
+        "fc_h0": 0.4761,
+        "fc_h1": 0.4779,
+        "ci_upper0_recal": 0.4917,
+        "ci_upper1_frozen": 0.4954,
+        "mean_q0_used_norm": 0.110929
+      }
+    },
+    "aci": {
+      "h1_binds_pct": {
+        "mean": 41.2,
+        "sd": 16.0,
+        "per_rep": [
+          50.8,
+          54.2,
+          33.9,
+          49.2,
+          50.8,
+          8.5
+        ]
+      },
+      "read_band": "PROMINENT (>40%): mechanism largely invisible to scaling on this cell; per-horizon q\u0302[1] recal is the named fix",
+      "h0_binds_pct_mean": 58.8,
+      "crosscheck_vs_recal_volatility_json": {
+        "cov_h0": [
+          89.8,
+          0.0
+        ],
+        "cov_h1_mean": 72.9,
+        "width_h0_mean": 0.0912,
+        "max_ladder_level": 0
+      },
+      "decomposition_mean_rps": {
+        "fc_h0": 0.4761,
+        "fc_h1": 0.4779,
+        "ci_upper0_recal": 0.5217,
+        "ci_upper1_frozen": 0.4954,
+        "mean_q0_used_norm": 0.323608
+      },
+      "complement_on_h0_binding_cycles": {
+        "recal_exceeds_frozen_h0_pct": 95.4,
+        "mean_h0_uplift_rps": 0.0552,
+        "mean_h0_uplift_x": 1.13,
+        "mean_actuator_signal_uplift_rps": 0.0509,
+        "note": "uplift = ci_upper[0]_recal - ci_upper[0]_frozen; signal_uplift = recal max - frozen-h0 max"
+      }
+    },
+    "pid": {
+      "h1_binds_pct": {
+        "mean": 11.6,
+        "sd": 9.0,
+        "per_rep": [
+          10.2,
+          11.9,
+          1.7,
+          23.7,
+          22.0,
+          0.0
+        ]
+      },
+      "read_band": "FOOTNOTE (<15%): recalibration reaches the actuator on most cycles",
+      "h0_binds_pct_mean": 88.4,
+      "crosscheck_vs_recal_volatility_json": {
+        "cov_h0": [
+          90.4,
+          0.8
+        ],
+        "cov_h1_mean": 72.9,
+        "width_h0_mean": 0.2105,
+        "max_ladder_level": 0
+      },
+      "decomposition_mean_rps": {
+        "fc_h0": 0.4761,
+        "fc_h1": 0.4779,
+        "ci_upper0_recal": 0.5813,
+        "ci_upper1_frozen": 0.4954,
+        "mean_q0_used_norm": 0.747203
+      },
+      "complement_on_h0_binding_cycles": {
+        "recal_exceeds_frozen_h0_pct": 99.1,
+        "mean_h0_uplift_rps": 0.1021,
+        "mean_h0_uplift_x": 1.21,
+        "mean_actuator_signal_uplift_rps": 0.098,
+        "note": "uplift = ci_upper[0]_recal - ci_upper[0]_frozen; signal_uplift = recal max - frozen-h0 max"
+      }
+    },
+    "aci-lad": {
+      "h1_binds_pct": {
+        "mean": 20.3,
+        "sd": 11.6,
+        "per_rep": [
+          27.1,
+          28.8,
+          5.1,
+          25.4,
+          32.2,
+          3.4
+        ]
+      },
+      "read_band": "MATERIAL (15-40%): state plainly in limitations",
+      "h0_binds_pct_mean": 79.7,
+      "crosscheck_vs_recal_volatility_json": {
+        "cov_h0": [
+          89.8,
+          0.0
+        ],
+        "cov_h1_mean": 72.9,
+        "width_h0_mean": 0.1161,
+        "max_ladder_level": 2
+      },
+      "decomposition_mean_rps": {
+        "fc_h0": 0.4761,
+        "fc_h1": 0.4779,
+        "ci_upper0_recal": 0.5341,
+        "ci_upper1_frozen": 0.4954,
+        "mean_q0_used_norm": 0.411973
+      },
+      "complement_on_h0_binding_cycles": {
+        "recal_exceeds_frozen_h0_pct": 99.1,
+        "mean_h0_uplift_rps": 0.0539,
+        "mean_h0_uplift_x": 1.12,
+        "mean_actuator_signal_uplift_rps": 0.0498,
+        "note": "uplift = ci_upper[0]_recal - ci_upper[0]_frozen; signal_uplift = recal max - frozen-h0 max"
+      }
+    },
+    "pid-lad": {
+      "h1_binds_pct": {
+        "mean": 9.6,
+        "sd": 6.3,
+        "per_rep": [
+          11.9,
+          15.3,
+          1.7,
+          13.6,
+          15.3,
+          0.0
+        ]
+      },
+      "read_band": "FOOTNOTE (<15%): recalibration reaches the actuator on most cycles",
+      "h0_binds_pct_mean": 90.4,
+      "crosscheck_vs_recal_volatility_json": {
+        "cov_h0": [
+          91.2,
+          0.6
+        ],
+        "cov_h1_mean": 72.9,
+        "width_h0_mean": 0.4817,
+        "max_ladder_level": 2
+      },
+      "decomposition_mean_rps": {
+        "fc_h0": 0.4761,
+        "fc_h1": 0.4779,
+        "ci_upper0_recal": 0.7169,
+        "ci_upper1_frozen": 0.4954,
+        "mean_q0_used_norm": 1.709957
+      },
+      "complement_on_h0_binding_cycles": {
+        "recal_exceeds_frozen_h0_pct": 98.9,
+        "mean_h0_uplift_rps": 0.2503,
+        "mean_h0_uplift_x": 1.51,
+        "mean_actuator_signal_uplift_rps": 0.2462,
+        "note": "uplift = ci_upper[0]_recal - ci_upper[0]_frozen; signal_uplift = recal max - frozen-h0 max"
+      }
+    }
+  }
+}

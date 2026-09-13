@@ -1,0 +1,197 @@
+{
+  "pattern": "B",
+  "batch": "data/p3_runs/outputs/ev7_ab_cost_B_20260625_101524",
+  "anchor_sanity": {
+    "overhead_per_hour_mean": 55104.0,
+    "mean_replicas": 16.30666666666667,
+    "max_replicas": 20.0,
+    "rails_like_D": false,
+    "note": "anchor does NOT rail \u2014 default HPA is not wasteful on this pattern; any 'mirror-D' verdict holds by a different mechanism than D's resonance"
+  },
+  "scp": {
+    "overhead_per_hour_mean": 31068.923333333332,
+    "sd": 2187.0083136177923,
+    "n": 5,
+    "mean_replicas": 9.628333333333334,
+    "e2e_p95_ms": 1025.78,
+    "e2e_violation": 0.77982,
+    "empirical_coverage_note": "coverage reported separately (operator_metrics_summary)"
+  },
+  "config_table": [
+    {
+      "config": "hpa-tuned-u70-s60",
+      "cpu_target": 70,
+      "downscale_stab_s": 60,
+      "hpa_api": "autoscaling/v2",
+      "overhead_per_hour_mean": 30810.0,
+      "overhead_per_hour_sd": 1870.8554193202656,
+      "overhead_per_hour_values": [
+        31560.000000000004,
+        28619.999999999996,
+        31680.000000000004,
+        29130.0,
+        33060.0
+      ],
+      "n": 5,
+      "mean_replicas": 9.558333333333334,
+      "e2e_p95_ms": 1066.7,
+      "e2e_violation": 0.7385400000000001,
+      "meets_matched_slo": true
+    },
+    {
+      "config": "hpa-tuned-u70-s120",
+      "cpu_target": 70,
+      "downscale_stab_s": 120,
+      "hpa_api": "autoscaling/v2",
+      "overhead_per_hour_mean": 34026.0,
+      "overhead_per_hour_sd": 3969.3299182607625,
+      "overhead_per_hour_values": [
+        33330.0,
+        36480.0,
+        29100.000000000004,
+        39300.0,
+        31920.0
+      ],
+      "n": 5,
+      "mean_replicas": 10.451666666666666,
+      "e2e_p95_ms": 1004.3399999999999,
+      "e2e_violation": 0.71772,
+      "meets_matched_slo": true
+    },
+    {
+      "config": "hpa-tuned-u50-s60",
+      "cpu_target": 50,
+      "downscale_stab_s": 60,
+      "hpa_api": "autoscaling/v2",
+      "overhead_per_hour_mean": 38892.0,
+      "overhead_per_hour_sd": 2508.0610040427646,
+      "overhead_per_hour_values": [
+        39540.0,
+        42690.0,
+        35910.0,
+        37740.0,
+        38580.0
+      ],
+      "n": 5,
+      "mean_replicas": 11.803333333333333,
+      "e2e_p95_ms": 937.8399999999999,
+      "e2e_violation": 0.7242,
+      "meets_matched_slo": true
+    },
+    {
+      "config": "hpa-tuned-u50-s120",
+      "cpu_target": 50,
+      "downscale_stab_s": 120,
+      "hpa_api": "autoscaling/v2",
+      "overhead_per_hour_mean": 46517.57,
+      "overhead_per_hour_sd": 4622.867700302488,
+      "overhead_per_hour_values": [
+        42870.0,
+        40260.0,
+        50157.850000000006,
+        49380.0,
+        49920.0
+      ],
+      "n": 5,
+      "mean_replicas": 13.919999999999998,
+      "e2e_p95_ms": 1080.9,
+      "e2e_violation": 0.7251,
+      "meets_matched_slo": true
+    },
+    {
+      "config": "hpa-anchor-u50-s300",
+      "cpu_target": 50,
+      "downscale_stab_s": 300,
+      "hpa_api": "autoscaling/v2",
+      "overhead_per_hour_mean": 55104.0,
+      "overhead_per_hour_sd": 5446.8550559015275,
+      "overhead_per_hour_values": [
+        56640.0,
+        60450.00000000001,
+        50940.0,
+        59520.00000000001,
+        47970.0
+      ],
+      "n": 5,
+      "mean_replicas": 16.30666666666667,
+      "e2e_p95_ms": 973.5600000000001,
+      "e2e_violation": 0.7157199999999999,
+      "meets_matched_slo": true
+    }
+  ],
+  "slo_gate_detail": {
+    "hpa-anchor-u50-s300": {
+      "reason": [],
+      "e2e_p95_cfg": 973.5600000000001,
+      "e2e_p95_scp": 1025.78,
+      "p95_welch_p": 0.4565602597391682,
+      "p95_within_5pct": true,
+      "p95_not_sig_worse": true,
+      "e2e_viol_cfg": 0.7157199999999999,
+      "e2e_viol_scp": 0.77982,
+      "viol_ok": true,
+      "meets": true
+    },
+    "hpa-tuned-u50-s120": {
+      "reason": [],
+      "e2e_p95_cfg": 1080.9,
+      "e2e_p95_scp": 1025.78,
+      "p95_welch_p": 0.3727588369192116,
+      "p95_within_5pct": false,
+      "p95_not_sig_worse": true,
+      "e2e_viol_cfg": 0.7251,
+      "e2e_viol_scp": 0.77982,
+      "viol_ok": true,
+      "meets": true
+    },
+    "hpa-tuned-u50-s60": {
+      "reason": [],
+      "e2e_p95_cfg": 937.8399999999999,
+      "e2e_p95_scp": 1025.78,
+      "p95_welch_p": 0.19743441046756222,
+      "p95_within_5pct": true,
+      "p95_not_sig_worse": true,
+      "e2e_viol_cfg": 0.7242,
+      "e2e_viol_scp": 0.77982,
+      "viol_ok": true,
+      "meets": true
+    },
+    "hpa-tuned-u70-s120": {
+      "reason": [],
+      "e2e_p95_cfg": 1004.3399999999999,
+      "e2e_p95_scp": 1025.78,
+      "p95_welch_p": 0.7687562258026829,
+      "p95_within_5pct": true,
+      "p95_not_sig_worse": true,
+      "e2e_viol_cfg": 0.71772,
+      "e2e_viol_scp": 0.77982,
+      "viol_ok": true,
+      "meets": true
+    },
+    "hpa-tuned-u70-s60": {
+      "reason": [],
+      "e2e_p95_cfg": 1066.7,
+      "e2e_p95_scp": 1025.78,
+      "p95_welch_p": 0.5312762961861084,
+      "p95_within_5pct": true,
+      "p95_not_sig_worse": true,
+      "e2e_viol_cfg": 0.7385400000000001,
+      "e2e_viol_scp": 0.77982,
+      "viol_ok": true,
+      "meets": true
+    }
+  },
+  "comparator_and_saving": {
+    "comparator_config": "hpa-tuned-u70-s60",
+    "comparator_overhead_per_hour": 30810.0,
+    "scp_overhead_per_hour": 31068.923333333332,
+    "saving_pct": -0.8403873201341521
+  },
+  "card_s2_verdict": {
+    "verdict": "PASS-mirror",
+    "detail": "A/B mirror D \u2014 SCP shows NO positive saving vs the tuned comparator (hpa-tuned-u70-s60 @ 30810 vs SCP 31069 rs/h; Saving -0.8%, cost Welch p=0.846). The earlier A/B 'savings' were a default-baseline artifact \u2014 NOTE: anchor did NOT rail like D, so the artifact arises by a DIFFERENT mechanism than D's 300s downscale-window resonance (interpret in the record).",
+    "saving_pct": -0.8403873201341521,
+    "cost_welch_p": 0.8457054488576063,
+    "anchor_rails": false
+  }
+}

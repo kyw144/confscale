@@ -1,0 +1,838 @@
+{
+  "source_commit": "18aa3ebba5d5dd0e5fac594c2a6d1aebb426036d",
+  "records": [
+    {
+      "source": "src/stage3_scale/analysis/__init__.py",
+      "source_sha256": "c4a9ee5fa597fcd13fd6db2d3b8e3a8067568d881df49f8a5a1aeec68a922b93",
+      "destination": "reference/stage3_scale/analysis/__init__.py",
+      "destination_sha256": "c4a9ee5fa597fcd13fd6db2d3b8e3a8067568d881df49f8a5a1aeec68a922b93",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/calibration.py",
+      "source_sha256": "5849862728ed7d4c26d77555a07c27d5b30e0a5d3fea6a33d35a195725303e90",
+      "destination": "reference/stage3_scale/analysis/calibration.py",
+      "destination_sha256": "5849862728ed7d4c26d77555a07c27d5b30e0a5d3fea6a33d35a195725303e90",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/config.yaml",
+      "source_sha256": "538a11c74fef5854f6f750de6349495f0bc76a0f69910a5fdee48f470d38a842",
+      "destination": "reference/stage3_scale/analysis/config.yaml",
+      "destination_sha256": "538a11c74fef5854f6f750de6349495f0bc76a0f69910a5fdee48f470d38a842",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/figures.py",
+      "source_sha256": "71d4559756366f77baf75e9d2acab4694ed5631198a5082a6c509e52f5a6acd7",
+      "destination": "reference/stage3_scale/analysis/figures.py",
+      "destination_sha256": "71d4559756366f77baf75e9d2acab4694ed5631198a5082a6c509e52f5a6acd7",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/hpa_qr_drift_status.py",
+      "source_sha256": "3389c97f571b68e83497771734a09cfbdb5539247af21df00cb3c03e46f23f41",
+      "destination": "reference/stage3_scale/analysis/hpa_qr_drift_status.py",
+      "destination_sha256": "3389c97f571b68e83497771734a09cfbdb5539247af21df00cb3c03e46f23f41",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/lambda_analysis.py",
+      "source_sha256": "d4acfa1b252319ff0725d21e18c7a92c2d4600185d82f468ae3303d3565a5dff",
+      "destination": "reference/stage3_scale/analysis/lambda_analysis.py",
+      "destination_sha256": "d4acfa1b252319ff0725d21e18c7a92c2d4600185d82f468ae3303d3565a5dff",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/loader.py",
+      "source_sha256": "63ad2b0b079b693e956cad966d35d02532ca8569cba5d0efd53481d92e47f16f",
+      "destination": "reference/stage3_scale/analysis/loader.py",
+      "destination_sha256": "63ad2b0b079b693e956cad966d35d02532ca8569cba5d0efd53481d92e47f16f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/metrics.py",
+      "source_sha256": "11dfcc873c56aa2953cf3775eeb3c04ae8684f8990096eb3b8b68a3deaf091dc",
+      "destination": "reference/stage3_scale/analysis/metrics.py",
+      "destination_sha256": "11dfcc873c56aa2953cf3775eeb3c04ae8684f8990096eb3b8b68a3deaf091dc",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/online_recal_effect.py",
+      "source_sha256": "570d02807733cadb46f1dd330fa6ae841fb59f7cfbfbf88852fe9685ef7a53f9",
+      "destination": "reference/stage3_scale/analysis/online_recal_effect.py",
+      "destination_sha256": "570d02807733cadb46f1dd330fa6ae841fb59f7cfbfbf88852fe9685ef7a53f9",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/post_reframe.py",
+      "source_sha256": "0518a2a9a3e3d67816acf672fb6f794605398f4617d689f62d5cb16f9b21dff5",
+      "destination": "reference/stage3_scale/analysis/post_reframe.py",
+      "destination_sha256": "0518a2a9a3e3d67816acf672fb6f794605398f4617d689f62d5cb16f9b21dff5",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/report.py",
+      "source_sha256": "41bbf78aed3f6cfe65231903c65556853186a6c88762c1c4ebbc595fe9535352",
+      "destination": "reference/stage3_scale/analysis/report.py",
+      "destination_sha256": "41bbf78aed3f6cfe65231903c65556853186a6c88762c1c4ebbc595fe9535352",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/stats.py",
+      "source_sha256": "52f515377134557772a111415260c5c29760a0c3366eea7f8e57db78826b1714",
+      "destination": "reference/stage3_scale/analysis/stats.py",
+      "destination_sha256": "52f515377134557772a111415260c5c29760a0c3366eea7f8e57db78826b1714",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/tables.py",
+      "source_sha256": "5e0c3f493af83eb0be2b5f75afb1239ce709dcd017f4a2100cfb92d5ac783150",
+      "destination": "reference/stage3_scale/analysis/tables.py",
+      "destination_sha256": "5e0c3f493af83eb0be2b5f75afb1239ce709dcd017f4a2100cfb92d5ac783150",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/analysis/test_loader_metric_basis.py",
+      "source_sha256": "d76374b3403559d7b3117d5f8496fd988bf928f2dd8e80b02ab9835bb2c86f8e",
+      "destination": "reference/stage3_scale/analysis/test_loader_metric_basis.py",
+      "destination_sha256": "d76374b3403559d7b3117d5f8496fd988bf928f2dd8e80b02ab9835bb2c86f8e",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/__init__.py",
+      "source_sha256": "e5359776ead319beee3343ddb000fc8e8eed85b0643219f281bf4b26d02ac80f",
+      "destination": "reference/stage3_scale/baselines/__init__.py",
+      "destination_sha256": "e5359776ead319beee3343ddb000fc8e8eed85b0643219f281bf4b26d02ac80f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/controller.py",
+      "source_sha256": "8d3e6bb12c4d66d1fa718dc70969f059eee4d9af8d9e6eb067c4a5de87fcb632",
+      "destination": "reference/stage3_scale/baselines/controller.py",
+      "destination_sha256": "271c8e57a99af71aa796ea22f51acbb7c18df7e6d7f6248407dace0071b2ae94",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/baselines/escalation_ladder.py",
+      "source_sha256": "7ed391b71e1231581ab5be849bbb8da2cb747bf6bd3b1ef6193481cafe396709",
+      "destination": "reference/stage3_scale/baselines/escalation_ladder.py",
+      "destination_sha256": "7ed391b71e1231581ab5be849bbb8da2cb747bf6bd3b1ef6193481cafe396709",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/keda-scaledobject.yaml",
+      "source_sha256": "75f0a991fa3720c1f80fb99a952ff60832a33f0caa8ee133de73ea21294401bb",
+      "destination": "reference/stage3_scale/baselines/keda-scaledobject.yaml",
+      "destination_sha256": "75f0a991fa3720c1f80fb99a952ff60832a33f0caa8ee133de73ea21294401bb",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/test_baseline_coverage_monitor.py",
+      "source_sha256": "985292922f1fab5e9652cefc8bd92ba735bdf142bd236d90bbfbb3616a3b457c",
+      "destination": "reference/stage3_scale/baselines/test_baseline_coverage_monitor.py",
+      "destination_sha256": "985292922f1fab5e9652cefc8bd92ba735bdf142bd236d90bbfbb3616a3b457c",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/test_error_monitor.py",
+      "source_sha256": "043fbc9ae6261cf5f5a4b8a6d8db46abd13e28456eb1499367e62a646f393ae5",
+      "destination": "reference/stage3_scale/baselines/test_error_monitor.py",
+      "destination_sha256": "043fbc9ae6261cf5f5a4b8a6d8db46abd13e28456eb1499367e62a646f393ae5",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/baselines/test_escalation_ladder.py",
+      "source_sha256": "6a5edfeb0c965a5a1e979fa35babddfc19233949a4d944836ebfc4c011064564",
+      "destination": "reference/stage3_scale/baselines/test_escalation_ladder.py",
+      "destination_sha256": "6a5edfeb0c965a5a1e979fa35babddfc19233949a4d944836ebfc4c011064564",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/collector/__init__.py",
+      "source_sha256": "873618761686e3b043a7f90b9b328a1594db3575293bf1c8ecb55dae51644999",
+      "destination": "reference/stage3_scale/collector/__init__.py",
+      "destination_sha256": "873618761686e3b043a7f90b9b328a1594db3575293bf1c8ecb55dae51644999",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/collector/collect.py",
+      "source_sha256": "c3b57810527023868a27d34d8d8e14ebde755b393134c0c4a964d432b811d1a2",
+      "destination": "reference/stage3_scale/collector/collect.py",
+      "destination_sha256": "ff3dabf044fa11dfbcbf36af8b3c6e832667a6168f0cde63bf69f4c50002d6fc",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/collector/queries.py",
+      "source_sha256": "40813a05ed563d93aabb7e21bf5abde86e9dbbd3b70099d6eff034cef4a64cd4",
+      "destination": "reference/stage3_scale/collector/queries.py",
+      "destination_sha256": "40813a05ed563d93aabb7e21bf5abde86e9dbbd3b70099d6eff034cef4a64cd4",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/collector/snapshot.py",
+      "source_sha256": "d2025bd7b500065fb55d4e21381e08e6f9e7b2169fd8905dec04cabd0e71afc8",
+      "destination": "reference/stage3_scale/collector/snapshot.py",
+      "destination_sha256": "d2025bd7b500065fb55d4e21381e08e6f9e7b2169fd8905dec04cabd0e71afc8",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/compute-worker/app.py",
+      "source_sha256": "4eab15ebd197b9b0baa74a00f76a8fdd34d4c187690cceb20a9e22b1306235fd",
+      "destination": "reference/stage3_scale/infosys-benchmark/compute-worker/app.py",
+      "destination_sha256": "b12755f2265b6061afe24a47d822bcacd016d8c0b7e37a2c488d69ba66b30751",
+      "adaptation": "all imports and direct launches disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/compute-worker/Dockerfile",
+      "source_sha256": "90665abfbd1a99fa1a6ea1494ca2a438a37ca135618cd37f79d9b97b6516927f",
+      "destination": "reference/stage3_scale/infosys-benchmark/compute-worker/Dockerfile",
+      "destination_sha256": "90665abfbd1a99fa1a6ea1494ca2a438a37ca135618cd37f79d9b97b6516927f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/frontend/app.py",
+      "source_sha256": "817da164b69383209578da75e8256c8f8a3349d67f1cccdc25465e712bd4b9e6",
+      "destination": "reference/stage3_scale/infosys-benchmark/frontend/app.py",
+      "destination_sha256": "e06af2e4d7ee2b52cda84d82f8b3c5351953dff49908f1e551f14cdff39759d3",
+      "adaptation": "all imports and direct launches disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/frontend/Dockerfile",
+      "source_sha256": "1f55fa00fa91e94f4e1c20e44db4a98695398c77c0cc49a6fc85214f3674f3e9",
+      "destination": "reference/stage3_scale/infosys-benchmark/frontend/Dockerfile",
+      "destination_sha256": "1f55fa00fa91e94f4e1c20e44db4a98695398c77c0cc49a6fc85214f3674f3e9",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/k8s/manifests.yaml",
+      "source_sha256": "4bb121648700dceac6c2538f5ea89a685c2d62ee71d2e3a3eb2461e5459fc714",
+      "destination": "reference/stage3_scale/infosys-benchmark/k8s/manifests.yaml",
+      "destination_sha256": "4bb121648700dceac6c2538f5ea89a685c2d62ee71d2e3a3eb2461e5459fc714",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/processor/app.py",
+      "source_sha256": "2c83b51171b40b1036e92d156502ccc0f0ef058d824609cbf38ce424e3dae549",
+      "destination": "reference/stage3_scale/infosys-benchmark/processor/app.py",
+      "destination_sha256": "11dd07c00200f90d75377e7b5a545446c7c8a6bcc3dfb89fbe428e6b37194fd7",
+      "adaptation": "all imports and direct launches disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/infosys-benchmark/processor/Dockerfile",
+      "source_sha256": "b1f1ae87f0fc6c9a69a4ded2e837bcc6198039a93748c825d6a2079d5e9b6a3f",
+      "destination": "reference/stage3_scale/infosys-benchmark/processor/Dockerfile",
+      "destination_sha256": "b1f1ae87f0fc6c9a69a4ded2e837bcc6198039a93748c825d6a2079d5e9b6a3f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/kind-config.yaml",
+      "source_sha256": "bd5aacc978d40df45b7677f478fa0fb7db74477bc7b4a35b9b70e0e394291e73",
+      "destination": "reference/stage3_scale/kind-config.yaml",
+      "destination_sha256": "bd5aacc978d40df45b7677f478fa0fb7db74477bc7b4a35b9b70e0e394291e73",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/load_gen.py",
+      "source_sha256": "865c94f8794f83bddf3ccce375cddde0c9bef157c15b31517f0c15b7e6dadd1e",
+      "destination": "reference/stage3_scale/load_gen.py",
+      "destination_sha256": "b2166983d237564f51c890522570d2093fe0ecbbf0f4ce453736c89aa7c80704",
+      "adaptation": "all imports and direct launches disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/__init__.py",
+      "source_sha256": "bd9299136fa6756b692afdb5c694299e6c8eb573f7856e02a656ee5278f5a09e",
+      "destination": "reference/stage3_scale/orchestrator/__init__.py",
+      "destination_sha256": "bd9299136fa6756b692afdb5c694299e6c8eb573f7856e02a656ee5278f5a09e",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/clusters.py",
+      "source_sha256": "1c26cd97ac45fd6716e0566615e98645e98f97ada3345afaef78d60a6211b38d",
+      "destination": "reference/stage3_scale/orchestrator/clusters.py",
+      "destination_sha256": "fababd66b696dade82372ec656d020eb8fbee8d10d3e939400380911e85b8a98",
+      "adaptation": "cluster create/delete calls disabled unless reference runtime explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/controller.py",
+      "source_sha256": "65bf688816d8d3bf89149df5280fca2d2c5f668ba96b40e59f04fbfc5eadc569",
+      "destination": "reference/stage3_scale/orchestrator/controller.py",
+      "destination_sha256": "f0b00f79aa89bbd263615cf8e263d24df1360598f0a0c507ec4c8ac526ccdd44",
+      "adaptation": "removed out-of-paper experimental levers and external telemetry; warm-start retained; direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/coverage_monitor.py",
+      "source_sha256": "703f623a13443bb447634c39248fe029a803bb83ef1fd7a8dd7040832a13ab2d",
+      "destination": "reference/stage3_scale/orchestrator/coverage_monitor.py",
+      "destination_sha256": "703f623a13443bb447634c39248fe029a803bb83ef1fd7a8dd7040832a13ab2d",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/kind-configs/kind-config-w0.yaml",
+      "source_sha256": "6964f469f572a5ab99fac5a022ba98203a4ddc4276d2862821550919bd20f271",
+      "destination": "reference/stage3_scale/orchestrator/kind-configs/kind-config-w0.yaml",
+      "destination_sha256": "6964f469f572a5ab99fac5a022ba98203a4ddc4276d2862821550919bd20f271",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/kind-configs/kind-config-w1.yaml",
+      "source_sha256": "3834242f525b4420e9295c246e01b7d81c4334fdabe79c2129dd1718b5051295",
+      "destination": "reference/stage3_scale/orchestrator/kind-configs/kind-config-w1.yaml",
+      "destination_sha256": "3834242f525b4420e9295c246e01b7d81c4334fdabe79c2129dd1718b5051295",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/kind-configs/kind-config-w2.yaml",
+      "source_sha256": "501f24578f4522ddb158b8b29abd69da99d4c3bd2c2547f4f575887f77ff0242",
+      "destination": "reference/stage3_scale/orchestrator/kind-configs/kind-config-w2.yaml",
+      "destination_sha256": "501f24578f4522ddb158b8b29abd69da99d4c3bd2c2547f4f575887f77ff0242",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-keda.yaml",
+      "source_sha256": "886663f23a9424a15b7162d8ba28b5f301049f8454cdbf6ca9ad0827013257c9",
+      "destination": "reference/stage3_scale/orchestrator/matrix-keda.yaml",
+      "destination_sha256": "886663f23a9424a15b7162d8ba28b5f301049f8454cdbf6ca9ad0827013257c9",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-no-hpa-reactive.yaml",
+      "source_sha256": "82899bc208ae741961cb85d1b9fcf23160e1ed9fc00243ba8f78ff0f657b74f2",
+      "destination": "reference/stage3_scale/orchestrator/matrix-no-hpa-reactive.yaml",
+      "destination_sha256": "82899bc208ae741961cb85d1b9fcf23160e1ed9fc00243ba8f78ff0f657b74f2",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-p3-d-reps45.yaml",
+      "source_sha256": "e5d6131d171891c9c6abe8d2037ad8666b84d823408fb4a9184052c901effdcc",
+      "destination": "reference/stage3_scale/orchestrator/matrix-p3-d-reps45.yaml",
+      "destination_sha256": "e5d6131d171891c9c6abe8d2037ad8666b84d823408fb4a9184052c901effdcc",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-p3-lambda-sweep.yaml",
+      "source_sha256": "a06dd05638f34dee571321d6220662b4d9cbbd24192e8e7f1b5f51ad9b337ed1",
+      "destination": "reference/stage3_scale/orchestrator/matrix-p3-lambda-sweep.yaml",
+      "destination_sha256": "a06dd05638f34dee571321d6220662b4d9cbbd24192e8e7f1b5f51ad9b337ed1",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-p3-uq-baselines.yaml",
+      "source_sha256": "f52810c437714b668268d09cf34d648c948a73efe66a0c619e7e5df845dd00d5",
+      "destination": "reference/stage3_scale/orchestrator/matrix-p3-uq-baselines.yaml",
+      "destination_sha256": "f52810c437714b668268d09cf34d648c948a73efe66a0c619e7e5df845dd00d5",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix-smoke.yaml",
+      "source_sha256": "8fd247fb55833e50b90e8e9dff32a06c662dc7ba93d4a46538172b7e49860292",
+      "destination": "reference/stage3_scale/orchestrator/matrix-smoke.yaml",
+      "destination_sha256": "8fd247fb55833e50b90e8e9dff32a06c662dc7ba93d4a46538172b7e49860292",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/matrix.yaml",
+      "source_sha256": "de2e1efb164d5ccc921731d3dfa32c0269a9c5b176ba634e9dfe9a334c0754c6",
+      "destination": "reference/stage3_scale/orchestrator/matrix.yaml",
+      "destination_sha256": "de2e1efb164d5ccc921731d3dfa32c0269a9c5b176ba634e9dfe9a334c0754c6",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/methods.py",
+      "source_sha256": "6ebfc61f924563b93463921133ed8d9646f72021a29036d8d23da24ca6f5148a",
+      "destination": "reference/stage3_scale/orchestrator/methods.py",
+      "destination_sha256": "3589a5278d46185ef3ee4e2fdb2bf4f434b093756fff7e96bf5829612794f148",
+      "adaptation": "removed out-of-paper method knobs; active interpreter"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/run_matrix.py",
+      "source_sha256": "3e9287c2a7bf7f79a1cca0f668235a3b69e43b873d7be63e01a2bc02d03e37c6",
+      "destination": "reference/stage3_scale/orchestrator/run_matrix.py",
+      "destination_sha256": "3c0b511efd99da2cbeb1b489bef1f8b4c94bf24a1a620919b9330c8799ad2fcc",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/simple-prometheus.yaml",
+      "source_sha256": "d8b0ff285c4ea49d3d64dbfb9097e256655aabfdab0d6d7fb95298eceb521c64",
+      "destination": "reference/stage3_scale/orchestrator/simple-prometheus.yaml",
+      "destination_sha256": "d8b0ff285c4ea49d3d64dbfb9097e256655aabfdab0d6d7fb95298eceb521c64",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/test_coverage_monitor.py",
+      "source_sha256": "0416039be960eba0a0daa911c3c464936366431c59484a3a052fc938ecfa32fd",
+      "destination": "reference/stage3_scale/orchestrator/test_coverage_monitor.py",
+      "destination_sha256": "0416039be960eba0a0daa911c3c464936366431c59484a3a052fc938ecfa32fd",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/test_ev6_e2e_path.py",
+      "source_sha256": "0643dee8a9834ca365d87a3cbea885758015a7da0ff3e3004425af638bba3999",
+      "destination": "reference/stage3_scale/orchestrator/test_ev6_e2e_path.py",
+      "destination_sha256": "0643dee8a9834ca365d87a3cbea885758015a7da0ff3e3004425af638bba3999",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/test_hpa_v2_behavior.py",
+      "source_sha256": "91bba9b400b0d515e8b5dd5d63b53a2bf464fdaf6953eebec30ab125aa53a5db",
+      "destination": "reference/stage3_scale/orchestrator/test_hpa_v2_behavior.py",
+      "destination_sha256": "91bba9b400b0d515e8b5dd5d63b53a2bf464fdaf6953eebec30ab125aa53a5db",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/test_parallel_orchestrator.py",
+      "source_sha256": "6012d7fe9cb22364570752cdf76732cd279b83031151121e0fc577d141e5acc7",
+      "destination": "reference/stage3_scale/orchestrator/test_parallel_orchestrator.py",
+      "destination_sha256": "6012d7fe9cb22364570752cdf76732cd279b83031151121e0fc577d141e5acc7",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/__init__.py",
+      "source_sha256": "16c6cba1200f1223af0d649ea6b49e6f4cbb8caae67a8a1144f5cd0263cfb071",
+      "destination": "reference/stage3_scale/predictor/__init__.py",
+      "destination_sha256": "16c6cba1200f1223af0d649ea6b49e6f4cbb8caae67a8a1144f5cd0263cfb071",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/data.py",
+      "source_sha256": "31c700a5c214c659bc3cd86e863c74fe77b1749f29db62fb00ca6eb15c6c808a",
+      "destination": "reference/stage3_scale/predictor/data.py",
+      "destination_sha256": "31c700a5c214c659bc3cd86e863c74fe77b1749f29db62fb00ca6eb15c6c808a",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/evaluate.py",
+      "source_sha256": "126c768c78f6fadf399fbd2b1816cb663a335382ee7a27cfbec9b2a2ab576f9f",
+      "destination": "reference/stage3_scale/predictor/evaluate.py",
+      "destination_sha256": "126c768c78f6fadf399fbd2b1816cb663a335382ee7a27cfbec9b2a2ab576f9f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/gru_model.py",
+      "source_sha256": "2c3457d12b28dc2fc6903f819f03a686a9e354d493e7136cc12650f110223f76",
+      "destination": "reference/stage3_scale/predictor/gru_model.py",
+      "destination_sha256": "2c3457d12b28dc2fc6903f819f03a686a9e354d493e7136cc12650f110223f76",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/run_sweep.py",
+      "source_sha256": "40e8e66877cb5787a1174fcfc3cbf8308eb38d9292de6113d2a4cce4e015bf92",
+      "destination": "reference/stage3_scale/predictor/run_sweep.py",
+      "destination_sha256": "40e8e66877cb5787a1174fcfc3cbf8308eb38d9292de6113d2a4cce4e015bf92",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/train.py",
+      "source_sha256": "6f5fe13b9cc36959e7a5cf14387959bbde93667be4548902925c6c713f9362e8",
+      "destination": "reference/stage3_scale/predictor/train.py",
+      "destination_sha256": "6f5fe13b9cc36959e7a5cf14387959bbde93667be4548902925c6c713f9362e8",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/predictor/train_all.py",
+      "source_sha256": "2fb62c0ec4de4b63d3e0db1aa7596b153c45ab07d43d1fb608040d659672634a",
+      "destination": "reference/stage3_scale/predictor/train_all.py",
+      "destination_sha256": "2fb62c0ec4de4b63d3e0db1aa7596b153c45ab07d43d1fb608040d659672634a",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/profiler/__init__.py",
+      "source_sha256": "200b2d881d1f32387086b89c8274bafe567c00f28dbbde71afb35aaf94471622",
+      "destination": "reference/stage3_scale/profiler/__init__.py",
+      "destination_sha256": "200b2d881d1f32387086b89c8274bafe567c00f28dbbde71afb35aaf94471622",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/profiler/fit_slo_model.py",
+      "source_sha256": "f1a84d63cb4d665fddc1e9e810400c85f425a8ea40c2b6cf746eabf8086292fa",
+      "destination": "reference/stage3_scale/profiler/fit_slo_model.py",
+      "destination_sha256": "f1a84d63cb4d665fddc1e9e810400c85f425a8ea40c2b6cf746eabf8086292fa",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/profiler/generate_training_data.py",
+      "source_sha256": "3aa69ed4270c5f0920c575620bcd67f163bc99ef26ac6b7cd64da5eca7eb221b",
+      "destination": "reference/stage3_scale/profiler/generate_training_data.py",
+      "destination_sha256": "3aa69ed4270c5f0920c575620bcd67f163bc99ef26ac6b7cd64da5eca7eb221b",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/profiler/profile.py",
+      "source_sha256": "27b5c986a0f286a3d2c71bb41510c96dd722de512893f74cdf01bcb34264fb17",
+      "destination": "reference/stage3_scale/profiler/profile.py",
+      "destination_sha256": "0b7e96dabbd70c84ec6ad4c98f0cfe6476e99d0ed78c2daf13f6ba39501f6375",
+      "adaptation": "active interpreter; direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/requirements.txt",
+      "source_sha256": "c40c303d85ef9954834c120b81150d8943ad48671fa12c0d6912eef3efe443c1",
+      "destination": "reference/stage3_scale/requirements.txt",
+      "destination_sha256": "c40c303d85ef9954834c120b81150d8943ad48671fa12c0d6912eef3efe443c1",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/__init__.py",
+      "source_sha256": "608397617832d74893a3856dda9906886249cb9482542911d4958a41fcdfe259",
+      "destination": "reference/stage3_scale/uq/__init__.py",
+      "destination_sha256": "608397617832d74893a3856dda9906886249cb9482542911d4958a41fcdfe259",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/aci.py",
+      "source_sha256": "5035772c75838411a09667efb3e69e615e9fecdc28506254c1b430bf1d554034",
+      "destination": "reference/stage3_scale/uq/aci.py",
+      "destination_sha256": "5035772c75838411a09667efb3e69e615e9fecdc28506254c1b430bf1d554034",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/bootstrap.py",
+      "source_sha256": "aced89be4f7c4890755e0fb4580ccfe9081158f3b6a609ca4dc2953914532deb",
+      "destination": "reference/stage3_scale/uq/bootstrap.py",
+      "destination_sha256": "aced89be4f7c4890755e0fb4580ccfe9081158f3b6a609ca4dc2953914532deb",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/conformal.py",
+      "source_sha256": "aaa39ca27e86b254a44a278519bad1b211704de1fe269f6d500a182009c8dd2f",
+      "destination": "reference/stage3_scale/uq/conformal.py",
+      "destination_sha256": "aaa39ca27e86b254a44a278519bad1b211704de1fe269f6d500a182009c8dd2f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/conformal_pid.py",
+      "source_sha256": "ce9add980e53dc4841db7dfc504230c0fee3fa40a8601331c691a51804b90cef",
+      "destination": "reference/stage3_scale/uq/conformal_pid.py",
+      "destination_sha256": "ce9add980e53dc4841db7dfc504230c0fee3fa40a8601331c691a51804b90cef",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/evaluate.py",
+      "source_sha256": "2a3826b2d6976334c82ff609422826582e261a04cd28a675b169e59c215cd52c",
+      "destination": "reference/stage3_scale/uq/evaluate.py",
+      "destination_sha256": "2a3826b2d6976334c82ff609422826582e261a04cd28a675b169e59c215cd52c",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/quantile.py",
+      "source_sha256": "e95ec3a18255deb652a509c4c1a6c32037ed43fc13a5b79dc49764d53974db87",
+      "destination": "reference/stage3_scale/uq/quantile.py",
+      "destination_sha256": "e95ec3a18255deb652a509c4c1a6c32037ed43fc13a5b79dc49764d53974db87",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/test_aci.py",
+      "source_sha256": "5ab97d140099dd3d5fc694542682a92ceb61dab2affa8309ef6f9e64756e1e5c",
+      "destination": "reference/stage3_scale/uq/test_aci.py",
+      "destination_sha256": "5ab97d140099dd3d5fc694542682a92ceb61dab2affa8309ef6f9e64756e1e5c",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/test_conformal_pid.py",
+      "source_sha256": "8795da8c2eabc7dcde46cc474e38b5e8d8d6b4298e96b7c9c82e8189c7de18be",
+      "destination": "reference/stage3_scale/uq/test_conformal_pid.py",
+      "destination_sha256": "8795da8c2eabc7dcde46cc474e38b5e8d8d6b4298e96b7c9c82e8189c7de18be",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/uq/train_all.py",
+      "source_sha256": "f50bbd0701718025de9c4355e79070a3d336ba97975035101ff619cb90419845",
+      "destination": "reference/stage3_scale/uq/train_all.py",
+      "destination_sha256": "f50bbd0701718025de9c4355e79070a3d336ba97975035101ff619cb90419845",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "src/stage3_scale/workload_gen.py",
+      "source_sha256": "aaa820d08799f41faff9d89f78f2a5addbb3fc2728f8c12a644bd9413e2f572b",
+      "destination": "reference/stage3_scale/workload_gen.py",
+      "destination_sha256": "0ae93efc795be483890abbe62931503bdeae593006e8e5bfb37e9f166c34b05c",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+    },
+    {
+      "source": "src/stage3_scale/uq/conformal_pid.py",
+      "source_sha256": "ce9add980e53dc4841db7dfc504230c0fee3fa40a8601331c691a51804b90cef",
+      "destination": "confscale/conformal_pid.py",
+      "destination_sha256": "f511b8126b4391fd8ce646926739d2460f7b464861a05f4b75e59ed4f757fc89",
+      "adaptation": "core copy; LF normalization only"
+    },
+    {
+      "source": "src/stage3_scale/uq/aci.py",
+      "source_sha256": "5035772c75838411a09667efb3e69e615e9fecdc28506254c1b430bf1d554034",
+      "destination": "confscale/aci.py",
+      "destination_sha256": "b759af535992c2c790913d9b538ece0dbe00aa94f7fddc778afe276bd217f5ee",
+      "adaptation": "core copy; LF normalization only"
+    },
+    {
+      "source": "src/stage3_scale/baselines/escalation_ladder.py",
+      "source_sha256": "7ed391b71e1231581ab5be849bbb8da2cb747bf6bd3b1ef6193481cafe396709",
+      "destination": "confscale/escalation_ladder.py",
+      "destination_sha256": "d40323e1b90434c958d86300f70c6f454c35190ad332674310ddf2b3bb0f57c2",
+      "adaptation": "core copy; LF normalization only"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/coverage_monitor.py",
+      "source_sha256": "703f623a13443bb447634c39248fe029a803bb83ef1fd7a8dd7040832a13ab2d",
+      "destination": "confscale/coverage_monitor.py",
+      "destination_sha256": "1a4789bb204383c20d211e01bcbf81096541363339fa4509fbf9b2b47e09875f",
+      "adaptation": "core copy; doc-only historical roadmap cleanup"
+    },
+    {
+      "source": "src/stage3_scale/orchestrator/controller.py",
+      "source_sha256": "65bf688816d8d3bf89149df5280fca2d2c5f668ba96b40e59f04fbfc5eadc569",
+      "destination": "confscale/planning_numpy.py",
+      "destination_sha256": "1bdf20355ea4d2fb6d9e2ddc266bce7ae61cae56f64f146bc0bd160f4fa0853f",
+      "adaptation": "AST-selected paper planner/constants/hysteresis; unrelated lever removed; no runtime I/O"
+    },
+    {
+      "source": "data/p3_runs/results/real/tables/table_3_calibration.md",
+      "source_sha256": "f8c49db285d01c0b16c917378cbf1b0b322e95f06ed9b31964a5684f3c550d00",
+      "destination": "evidence/data/p3_runs/results/real/tables/table_3_calibration.md",
+      "destination_sha256": "f8c49db285d01c0b16c917378cbf1b0b322e95f06ed9b31964a5684f3c550d00",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/post_reframe/tables/table_a_coverage_cost_drift.md",
+      "source_sha256": "82632e9787d3f44815b1b125bd70f86543910fdd85998ceb4388c3e8244d2894",
+      "destination": "evidence/data/p3_runs/results/post_reframe/tables/table_a_coverage_cost_drift.md",
+      "destination_sha256": "82632e9787d3f44815b1b125bd70f86543910fdd85998ceb4388c3e8244d2894",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/variance_recheck_20260530_175923/ev3_analysis.json",
+      "source_sha256": "72fcdb386c4b6b0dadab42ea2cf7ecd48a524062d7f31824438caf5a8a5b4fd2",
+      "destination": "evidence/data/p3_runs/results/variance_recheck_20260530_175923/ev3_analysis.json",
+      "destination_sha256": "72fcdb386c4b6b0dadab42ea2cf7ecd48a524062d7f31824438caf5a8a5b4fd2",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_cost_analysis.json",
+      "source_sha256": "718fdc5655110d7fa9666845948c8dfffe79f6f85e1b463be6ae5829c6d49947",
+      "destination": "evidence/data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_cost_analysis.json",
+      "destination_sha256": "718fdc5655110d7fa9666845948c8dfffe79f6f85e1b463be6ae5829c6d49947",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev3_acih_analysis.json",
+      "source_sha256": "e7197645802edc5ffb2f3fd7068339cd269a07667d12b857d9a6018c76a128ca",
+      "destination": "evidence/data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev3_acih_analysis.json",
+      "destination_sha256": "e7197645802edc5ffb2f3fd7068339cd269a07667d12b857d9a6018c76a128ca",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_summary.json",
+      "source_sha256": "abd1b015a0fceeeac4c55fa05e684e6a754150f83dd5de74e5b5d9c1494a8489",
+      "destination": "evidence/data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_summary.json",
+      "destination_sha256": "abd1b015a0fceeeac4c55fa05e684e6a754150f83dd5de74e5b5d9c1494a8489",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_recal.json",
+      "source_sha256": "e20a8af91d0fae5253236d6e0049f37421f5fe28fe993f74a98fb89c75dc6907",
+      "destination": "evidence/data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_recal.json",
+      "destination_sha256": "e20a8af91d0fae5253236d6e0049f37421f5fe28fe993f74a98fb89c75dc6907",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_perservice_20260601_024537/recal_volatility.json",
+      "source_sha256": "aed36d95944ebd9b248e31d55733e28c94862ea05354cdfe19cc10fcd9a8f864",
+      "destination": "evidence/data/p3_runs/results/ev8b_perservice_20260601_024537/recal_volatility.json",
+      "destination_sha256": "aed36d95944ebd9b248e31d55733e28c94862ea05354cdfe19cc10fcd9a8f864",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_perservice_20260601_024537/h1_binds.json",
+      "source_sha256": "47eba37ee2cb4846db3dcd258dc0c7cc703fd974b69657e56e7c093ed599976f",
+      "destination": "evidence/data/p3_runs/results/ev8b_perservice_20260601_024537/h1_binds.json",
+      "destination_sha256": "47eba37ee2cb4846db3dcd258dc0c7cc703fd974b69657e56e7c093ed599976f",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/outputs/ev7_ab_cost_A_20260624_185820/t4_cost_analysis_A.json",
+      "source_sha256": "b08ba27b5ca1e7d2b73fd2f8ee4e23fd023e1074ac394eb6eb086fce7192de6c",
+      "destination": "evidence/data/p3_runs/outputs/ev7_ab_cost_A_20260624_185820/t4_cost_analysis_A.json",
+      "destination_sha256": "b08ba27b5ca1e7d2b73fd2f8ee4e23fd023e1074ac394eb6eb086fce7192de6c",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/outputs/ev7_ab_cost_B_20260625_101524/t4_cost_analysis_B.json",
+      "source_sha256": "719418a082adb908664c4afbe7fd29d92d2f1fa2981f5d9c2aebecc6f2ccc89b",
+      "destination": "evidence/data/p3_runs/outputs/ev7_ab_cost_B_20260625_101524/t4_cost_analysis_B.json",
+      "destination_sha256": "719418a082adb908664c4afbe7fd29d92d2f1fa2981f5d9c2aebecc6f2ccc89b",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/outputs/ev7_c_cost_20260627_021701/results/t4_cost_analysis_C.json",
+      "source_sha256": "aca4aacd22032385e42b17ea5a46958a2d641047fadd0372f8bb899d23671166",
+      "destination": "evidence/data/p3_runs/outputs/ev7_c_cost_20260627_021701/results/t4_cost_analysis_C.json",
+      "destination_sha256": "aca4aacd22032385e42b17ea5a46958a2d641047fadd0372f8bb899d23671166",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T2/t2_coverage_sweep_r6.json",
+      "source_sha256": "19c32053052ebc2ce81d355e96cc3a9691910d5734f6c8d4b401e8911ac6a775",
+      "destination": "evidence/data/p3_runs/reopen_2026-06/T2/t2_coverage_sweep_r6.json",
+      "destination_sha256": "19c32053052ebc2ce81d355e96cc3a9691910d5734f6c8d4b401e8911ac6a775",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.json",
+      "source_sha256": "1bd72dbbd3e4df76cd6a0f4e5a6b933a9ceb88af7560b79554b68b1becd28cca",
+      "destination": "evidence/data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.json",
+      "destination_sha256": "1bd72dbbd3e4df76cd6a0f4e5a6b933a9ceb88af7560b79554b68b1becd28cca",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.json",
+      "source_sha256": "9381d1d14b6588bd268f0ae78120ccb13f651c23a1e753a4d22c9725b123f51b",
+      "destination": "evidence/data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.json",
+      "destination_sha256": "9381d1d14b6588bd268f0ae78120ccb13f651c23a1e753a4d22c9725b123f51b",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/outputs/slo_binding_existence_proof_20260621_134302/rc5_results.json",
+      "source_sha256": "cdc0bb7f1afe4db695b7f26958215963ae73d95d2eb3ad1839995783dda56199",
+      "destination": "evidence/data/p3_runs/outputs/slo_binding_existence_proof_20260621_134302/rc5_results.json",
+      "destination_sha256": "cdc0bb7f1afe4db695b7f26958215963ae73d95d2eb3ad1839995783dda56199",
+      "adaptation": "byte-identical copy"
+    },
+    {
+      "source": "data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_driver.py",
+      "source_sha256": "59d7c46970a9316cf66f0ef68778aa93f0ab3f4267540885685a5c918c3dd4df",
+      "destination": "reference/studies/tuned_hpa/ev7_driver.py",
+      "destination_sha256": "cbd7ee60dac0922d07d55fc7efa2056ee0b3dd5f4617e52da5a1d1ce97fde3f2",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_cost_analyze.py",
+      "source_sha256": "8206ccae85c469f684e09b5cd6e75a56374f862460c6ddae9ba0968e1e19fe0e",
+      "destination": "reference/studies/tuned_hpa/ev7_cost_analyze.py",
+      "destination_sha256": "cfe7a533dd1ed1c0d9b54a12b3424738159c330ccff5b222c872f0f6b2c8a43b",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T5d/rc5_driver.py",
+      "source_sha256": "e1c290e0e00aac5be32bfd2f797d001d341f079264f97de4303a2144c6607291",
+      "destination": "reference/studies/binding/rc5_driver.py",
+      "destination_sha256": "1585e95bf8574f52014f072fd52726ea0e2f3fc8c5436a4419ac887131dcfe0b",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T4/t4_driver.py",
+      "source_sha256": "a859f2f2a9d0928f84b688cf7fb43910f6119609081aa1eec516397fe7955de1",
+      "destination": "reference/studies/cost_ab_c/t4_driver.py",
+      "destination_sha256": "ab2ddba9f632fe1e722ccb537924e03f9bb1e7b451bb349ce09da50a2d73fbb7",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T4/t4_cost_analyze.py",
+      "source_sha256": "c64a6289e2d8edfaaf8ffc915e006e10af13ea1f845ce210fe72cfda0858aae8",
+      "destination": "reference/studies/cost_ab_c/t4_cost_analyze.py",
+      "destination_sha256": "8d0c0d1f4a3253daf21e56726d3e8c518fc8bdc12ab5999e46ddde7c04d11145",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T3/t3_driver.py",
+      "source_sha256": "898b1a41158de97801729bfd8638d4df67fc233a7aeb2ba94c0ac4d3f4a8b051",
+      "destination": "reference/studies/raw_rolling/t3_driver.py",
+      "destination_sha256": "97a7f66bafe227a7248010549fbbd7a566fe8e30f80b85dfc2869ff203c7a255",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T7b/t7b_driver.py",
+      "source_sha256": "7e21dc2c119019fdf9adbab7d723337041a9220b69d1b39803946106eb1c42a4",
+      "destination": "reference/studies/warmstart/t7b_driver.py",
+      "destination_sha256": "0452e6608c7cec86783e219ee7e8db266ff177e367e47121b0174fc058b2b4c6",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_perservice_20260601_024537/pass2_perservice.py",
+      "source_sha256": "83f94997391edb254451daa555b98f0d3a7aed01cac4de57a0f6ba76407926b6",
+      "destination": "reference/studies/per_service/pass2_perservice.py",
+      "destination_sha256": "f65ead45de005ba719a4788c014e7c3f63a5ea5f04cd770a1889593ec759ad1a",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_perservice_20260601_024537/recal_perservice.py",
+      "source_sha256": "3b45cfcd9ce81999555b6d236cdded589b3bfd0c27846daf8b3b4b247860d8d9",
+      "destination": "reference/studies/per_service/recal_perservice.py",
+      "destination_sha256": "7d32d27d3e136dea300c786a262f1342d595c077bfa000162d32dbbd36ea4f94",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_perservice_20260601_024537/h1_binds_analysis.py",
+      "source_sha256": "dcd977ce69f7e1709fef45c3be44b3a294c0f09379ec653ecf26f95cf5d4a59b",
+      "destination": "reference/studies/per_service/h1_binds_analysis.py",
+      "destination_sha256": "835e57f5235d9360dd4f51b62c4a1a5ce454835177f0679e99a6e5ef823ea4b9",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_coverage.py",
+      "source_sha256": "9352611a2bb987e9c154b2d1b67aaad2458a175a2ac8c19abc7ed1528d37cf67",
+      "destination": "reference/studies/per_service/pass2_full_coverage.py",
+      "destination_sha256": "8caa9472296beeb99f43c42a0a6f15abb53bd8a982597177f72590b363f2a416",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_recal.py",
+      "source_sha256": "47c9951b1f8c06943fb90922a59ea0d224069d54a937dcf9f816aaa6a04a7e68",
+      "destination": "reference/studies/per_service/pass2_full_recal.py",
+      "destination_sha256": "98be67dddc41238fb837474c89dfa3e1117f6ec614ccfc54c88887fdac5d0147",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass2_full_20260601_210028/lock_rematerialize.py",
+      "source_sha256": "0b545a1b3340f75367ca907b08f67d7b826ca691ac13ffb81a8728078a9b3bff",
+      "destination": "reference/studies/per_service/lock_rematerialize.py",
+      "destination_sha256": "fe8025b5f12612161a1e97d8123ddae836c4556c0deb46953c93fbf11f56eb23",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.py",
+      "source_sha256": "9e46f7d98db665d045eb5a7b97b47a8433ab26ac93d25d5bf12f79e520c901c3",
+      "destination": "reference/studies/per_horizon/recal_perservice_h1.py",
+      "destination_sha256": "0140896253ff8260c3bc9d1295bbc6ef893d751780476af4bb81f611d95a8034",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.py",
+      "source_sha256": "e2b7b12c52213fd0609f16493916877e4780ea5410d930591cf944560e2ab0b3",
+      "destination": "reference/studies/per_horizon/recal_pool_h1.py",
+      "destination_sha256": "e210b881a32a3fc98c82950fe72a48219e704909c6306560b375c3901edd6d9b",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/reopen_2026-06/T2/t2_coverage_batch.py",
+      "source_sha256": "ac96af30702f728e5438813ca9d6d95fd036f20a61c4d1da2b7d9ae29c323ab7",
+      "destination": "reference/studies/expanded_pool/t2_coverage_batch.py",
+      "destination_sha256": "22c7397626b33f7ea3d71a4b51e139889a5389932ee7ed892336f28263e3656e",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8_etl_build_20260531_215632/etl_build.py",
+      "source_sha256": "1bb3edf68f0b35c99f79caf7ce3af1ac78c293737a883b9fcab715e5bb4cd4a2",
+      "destination": "reference/studies/etl/etl_build.py",
+      "destination_sha256": "c3f73317841db6bf3c1559c0950a0e5b8ef9fd926400313f00f86a5eddfcb1fe",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass1_20260601/pass1_perservice_etl.py",
+      "source_sha256": "d59b134b296e04b67eaab91e9e0d7add6488676d7cf4329e4d9d5ef3a36d533e",
+      "destination": "reference/studies/etl/pass1_perservice_etl.py",
+      "destination_sha256": "f623230f76ae35e361d479051a02c58e3f8829c52787a330d5bfcbba748c56b0",
+      "adaptation": "reference only: execution guard; private workspace strings replaced by placeholder; original study procedure retained"
+    },
+    {
+      "source": "docs/papers/p3/camera_ready_cnsm2026/P3_CNSM2026_camera_ready_READABILITY.docx",
+      "source_sha256": "7b0555d8f842331e22022c452f5865fd60cec399ef5c04d171b8703f00948bf9",
+      "destination": "provenance/paper_tables_expected.json",
+      "destination_sha256": "4f5e0526f9343a4d0c02a0112505c93b98e676336cb3a71182802a25870d8935",
+      "adaptation": "table-cell text extracted from Word XML; manuscript itself not distributed"
+    },
+    {
+      "source": "docs/papers/p3/draft/codex/scripts/build_codex_entities.py",
+      "source_sha256": "32f017ce2a4064c47be035ced3172fdb92cb1359d2fa9eb9670d76797b1d3b2a",
+      "destination": "confscale/entities_legacy.py",
+      "destination_sha256": "9bc24503e9efd157803639de394540d18b6b6b67a6a7d43d93617377e27d378e",
+      "adaptation": "only root/output discovery adapted; archived table numbering retained internally"
+    }
+  ]
+}

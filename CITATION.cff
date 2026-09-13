@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Please cite the paper. This is a local preparation snapshot; no public artifact DOI or release is assigned."
+type: software
+title: "ConfScale paper artifact"
+version: 0.1.0
+authors:
+  - family-names: Morhoiev
+    given-names: Kostiantyn
+    orcid: "https://orcid.org/0009-0009-5347-6022"
+preferred-citation:
+  type: conference-paper
+  title: "Coverage Monitoring and Online Recalibration for Predictive Autoscaling under Deployment Drift"
+  authors:
+    - family-names: Morhoiev
+      given-names: Kostiantyn
+    - family-names: Klymash
+      given-names: Mykhailo
+  year: 2026
+  conference:
+    name: "CNSM 2026"
+  notes: "Accepted paper; final proceedings metadata and DOI are not assigned in this local artifact."

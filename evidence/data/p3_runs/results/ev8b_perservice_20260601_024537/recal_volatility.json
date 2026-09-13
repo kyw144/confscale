@@ -1,0 +1,78 @@
+{
+  "cell": "MS_7129 volatility (locked)",
+  "windows": {
+    "train": [
+      120,
+      840
+    ],
+    "ref": [
+      480,
+      720
+    ],
+    "deploy": [
+      840,
+      960
+    ]
+  },
+  "R": 6,
+  "sanity_bias_pct": -2.3,
+  "n_deploy": 59,
+  "frozen_scp_pass2_ref": "63.0\u00b10.6% (+27.0pp)",
+  "qr_pass2_ref": "81.4% (+8.6pp)",
+  "synthetic_F_ref": {
+    "pid_raw": 0.9,
+    "laddered": 0.88
+  },
+  "methods": {
+    "frozen": {
+      "cov_h0": [
+        70.1,
+        3.5
+      ],
+      "gap_h0": 19.9,
+      "cov_h1_frozen": 72.9,
+      "mean_width_h0": 0.0312,
+      "max_ladder_level": 0
+    },
+    "aci": {
+      "cov_h0": [
+        89.8,
+        0.0
+      ],
+      "gap_h0": 0.2,
+      "cov_h1_frozen": 72.9,
+      "mean_width_h0": 0.0912,
+      "max_ladder_level": 0
+    },
+    "pid": {
+      "cov_h0": [
+        90.4,
+        0.8
+      ],
+      "gap_h0": -0.4,
+      "cov_h1_frozen": 72.9,
+      "mean_width_h0": 0.2105,
+      "max_ladder_level": 0
+    },
+    "aci-lad": {
+      "cov_h0": [
+        89.8,
+        0.0
+      ],
+      "gap_h0": 0.2,
+      "cov_h1_frozen": 72.9,
+      "mean_width_h0": 0.1161,
+      "max_ladder_level": 2
+    },
+    "pid-lad": {
+      "cov_h0": [
+        91.2,
+        0.6
+      ],
+      "gap_h0": -1.2,
+      "cov_h1_frozen": 72.9,
+      "mean_width_h0": 0.4817,
+      "max_ladder_level": 2
+    }
+  }
+}

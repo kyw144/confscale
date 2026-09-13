@@ -1,0 +1,55 @@
+# KEDA ScaledObject — event-driven autoscaling baseline for P3 experiments
+#
+# Deploy with: kubectl apply -f keda-scaledobject.yaml -n infosys-benchmark
+# Remove with:  kubectl delete scaledobject compute-worker-keda -n infosys-benchmark
+#
+# Prerequisites: KEDA must be installed in the cluster
+#   helm repo add kedacore https://kedacore.github.io/charts
+#   helm install keda kedacore/keda --namespace keda --create-namespace
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: compute-worker-keda
+  namespace: infosys-benchmark
+spec:
+  scaleTargetRef:
+    name: compute-worker
+  minReplicaCount: 1
+  maxReplicaCount: 20
+  pollingInterval: 15
+  cooldownPeriod: 60
+  triggers:
+  - type: prometheus
+    metricType: AverageValue
+    metadata:
+      serverAddress: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+      metricName: cpu_cores_total
+      # CPU scaling — mirror native HPA-reactive's "70% of CPU request"
+      # target. Native HPA: scales on cpu_usage / cpu_request, target 70%.
+      # Here we use AverageValue with the SAME underlying signal:
+      #   query returns total CPU cores used across all compute-worker pods.
+      #   threshold = 0.7 * cpu_request_per_pod = 0.7 * 0.050 = 0.035 cores
+      # HPA formula (AverageValue): desired = ceil(metric_total / threshold_per_pod)
+      #   Example: 1 pod using 0.464 cores → desired = ceil(0.464/0.035) = 14
+      #            14 pods, workload unchanged, still 0.464 cores total →
+      #            desired = ceil(0.464/0.035) = 14 (stable)
+      #
+      # The previous version used sum(cpu_usage)/sum(cpu_limits) which is a
+      # dimensionless ratio that doesn't scale linearly with replica count,
+      # so HPA could never compute a meaningful desired replica count and
+      # always stayed at minReplicas=1 — see paper3_experiments/outputs/
+      # smoke2_*/keda_b_rep1_* (mean_replicas=1.375).
+      threshold: '0.035'
+      query: |
+        sum(rate(container_cpu_usage_seconds_total{
+          namespace="infosys-benchmark",
+          container="compute"
+        }[1m]))
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 60
+        scaleUp:
+          stabilizationWindowSeconds: 0

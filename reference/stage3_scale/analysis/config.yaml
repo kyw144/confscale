@@ -1,0 +1,129 @@
+# Analysis Pipeline Configuration
+# All thresholds, figure styling, and statistical params live here.
+# No magic numbers in code.
+
+# ── Statistical Parameters ──────────────────────────────────────────────
+statistics:
+  alpha: 0.05                 # Significance level
+  confidence_level: 0.95      # For confidence intervals
+  multiple_comparison: "bonferroni-holm"  # Correction method
+  baselines:
+    primary: "hpa-reactive"   # Reference method for comparisons
+    predictive: "hpa-predictive"  # Point-forecast reference for UQ comparison
+  effect_size_thresholds:
+    negligible: 0.2
+    small: 0.5
+    medium: 0.8
+    large: 1.2
+
+# ── Metrics Settings ─────────────────────────────────────────────────────
+metrics:
+  slo:
+    target_p95_ms: 100        # SLO threshold (used if not in run config)
+    use_e2e: true             # Use E2E SLO metrics when available
+  normalization:
+    # Per-workload normalization (z-score)
+    enabled: false
+
+# ── Table Formatting ──────────────────────────────────────────────────────
+tables:
+  float_format: "%.3f"
+  significant_digits: 3
+  latex:
+    column_format: "lcccccc"
+    label_prefix: "tab:"
+    caption_prefix: "P3 Results — "
+  markdown: true              # Also generate .md versions
+
+# ── Figure Styling ───────────────────────────────────────────────────────
+figures:
+  dpi: 300
+  format: "pdf"
+  width_single_col: 3.5       # inches
+  width_double_col: 7.0       # inches
+  height_square: 3.5          # inches
+  height_wide: 2.5            # inches
+  font_family: "sans-serif"
+  font_size: 9
+  title_size: 11
+  palette: "colorblind"       # seaborn palette name
+  method_colors:
+    hpa-reactive: "#1f77b4"
+    hpa-predictive: "#ff7f0e"
+    hpa-predictive-safety: "#d62728"
+    keda: "#9467bd"
+    base-inspired: "#8c564b"
+    confscale-be: "#e377c2"
+    confscale-scp: "#2ca02c"
+    confscale-qr: "#17becf"
+  tier_colors:
+    tier1: "#27ae60"
+    tier2: "#f39c12"
+    tier3: "#e74c3c"
+  reference_line:
+    color: "#7f7f7f"
+    linestyle: "--"
+    alpha: 0.7
+
+# ── Report Generation ─────────────────────────────────────────────────────
+report:
+  output_dirs:
+    tables: "tables"
+    figures: "figures"
+    statistics: "statistics"
+    data: "data"
+  reproducibility:
+    include_requirements: true
+    include_readme: true
+    gen_reproduce_script: true
+
+# ── Workload Metadata ─────────────────────────────────────────────────────
+workloads:
+  A:
+    label: "Diurnal"
+    description: "Stable sinusoidal pattern, 24h periodicity"
+    category: "predictable"
+    order: 1
+  B:
+    label: "Bursty"
+    description: "Intermittent traffic spikes, high uncertainty"
+    category: "uncertain"
+    order: 2
+  C:
+    label: "Batch-Ramp"
+    description: "Sustained load transition, step-function RPS"
+    category: "transitional"
+    order: 3
+  D:
+    label: "Signaling"
+    description: "Periodic impulse train, sharp transitions"
+    category: "intermittent"
+    order: 4
+
+# ── Method Display Order ──────────────────────────────────────────────────
+method_order:
+  - hpa-reactive
+  - hpa-predictive
+  - hpa-predictive-safety
+  - keda
+  - base-inspired
+  - confscale-be
+  - confscale-scp
+  - confscale-qr
+
+# ── Method Labels ─────────────────────────────────────────────────────────
+method_labels:
+  hpa-reactive: "HPA-Reactive"
+  hpa-predictive: "HPA-Predictive"
+  hpa-predictive-safety: "HPA-Predictive-Safety"
+  keda: "KEDA"
+  base-inspired: "BASE-Inspired"
+  confscale-be: "ConfScale-BE"
+  confscale-scp: "ConfScale-SCP"
+  confscale-qr: "ConfScale-QR"
+
+# ── UQ Method Labels ──────────────────────────────────────────────────────
+uq_method_labels:
+  be: "Bootstrap Ensemble"
+  scp: "Split-Conformal Prediction"
+  qr: "Quantile Regression"

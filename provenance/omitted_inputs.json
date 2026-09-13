@@ -1,0 +1,1169 @@
+{
+  "source_commit": "18aa3ebba5d5dd0e5fac594c2a6d1aebb426036d",
+  "inputs": [
+    {
+      "source": "data/p3_runs/results/ev8b_pass1_20260601/perservice_pool_series.csv",
+      "bytes": 13958513,
+      "sha256": "e9449c4969e7160cf517982dcfbeff24f4f5cb7d0c291542478f30bce281f25b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/results/ev8_etl_build_20260531_215632/service_totals.csv",
+      "bytes": 1187668,
+      "sha256": "53afbdfdbd48f58281aa9b093dddc7a2cd63a2deec56f89edc27fd34361577e4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/results/ev8_etl_build_20260531_215632/topN_providerrpc_series.csv",
+      "bytes": 549498,
+      "sha256": "e703fe874f66f03ab8ec30088aa31acd174f13e21afe9303e8158878d38bb6c6",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/results/ev8_etl_build_20260531_215632/cluster_agg_series.csv",
+      "bytes": 71826,
+      "sha256": "87cc18f685d412303d59b85f76460c7a96d0a9c96511534919ea15b24530da23",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass1_20260601/perservice_descriptors.csv",
+      "bytes": 49108,
+      "sha256": "c1a1d6d624d3ff01f8f73d65b79bd7fa42a301ddfcf21daceff4432273f4b6ef",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/results/ev8b_pass1_20260601/pass1_selected_candidates.csv",
+      "bytes": 5312,
+      "sha256": "6f21e42e4518d6fa32b669a87a90c92831b7f51ee5e85a2a44f14598487a8db4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_batch_ramp/gru_config.yaml",
+      "bytes": 414,
+      "sha256": "39f2a60d03b632ed075095dfc955b416f8793ffc92c697287ceeae15028e56f6",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_batch_ramp/model.pt",
+      "bytes": 155237,
+      "sha256": "3efbb7d9b354ac0ca2b49ad190404abbbfe31961f45f51805b4fd9c45d1c6591",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_bursty/gru_config.yaml",
+      "bytes": 414,
+      "sha256": "2d6cc83c489f4c923aa32b9ba86956cd603310baaa232d349e48dc8c82428114",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_bursty/model.pt",
+      "bytes": 155237,
+      "sha256": "9f08fe3b72f5e42bf38bd3c1aca15613cb51cef59a6e8311804eae6984e75fe0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_combined/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "8533c945f112e5f713dc7e738bb4a0e89a14ffb2a037a708a79110c6661f3d06",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_combined/model.pt",
+      "bytes": 155237,
+      "sha256": "5ea3b366f8651a962fd8b877358d438aced47fd489fad1dc07f36c679005d3e5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_diurnal/gru_config.yaml",
+      "bytes": 416,
+      "sha256": "e37a55a91c662f19b1ec18ebb729afefb13bf4d3990debadde12c2d8342d7b28",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_diurnal/model.pt",
+      "bytes": 155237,
+      "sha256": "50a2f2719a46be42076953733e7e673bfdee574ae0cccaced08405b3c13ece0f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_signaling/gru_config.yaml",
+      "bytes": 400,
+      "sha256": "6d631b9964fd590f50c0380115613a1254e753be5e8fa95b1473f8b37921834b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/gru_compute-worker_signaling/model.pt",
+      "bytes": 155237,
+      "sha256": "77b9d7497715d94460314df41f98c11da2f9bddf5e2273dd07c30921aa8dbec3",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs128_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "225304eca8eebdb436ab16792468e422b13185643aa9923d223e428f676b2219",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs128_nl1/model.pt",
+      "bytes": 204413,
+      "sha256": "da34c20b274b5e5e1957e8173bbbca04eedb5741a945f5e2607b230d77f2ade2",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs128_nl2/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "2e22fe76adfc88dc57c60d8cda59be7823fb75150fb77a2949edd10de0325c7e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs128_nl2/model.pt",
+      "bytes": 601445,
+      "sha256": "575464ea95310f526e8afcc82571b3a40f4572f1d95ea619d9ba40f2b54bdb9e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs32_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "a58bce59753ad9f31107f447ef030b5e541f9c9d036266d0bdc72991c3020120",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs32_nl1/model.pt",
+      "bytes": 16253,
+      "sha256": "2db71af13c475bb6e77c528052f7cb103db64aefa391dd122dc2980ce59b22ed",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs32_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "f07e13c2438dcc127da373a6145e0cfaee5fc37afbfae8ed24e15ddb5b78da07",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs32_nl2/model.pt",
+      "bytes": 42341,
+      "sha256": "dedbf30586b2ff52d1d7fc9d1ecefa7715290a60f123085ef775115f0021f106",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs64_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "cb839a6ceb73847864a48b6c7f39be725614bdc63ead16ff23ec6eb041cad487",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs64_nl1/model.pt",
+      "bytes": 54397,
+      "sha256": "6ca70ecffc4bdc75a4ad825e793440648dcdbd1965f72169fcd557aae2cce26b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs64_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "73e58c86ac8c79a4227b1c3728c1541769e6d4388511f0bf13fbbcb59e725a33",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k1_hs64_nl2/model.pt",
+      "bytes": 154981,
+      "sha256": "e0d87b7edf94e4421262d8576d7cf9843f05a11783565d3781c0a5801692d6cb",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs128_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "e882ec16378520e3d31d74cd5117af0a208f4a6fc6ba21688ae43b30391e81e1",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs128_nl1/model.pt",
+      "bytes": 204925,
+      "sha256": "f9dbd9073ea9d268c88c15d464046671af066f988561f2c8853e96a15eba48a3",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs128_nl2/gru_config.yaml",
+      "bytes": 342,
+      "sha256": "d8e4fdbe330485a8eca8faa35441e7123a6c42756b1d395c450d63ecb6241748",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs128_nl2/model.pt",
+      "bytes": 601957,
+      "sha256": "ead4ab0ecd726839235b49003efe5d606678f872de70b0e48411712cb8242e2b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs32_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "5a1d83c96931bb457eb84d83ddb6cff6a0bcf08c4ce7b0f091a73b0192ff5c5e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs32_nl1/model.pt",
+      "bytes": 16381,
+      "sha256": "87d612ba321b03723615ae0ef7b74581983465ffa649120cdd5c37f62c2e05bb",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs32_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "1fe2d7d1432c6ce0888bf26a8bb8488662b94bf1af179f7cc38037a050618240",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs32_nl2/model.pt",
+      "bytes": 42469,
+      "sha256": "3168297404bc298633c3b3b3e3645886ceb72385652cef774fcf436dbaf613be",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs64_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "878693a7e1710d4f0a5e367e84a048efb866f25ec979b6311648f0bdcc15ab0a",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs64_nl1/model.pt",
+      "bytes": 54653,
+      "sha256": "f16e2da291281292f4cb03bdc72d639539ef4f525b4690655ef381b51407da8f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs64_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "ddddd0a17aabdec2751d68158d7257dd7f596e99fda80d28669b50e39de9ad11",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k2_hs64_nl2/model.pt",
+      "bytes": 155237,
+      "sha256": "ce2440855f068306d4459356d1a0a25a7c1f6ff343a59495124786e6c680c4d1",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs128_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "8b18b4a8dcb8851cf74495d2725e57f980720e8447970d21e9a7cbb4e0d8d705",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs128_nl1/model.pt",
+      "bytes": 205949,
+      "sha256": "0ee3e9c462c6f766b353958fecaa37df1887a3d9361e348c8b9edc05a9fa01d8",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs128_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "9603b3e941db78cdbb68c028b8063156ae9cefc00fcc08da0a0192f54f7cf75b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs128_nl2/model.pt",
+      "bytes": 602981,
+      "sha256": "5bf9e2d8d41725062fdce01dab8f2a4d56bae9ab7229b4a2d06a92c95d2ab77a",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs32_nl1/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "34720aacc4af92939e7c745630bb3905815add0c14e304e52813b8f3ebfc9940",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs32_nl1/model.pt",
+      "bytes": 16637,
+      "sha256": "6bbf0108a0f2b23797659bf090587868e412cf8245b8509c45ba3d3ce1b9c76c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs32_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "df6bc561a4bb96e36239d2ba6849645c18f02933d63b8cfdacf84c4b15e25ac4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs32_nl2/model.pt",
+      "bytes": 42725,
+      "sha256": "61b07cda32a984f71d99851822645b7e893bac52c34773bc043a6dec44936473",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs64_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "b131f5ff41c64d76828acfc364370f48c8d8c59f1bb72d0bb19ab2c16bc96cc8",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs64_nl1/model.pt",
+      "bytes": 55165,
+      "sha256": "2598bbb9459b07fd3c6ae9abbf42bf7caa25a0470bfeefa92ba4e1da1f8fb717",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs64_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "d35011d50b8b4c128623a27057714d25780f0874fd893c6956a502760e4887bb",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h30_k4_hs64_nl2/model.pt",
+      "bytes": 155749,
+      "sha256": "5e4a40dac155d3c43d1b3cefd9544d8f600f306d05f588ee740e8b8f20cdc47c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs128_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "ccaa67108d18c0a3cb139d1295dd5908ac758bc78e8e824a3ab01d2a5ee19054",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs128_nl1/model.pt",
+      "bytes": 204413,
+      "sha256": "f6ec879cf83331abcf7b410a94a0df7e768cc9c116eeccc7565e18c480178aa4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs128_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "9b915a2666f294c268d4c626aa10d45fa1e84744e341ef7e8671a5d88d50eabb",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs128_nl2/model.pt",
+      "bytes": 601445,
+      "sha256": "038e8d930146a2952ab94f88b246221140203fadeb46888701ba0fabc1fdd0b5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs32_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "c19bb0d23628a277c0b1bd64f520decfb7ffcbbd683745b591f79ee57c91ccb7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs32_nl1/model.pt",
+      "bytes": 16253,
+      "sha256": "d1db87d9c5b5fdd583558f638e432d355b9615fb286b0a035c40d59f7ec68a19",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs32_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "5de2db2d3cbadf3665ff831a5eb489aeb6517583ee7372c3b7fd941f4eea4610",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs32_nl2/model.pt",
+      "bytes": 42341,
+      "sha256": "28886f564e8a0bdabaa50a60c47017347598be20cbcd32244df9f52e761a4fd0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs64_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "aac256159659201de9e028816da6ab0ef06847ac81aa46a98cdaab809c11279b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs64_nl1/model.pt",
+      "bytes": 54397,
+      "sha256": "0cf47c267e7281bc963134443409309ab1e250fbd0868074142ffe82fc748482",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs64_nl2/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "cb41f75abaff6a114d1b19ddcecf45a95048badb8d148287cc9d3a52d81e0bb2",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k1_hs64_nl2/model.pt",
+      "bytes": 154981,
+      "sha256": "c240dcc2b1116a7e8a0c14e1711c554a8d12f4d86d9e889f946a1ef2720889e6",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs128_nl1/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "82f96d6af17a5abbc923d526b2e32a22352d1f47936ce897f1e6bfa59c81d90a",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs128_nl1/model.pt",
+      "bytes": 204925,
+      "sha256": "7d0892e7ffe957918a0693418a0379f5fa5b485e65938cf4339dc881583498bf",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs128_nl2/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "0b63e17243c01fb62376afbc0a8f0df94b633e839af1c9f93014c76c867b4160",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs128_nl2/model.pt",
+      "bytes": 601957,
+      "sha256": "26826e7b81b6e4692ef015d71226b11e5a9b9dc44dd3fc9296026732bda6cfd8",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs32_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "0f5cd130c06a6d9610fee4447df0630237de995be883922abc9369cfab6c6254",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs32_nl1/model.pt",
+      "bytes": 16381,
+      "sha256": "2bf8b38425d1ab4376c2a77f46a9fe6d78f9d598792fdfd7099f9236303b45f1",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs32_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "4914e1f7ce3f0ae75d06b543ef94149572b3817fcb6d2a65d091f5c94221de1c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs32_nl2/model.pt",
+      "bytes": 42469,
+      "sha256": "04075569b37ed2e2a42727b0b14890a39c19ca352c17c6b6891d719959da96ff",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs64_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "6f0eb71a6d439ac7d81daa189e8bdedcab09f21b6bee747077ef0e0fd49970ef",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs64_nl1/model.pt",
+      "bytes": 54653,
+      "sha256": "8494e1e1e8273eba01102776f4c2e35f48c1539610bf358fd15d5bbbeeec0d96",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs64_nl2/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "5154c5801d556aeed82c0398c8a3b7d9ff522ddf88a1e390722cd09d063f6278",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k2_hs64_nl2/model.pt",
+      "bytes": 155237,
+      "sha256": "8ae2b700a5fa99e482ae6375bdd685387e682fda8ef69a03269c2aacae8e68e1",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs128_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "89c3b22110a07fcc45872d30c860b8be63f4c78f51bdbdf4d936c26f3c62dda7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs128_nl1/model.pt",
+      "bytes": 205949,
+      "sha256": "6164fbfc2aa177f1e41acc54bccb41d1d44e7fc0c9ef2da361c7f8197342ce37",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs128_nl2/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "c43655c48576ca08c1ff7f4a3a7f39424931d729de2de37c5254f2e7f1170162",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs128_nl2/model.pt",
+      "bytes": 602981,
+      "sha256": "cf19e48bfe0077a2d480b7efd4dd96dd9f5aa1ead12945d47e07ddd0d1e5a37c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs32_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "e27a2fb728ae44866e2d1b3d64ea85e01bd0b1d2f8ec24e6572e331cc25bacf0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs32_nl1/model.pt",
+      "bytes": 16637,
+      "sha256": "ba3fa7be8c71b6291f57039965205747d07900f13d3cecb6c96be0bbccba72d5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs32_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "18d7581b92cb1694712d5c77fb8222c1a8d95149c736b1ea3cc6d86db020a63e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs32_nl2/model.pt",
+      "bytes": 42725,
+      "sha256": "263c85e50b9c1340243aa9cb6a156a02c3717ae3d9032a010bf3a324289e8172",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs64_nl1/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "aaa8f7116a4e1c4c8934cca8e45d1768961002fb7c05f0539bb9ee4b359d97be",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs64_nl1/model.pt",
+      "bytes": 55165,
+      "sha256": "44b37e39a3a58f38de04e6430176c2ff485c19d8b72746ff738c84d5edb71bb0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs64_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "cddf3db02695041cd6bf3f806f6adafd8a9737c4b779b2f65ad2b1ec5bb0ad4f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h60_k4_hs64_nl2/model.pt",
+      "bytes": 155749,
+      "sha256": "4a7197962310266e8535544941b435640b1f4c30932d4f8b9807fcadb457bddf",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs128_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "31d9c288a68dd9fb7b7319721f6fdd9c86582448b0606ac27aea88b75b2bac73",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs128_nl1/model.pt",
+      "bytes": 204413,
+      "sha256": "e499fc31e6fb3e6615d1a8abd0ad68d6357737eae0c40dffe67495ea12d8db20",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs128_nl2/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "3cdd9234d92143c6a95ffbc71a6658c69d30a8d4385aa3af536aa423af291623",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs128_nl2/model.pt",
+      "bytes": 601445,
+      "sha256": "dd3ab0605a7c9d657993af1b650fd14678b72fe09b363747539e5a41457036b5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs32_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "dd846568a33eac622a5fa0f54927071499c06e9d2b47b4eeda0f431ec46df425",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs32_nl1/model.pt",
+      "bytes": 16253,
+      "sha256": "ff30d71d86efc1f68806eeb536ee296314a33273a2601101b4ea2426f72b8d7d",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs32_nl2/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "2b1fa3f4b00aecd7f2cbd66b30871a291b7c9d1616b986280a3f37f48ad48c36",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs32_nl2/model.pt",
+      "bytes": 42341,
+      "sha256": "381388d715f9dea86ab265f8f172fe779541a23ef759a3d6cd61adefc9ccefb0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs64_nl1/gru_config.yaml",
+      "bytes": 341,
+      "sha256": "ad76dca4deb56417494b4f39af737b79cafa53708a72f8fe28200a375e3e3829",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs64_nl1/model.pt",
+      "bytes": 54397,
+      "sha256": "9717d3ecb360f87bbc5d522f0ab2ccf760ac86f24911ccff712e8806dbc40a85",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs64_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "8b1516007aae8cbfd367982e79afaaad188fe643441bfc8a78aae1e537726d57",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k1_hs64_nl2/model.pt",
+      "bytes": 154981,
+      "sha256": "75da8c0d602e0b121bb3763a40706ff274dd66b573b6610bd671c6f16a664129",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs128_nl1/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "3e3ba972767e54bb84aa697eab72519beff38cc69e5f4157e092ce676b0a7bab",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs128_nl1/model.pt",
+      "bytes": 204925,
+      "sha256": "b62f3d74ff6c95b4ede660d0f4775181f81e0b145c63dba92f880837878a57a0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs128_nl2/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "2792f7b93b914d7df9e25e5de478036df109fc7891e1a1a03d68a44000836814",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs128_nl2/model.pt",
+      "bytes": 601957,
+      "sha256": "7ff6a96996bd1f1529f28ad9810f4e2289fd568e471001140e56275c3f840a3d",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs32_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "e0a9a2be45a3d8f5dd0cf3ed36b682c957c0b78c479973399e3f5265f9095f4b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs32_nl1/model.pt",
+      "bytes": 16381,
+      "sha256": "1f4619a4f6e6f14b3b5d801f05f6e59f4979f5889757a9cc99c19e756c23c54e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs32_nl2/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "f75dcadfb155525d3b268263eb1e46ea4c07f684b478d8744799edac3c5c007e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs32_nl2/model.pt",
+      "bytes": 42469,
+      "sha256": "66ecc991ca1a9b51ac030981eaf7884d88a7115011b8ddb8bb73759d26b08062",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs64_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "38fa0679298b325ad2d47004331fb4dc2c346e701ffe05d4e65e191d04ca99d3",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs64_nl1/model.pt",
+      "bytes": 54653,
+      "sha256": "420043370832a1c50842d9d03320d0c2a3c7c697fd89a5e3dd8fb4cfdf6a14de",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs64_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "3bdf99a9e3e0b6043e0986155d8b5cf228f8bafac5328b5f1d17f70265b0dd6d",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k2_hs64_nl2/model.pt",
+      "bytes": 155237,
+      "sha256": "8dbb63bae4caa652b96b5df527e8e36e51e76d8d68b4efd5fc97446dd6664cbf",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs128_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "d46ed19013dce730a75d4d084087250d684270a5e8167790f1b0ea7b9982c961",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs128_nl1/model.pt",
+      "bytes": 205949,
+      "sha256": "f8d4478e0fad7a892573da9db13b2bf34f79766aa826ba5c7b94a76bde5e9dbd",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs128_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "7ccc7a0b8c5f6a0f41755ba00e30602167e7ae6ab3fc42bedec5577a821d4084",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs128_nl2/model.pt",
+      "bytes": 602981,
+      "sha256": "60ef9e460849e1383df4cf0cdca5a4f9402d86091b67f9bc5a33e12087c2d40c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs32_nl1/gru_config.yaml",
+      "bytes": 340,
+      "sha256": "18614b9e874a9c434d4baf0c5e04e951a87df88071321001b47a2bee178a629e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs32_nl1/model.pt",
+      "bytes": 16637,
+      "sha256": "0cffd98034f745646fe5a0b54af94f2c4af272013a6533cf77129d976db66ab7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs32_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "fe7e2b0296dbab15b1e21864552e945e48a11602fe2cfbe64215e92965dfb697",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs32_nl2/model.pt",
+      "bytes": 42725,
+      "sha256": "024f4c7fe8065c9f048b147245b9301ceb1cb8e708e7be5c288f5e4904e27446",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs64_nl1/gru_config.yaml",
+      "bytes": 338,
+      "sha256": "9d55aaf4ade1b0fafcfddbd1c855c1bad5a83e727094d4fcb31a8740ad412295",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs64_nl1/model.pt",
+      "bytes": 55165,
+      "sha256": "8be3443caa2c358fac41f318e221233559c9ffcd1e5b8143333a9ae0011d740f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs64_nl2/gru_config.yaml",
+      "bytes": 339,
+      "sha256": "684e4e127eb7da133a84d0a568d6139944f558d56e2ac1b36e711ec2961ab270",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/h90_k4_hs64_nl2/model.pt",
+      "bytes": 155749,
+      "sha256": "7fa1742479de6c1df79fe570e6e9b30caa3cf58e9520767c4b28d4985d469ba7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/gru/sweep/sweep_results.csv",
+      "bytes": 5796,
+      "sha256": "af624bcad1de8dcbf65f8cfdc1e16dcb9617f5c8d13c1e90645b643fc42af898",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/be_config.yaml",
+      "bytes": 170,
+      "sha256": "3fb9f6296479e2b7a75ab0e8149702c117290b0d34d598048e1902205a2bbcf7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_00.pt",
+      "bytes": 155877,
+      "sha256": "8d1e984bbdd51ec6c2c129631af69506953120a992a0f8219959f64775f08edc",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_01.pt",
+      "bytes": 155877,
+      "sha256": "973849df9bdd57f128c9fba90d3d4c2cbc8947a407ccf9c51b323298c4711e11",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_02.pt",
+      "bytes": 155877,
+      "sha256": "27bc96ae40d433dc6746484fba1f9c8e610392b48831c22b29ed546e4f97fa24",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_03.pt",
+      "bytes": 155877,
+      "sha256": "ee87b138b114d2910fe46c34dcb6de81572ad099b5f8eec1dfb20a714676e5d4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_04.pt",
+      "bytes": 155877,
+      "sha256": "a930ec0cff2e1955aec058d1cc5f4be0cbbb13b0f0a7d677e0f6fa0b6af57c92",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_05.pt",
+      "bytes": 155877,
+      "sha256": "07f318055bf188456357993632ba3bfae5d1c97e890e3b9f2eec7d09d8c73125",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_06.pt",
+      "bytes": 155877,
+      "sha256": "32a268efaa62ff16e3e3b576843151a081538926d38993723e8374461041ab35",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_07.pt",
+      "bytes": 155877,
+      "sha256": "20d707b25b21564ce9706d7cad9ad18ea609c29db0581b9674e187cd511cea44",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_08.pt",
+      "bytes": 155877,
+      "sha256": "aac36ec95e0a96ef70987f9001c645c8db209cfa8f23d66c8ce5840e0d1e43d8",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/be/member_09.pt",
+      "bytes": 155877,
+      "sha256": "06f2ee9588dc9d1d4070847532e11381ca3673af0e979c717418f322c0200533",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/qr/qr_config.yaml",
+      "bytes": 198,
+      "sha256": "077100560210b1f799f415d4fe4334de797f5c59333c982f66e7f3dcacbbb7e3",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/qr/quantile_model.pt",
+      "bytes": 157045,
+      "sha256": "1016bc742e9655c42648d4a777cbec2b3667caf200cd4dbcc9fa382350a8e799",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/scp/base_model.pt",
+      "bytes": 155893,
+      "sha256": "61981639f6bcc40fe0cf2832356e476224a591766ac9b6836a5ae9b890183f30",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/batch_ramp/scp/scp_config.yaml",
+      "bytes": 205,
+      "sha256": "521a2e28fe1806596fd3703d3eadcc9b33ab35c841d5e6a05580992fad4b842b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/be_config.yaml",
+      "bytes": 169,
+      "sha256": "7fbb3bf3ec11d59d7979c68bc38290cae859452161d477ad4c04c659d1bc2871",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_00.pt",
+      "bytes": 155877,
+      "sha256": "9366dd207781faaae0c1e394fcf705a3ef08375a74abf3aadd02eac7510d2136",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_01.pt",
+      "bytes": 155877,
+      "sha256": "c8bee0d6a33f854fcb7274a0173f5e6d5238f36d5497d32d0ed01d90fcad9a42",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_02.pt",
+      "bytes": 155877,
+      "sha256": "ac3bf4247e28fa8e01bd076834ff12d5f6cc8178e8c8525accb68c29b0a48735",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_03.pt",
+      "bytes": 155877,
+      "sha256": "5feee064e252f106bfc6670bca1450bf1edc94bb060526d3699957f592ed981a",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_04.pt",
+      "bytes": 155877,
+      "sha256": "ede343d46a1518f5fdf0a56b58cfc73122ff07b02b45f985994a58bea3db76bf",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_05.pt",
+      "bytes": 155877,
+      "sha256": "25fdbb842b7558169f2517f7b201c6b8fb6852ae4cc15be43e7df4d513780d36",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_06.pt",
+      "bytes": 155877,
+      "sha256": "da855c2d115ef386e903c5166ddfad427c8d11cfe7364bd05a73ce320d9f3e8b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_07.pt",
+      "bytes": 155877,
+      "sha256": "f11a4a45949c2f3238cc60ea9847b9737c988881a00bb97277f053eadeca8d36",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_08.pt",
+      "bytes": 155877,
+      "sha256": "9028cd3b43d7f44e73c4f154b42cf14fce11f29efcbf01138e0ca30a7edf4860",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/be/member_09.pt",
+      "bytes": 155877,
+      "sha256": "6bea0bdf62b128ff4379173dcd24978f8a6be3085241a86b5cc17fefe4a544d2",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/qr/qr_config.yaml",
+      "bytes": 197,
+      "sha256": "ab2ea3cc0b0e0578b48cf9c13311011dd370226330f3deb9f4b0478b23840641",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/qr/quantile_model.pt",
+      "bytes": 157045,
+      "sha256": "4266e304146a3d6a21218a2c102168df8ff03683896da0178dd9759e233bf8e7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/scp/base_model.pt",
+      "bytes": 155893,
+      "sha256": "3b38fe3ad0f1b2717564abb6ba9f1639b822f56fec5e4bfcaeaa10915a40b72e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/bursty/scp/scp_config.yaml",
+      "bytes": 205,
+      "sha256": "106726b22fa2ee4beed6d68c117089cc5acbc273ed7d0e8089bdd4fff8c3ffe1",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/be_config.yaml",
+      "bytes": 170,
+      "sha256": "b9dd33a6a8a9058f5c33a99e71fc710f43cc810f048fbb3ad5e92f14605211bb",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_00.pt",
+      "bytes": 155877,
+      "sha256": "f9c5520aad54e7424ff990eab46e4fef1b9bcad5151452353b5868da97933a34",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_01.pt",
+      "bytes": 155877,
+      "sha256": "88d4c3df46d087191cb712281125b2c3095ec655fa17600237a1bc0d7ae8cb6e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_02.pt",
+      "bytes": 155877,
+      "sha256": "bfa6c1ff8b7cf860920cb77bde5217cbc6a22e9d2002d3be8fdcf656e7782286",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_03.pt",
+      "bytes": 155877,
+      "sha256": "be318685da88cb50274ea457186dd4c517b519b5937a0107486a193f2858eaa5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_04.pt",
+      "bytes": 155877,
+      "sha256": "38d5fe9b5e9238b5f599ce7a87571dbc099b4e1dfc2609be5c29f937da9af44e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_05.pt",
+      "bytes": 155877,
+      "sha256": "d5134332ea511d42a628713b1f2d93128bb63b2ea25947c0e1dc31c9646c8a5f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_06.pt",
+      "bytes": 155877,
+      "sha256": "0a06069abaa95e0552cb45a4aa6bedf83d6e56bc35f53edc9e657b5b3ad8cff7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_07.pt",
+      "bytes": 155877,
+      "sha256": "3de52093798b511178146b5f1301d3a376c1cafe4e8399c3e1a014df11ecdb23",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_08.pt",
+      "bytes": 155877,
+      "sha256": "b1b9a19dccaa76ccfb77c4c6b7396264293bb0c2828cbaacdd238f5f1514afee",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/be/member_09.pt",
+      "bytes": 155877,
+      "sha256": "ad39b6c699250b59ec2c3306d65d0b224d3aadca5ed8676b1d4f3420a6f1229f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/qr/qr_config.yaml",
+      "bytes": 198,
+      "sha256": "760f09b66bc00836178fb35dbc1f49d9cb4e133a4d6af41c4377cc2afa2c39d5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/qr/quantile_model.pt",
+      "bytes": 157045,
+      "sha256": "dd58e48c19dae91528d32522335cafa63cfe2750d0f3c52257f0649b14845fc4",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/scp/base_model.pt",
+      "bytes": 155893,
+      "sha256": "80cff986cdfe94afb0365a981d0da5175f76be3eb3eb33141ce7aedddd2db33c",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/diurnal/scp/scp_config.yaml",
+      "bytes": 203,
+      "sha256": "63d55a1554650328e5b9391df498f722889821c4eaa881f58be75d469748211e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/be_config.yaml",
+      "bytes": 155,
+      "sha256": "5513edc79d0a33e37f831dd42c12099d69678ba2fb88f6a0fd6d6b416f1d9418",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_00.pt",
+      "bytes": 155877,
+      "sha256": "261410d56d6785b917765e4e670af857215ad961c15aadd69fb498814db76818",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_01.pt",
+      "bytes": 155877,
+      "sha256": "8c6b4631df6e86752720a0fe179988163ee6edba91520d33e5cb4e301e96a997",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_02.pt",
+      "bytes": 155877,
+      "sha256": "e7a92a63bfe19ed0c94d36743588f7d0d3d90c4c737391c05880f2a5e0f36052",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_03.pt",
+      "bytes": 155877,
+      "sha256": "6ca32e98cb09240b0d8101afb2b1f252f66bb3d995e4e4ba516d7b72b92618be",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_04.pt",
+      "bytes": 155877,
+      "sha256": "333196060e33dc5408adadbcc88f140baf9ac5706d0c5197924dc5ebdf5c960a",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_05.pt",
+      "bytes": 155877,
+      "sha256": "e420c1de833c806d41205ed37bbc07d57cf9763134243dcdc1a53e618514490e",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_06.pt",
+      "bytes": 155877,
+      "sha256": "39f9aedfcdf72f2f53968044ee56d51944a6a5fdbfc987284fa783e9af77c676",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_07.pt",
+      "bytes": 155877,
+      "sha256": "acf497bb760642e54d87625a5961fb3ec983af676f3f2baa2dd24d912da496b0",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_08.pt",
+      "bytes": 155877,
+      "sha256": "cafdae0f3b0945a1ce2631f20378556e6bbe52da0b43e73b4e3ffee13b0bf200",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/be/member_09.pt",
+      "bytes": 155877,
+      "sha256": "795b3c024cc94dca21d514829e9e19e6ac84303cf69a7b85e976b1fd4036ed07",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/qr/qr_config.yaml",
+      "bytes": 183,
+      "sha256": "4d79e077cf61ae01dcdca8a4b4fc6cbeabbd492cfc6248f91ff12a103ec08f67",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/qr/quantile_model.pt",
+      "bytes": 157045,
+      "sha256": "013b8e2c4f6f650256152806d01b1eaedc6df6520505ee5915a14a391bc7932f",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/scp/base_model.pt",
+      "bytes": 155893,
+      "sha256": "0cfd55c326e1272e8f9e3ed3c515b0ca2e42568b303c4b7014b931a4ffb15a0d",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/models/uq/signaling/scp/scp_config.yaml",
+      "bytes": 191,
+      "sha256": "2bb159c7749a29d8eed71ac40bb25a5a2abb35490107360b1f0c57da868dee32",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_A_168h.csv",
+      "bytes": 271801,
+      "sha256": "5f3e6080bc4f736bf647236d6c036ce4203312b2999af74ca77934d619910441",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_A_24h.csv",
+      "bytes": 36102,
+      "sha256": "1efb8bc5f92c3a15d58e4de1d957277987a70a125906e043da8282334ad30c69",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_ALL_24h.csv",
+      "bytes": 139745,
+      "sha256": "a9f8c529daa47b19db19b69df7e6d8c4672a41b914777e5e267d09f0d39ef96b",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_B_168h.csv",
+      "bytes": 258774,
+      "sha256": "510ff6bf971a118a78d6dc5ff731f11e71d2b12dbcf0f7a2b5850093c99b1084",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_B_24h.csv",
+      "bytes": 34247,
+      "sha256": "3b8573d16e7f24c7bbbee648158296cb1dbc216fc5eec8476ff06e76bb32a2a7",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_C_168h.csv",
+      "bytes": 277743,
+      "sha256": "f824adc357ba77bdc739e23e6d40e5dced882efdb6fe0850e0ae95a9805c8c2d",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_C_24h.csv",
+      "bytes": 36967,
+      "sha256": "a322032c1249265fd0c7f172276940e4743fa8fb1179220b1941cf8256a496c5",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_D_168h.csv",
+      "bytes": 246292,
+      "sha256": "6558c8b47f2648badbb556c02fe73a05bfc3929d6595b88acbf896a03b7256fc",
+      "reason": "omitted optional source input; not redistribution authorization"
+    },
+    {
+      "source": "data/p3_runs/outputs/training_data/pattern_D_24h.csv",
+      "bytes": 32474,
+      "sha256": "cfd6a17fec3a9c8433c949fd64504ae4641f286e9eb166257e51a883bb769f23",
+      "reason": "omitted optional source input; not redistribution authorization"
+    }
+  ]
+}

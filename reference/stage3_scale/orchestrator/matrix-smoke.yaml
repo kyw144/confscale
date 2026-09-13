@@ -1,0 +1,44 @@
+# Smoke-test config — validates every method spins up, scales, and tears down
+# without crashing. Run BEFORE the full 96-cell matrix.
+#
+# Usage:
+#   python run_matrix.py --workers 3 --config matrix-smoke.yaml \
+#     --output-dir outputs/smoke_$(date +%Y%m%d_%H%M%S)
+#
+# Expected wall-time: ~6 min wall-clock with 3 workers (8 cells × 2 min / 3).
+#
+# Gate before going to matrix.yaml:
+#   1. All 8 cells exit "ok" in run_log.csv.
+#   2. mean_replicas in run_log.csv > 1.0 for every method except hpa-reactive
+#      under low load (workload A with only 2 min may stay at 1 — see note).
+#   3. controller_scale_log.json exists in each cell dir (verifies the
+#      per-cell --output-dir fix landed).
+#   4. For controllers: at least one log entry has prediction_made=True
+#      and seeded=True or seeded=False (verifies the cold-start seed fires).
+#   5. For KEDA: kubectl get scaledobject -n infosys-benchmark shows
+#      Ready=True within 30s (verifies the serverAddress fix landed).
+#
+# Note: 2-min cells are too short for predictive controllers to react under
+# workload A's slow ramp (30 RPS base). Use workload B (bursty) which spikes
+# to 150 RPS within ~30s, forcing a scaling decision quickly.
+
+methods:
+  - hpa-reactive
+  - hpa-predictive
+  - hpa-predictive-safety
+  - keda
+  - base-inspired
+  - confscale-scp
+  - confscale-be
+  - confscale-qr
+
+workloads:
+  - B           # Bursty — fastest path to a forced scaling decision
+
+replicates: 1
+
+duration_s: 120  # 2 minutes per cell
+complexity: 50000
+cooldown_s: 30
+
+frontend_url: http://localhost:30080
