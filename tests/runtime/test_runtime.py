@@ -63,6 +63,30 @@ def test_unknown_method_override_fails():
         runner._resolve_method_spec({'name': 'hpa-reactive', 'max_replica': 2})
 
 
+def test_interruption_retains_failed_status_and_resets(tmp_path):
+    method = Mock()
+    method.name = 'hpa-reactive'
+    method.configure.side_effect = KeyboardInterrupt
+    method.reset.return_value = True
+    with pytest.raises(KeyboardInterrupt):
+        runner.execute_single_run(method, 'B', 1, 30, 50000,
+                                  'http://unused', 'http://unused', tmp_path)
+    method.reset.assert_called_once()
+    config = yaml.safe_load(next(tmp_path.glob('*/run_config.yaml')).read_text())
+    assert config['status'] == 'interrupted'
+
+
+def test_provision_cannot_race_an_experiment(tmp_path):
+    from confscale import cluster
+    profile = cluster.load_profile(ROOT / 'configs/cluster.json')
+    (tmp_path / 'experiment.lock').write_text('existing run')
+    with patch.object(cluster, 'location', return_value=tmp_path), \
+         patch.object(cluster, '_provision', side_effect=AssertionError('mutation')):
+        with pytest.raises(FileExistsError):
+            cluster.provision(profile, create=False)
+    assert (tmp_path / 'experiment.lock').read_text() == 'existing run'
+
+
 def test_single_cell_dry_run_starts_no_forwarder():
     with patch.object(sys, 'argv', ['runner', '--method', 'hpa-reactive', '--workload', 'B', '--dry-run']), \
          patch.object(runner, 'PortForward', side_effect=AssertionError('created forwarder')):

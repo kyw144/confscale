@@ -62,3 +62,40 @@ succeeded. See [CLUSTER_RUNS.md](CLUSTER_RUNS.md) for the documented prerequisit
 Local command logs and full receipts remain under ignored `generated/validation/`,
 `generated/clusters/confscale-repro/`, and `generated/runs/`. Final commit-pinned
 live/CI results are appended below after verification.
+
+## Final live check and CI — 2026-09-15
+
+The stricter smoke (`generated/runs/smoke-002`) **PASS**, including independent
+offline audit of all 36 output files and both planned cells. Execution began from
+clean commit `ac214f8703f79b805366c7a071cce09ec130b077`. Subsequent software changes
+fix installer index selection, interrupted-run status and the provisioning lock;
+those paths have separate offline/fresh-install tests. See the committed
+[technical receipt](../validation/mac-arm64-smoke.json) for exact source/input
+hashes, per-cell checks, output hashes and platform details.
+
+| Cell (B, seed 144, 180 s) | Workload ticks | Successful / failed requests | Forecasts / validated intervals | Result |
+|---|---:|---:|---:|---|
+| HPA-reactive | 57 | 15039 / 373 | n/a | PASS; AbleToScale and ScalingActive both True |
+| ConfScale-PID | 55 | 14581 / 503 | 7 / 6 | PASS; coverage counts independently recomputed |
+
+Both cells and final cleanup restored one ready worker with no benchmark HPA.
+Ports 9290 and 9291 were released; the default context remains `kind-p4-hotel`.
+The dedicated cluster is left deployed for further work. Model/trace/kubeconfig
+files remain ignored, and the original dissertation HEAD is unchanged.
+
+Final local regression suite: **111 tests and 18 subtests pass**; 26 unittest tests
+pass with NumPy enabled. Editable installation and `confscale verify` from outside
+the checkout also pass. All five tables and 119 source-derived file hashes pass.
+
+[CI run 34896846251](https://github.com/kyw144/confscale/actions/runs/34896846251)
+passed all six jobs at `03561d9ffee9acd53a21a1732c6b944093bfa4ad`: offline Linux
+(Python 3.10 and 3.14), macOS and Windows (3.12), plus full Linux/macOS runtime
+installation and tests. The initial run exposed different same-version macOS
+PyTorch wheel bytes between PyPI and the CPU index. The installer now selects
+PyPI on macOS and the CPU index on Linux/Windows, retaining mandatory hash checks.
+The final interruption/provisioning guards are covered by the 111-test suite.
+
+The error counts and variable tick counts above remain visible. These tests
+establish a working standalone apparatus and evidence trail. They do not rerun
+the full paper matrix, retrain the models, replay Alibaba traces, establish a
+new latency/cost/coverage effect, or replace the frozen paper evidence.

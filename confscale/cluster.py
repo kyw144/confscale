@@ -109,6 +109,18 @@ def render(profile, architecture=None):
 
 def provision(profile, create=True):
     directory = location(profile)
+    directory.mkdir(parents=True, exist_ok=True)
+    lock = directory / 'experiment.lock'
+    with lock.open('x') as stream:
+        stream.write('cluster provisioning')
+    try:
+        return _provision(profile, create)
+    finally:
+        lock.unlink()
+
+
+def _provision(profile, create):
+    directory = location(profile)
     plan = render(profile)
     log_path = directory / 'provision.log'
     def run(command, timeout=600):

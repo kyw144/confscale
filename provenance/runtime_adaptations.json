@@ -39,5 +39,15 @@
       "destination_sha256": "b2d1ba02e9cf687a1dae066d0bdf40fe95eda27bb8d8d69a6715f3dcf077cd88",
       "adaptation": "Explicit deterministic RNG seed, passed through CLI and generator including burst/noise/regime paths; no wall-clock-derived seed."
     }
+  ],
+  "followups": [
+    {
+      "date": "2026-09-15",
+      "previous_artifact_commit": "ac214f8703f79b805366c7a071cce09ec130b077",
+      "destination": "reference/stage3_scale/orchestrator/run_matrix.py",
+      "previous_sha256": "79cc9e287c6a89a0e32857cd0a6a11a429b57e5239d968d55cc84c33ffe2a5d5",
+      "destination_sha256": "8618d3516072b4edebcdf0c12bfd44d8e7ed9853a5e4bc6b0ae1108bf7864371",
+      "adaptation": "Persist interrupted cell status before re-raising KeyboardInterrupt; baseline reset still runs."
+    }
   ]
 }

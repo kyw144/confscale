@@ -430,6 +430,12 @@ def execute_single_run(
         end_time = datetime.now(timezone.utc)
         summary = {"status": "timeout", "error": error_message}
         logger.error(error_message)
+    except KeyboardInterrupt:
+        status = "interrupted"
+        error_message = "Interrupted by user"
+        end_time = datetime.now(timezone.utc)
+        summary = {"status": status, "error": error_message}
+        raise
     except Exception as e:
         status = "failed"
         error_message = str(e)

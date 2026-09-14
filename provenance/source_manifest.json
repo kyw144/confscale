@@ -348,8 +348,8 @@
       "source": "src/stage3_scale/orchestrator/run_matrix.py",
       "source_sha256": "3e9287c2a7bf7f79a1cca0f668235a3b69e43b873d7be63e01a2bc02d03e37c6",
       "destination": "reference/stage3_scale/orchestrator/run_matrix.py",
-      "destination_sha256": "79cc9e287c6a89a0e32857cd0a6a11a429b57e5239d968d55cc84c33ffe2a5d5",
-      "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Active Python, reproducible seed forwarding, strict option names, unique output directories, workload/controller/collection/reset failure propagation and receipts, pre-reset runtime state, effective single-cell dry-run, nonzero CLI status."
+      "destination_sha256": "8618d3516072b4edebcdf0c12bfd44d8e7ed9853a5e4bc6b0ae1108bf7864371",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Active Python, reproducible seed forwarding, strict option names, unique output directories, workload/controller/collection/reset failure propagation and receipts, pre-reset runtime state, effective single-cell dry-run, nonzero CLI status. Explicit interrupted status persisted before propagating Ctrl-C."
     },
     {
       "source": "src/stage3_scale/orchestrator/simple-prometheus.yaml",

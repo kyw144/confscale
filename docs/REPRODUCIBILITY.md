@@ -30,3 +30,15 @@ acceptance criterion is changed by this maintenance work.
 
 Changes are reversible using Git; original frozen evidence remains byte-identical.
 The retained reference manifest records each runtime adaptation separately.
+
+## Completion record — 2026-09-15
+
+Locked environments, digest-pinned cluster rendering/build/deployment, local
+hash-checked model restoration, explicit seed/config planning, run failure gates,
+independent receipt audits, CI and run guides are implemented. The final local
+suite has 111 passing tests; the fresh Mac HPA/PID smoke passes with baseline
+restoration. The source workspace and frozen evidence remain unchanged.
+See [VALIDATION.md](VALIDATION.md) for receipts, anomalies, tested commits and
+the scientific replication boundary. No model/trace redistribution or new paper
+claim was introduced. The dedicated cluster remains available; its cleanup
+command and the temporary Colima prerequisite change are in the run guide.
