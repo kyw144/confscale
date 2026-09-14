@@ -2,11 +2,15 @@
 
 ## Current boundary
 
-This package has local Python verification. It has **no successful standalone Mac, model-training, trace-replay or cluster run**. Reference files are preserved to make that next step concrete. A passing local test suite is not evidence that a Kubernetes deployment launches or reproduces a reported number.
+The original experiments ran on the author's Mac using kind. This exported package has local Python verification, but **its standalone Mac execution, model training, trace replay and cluster execution remain unverified**. Reference files are preserved to make that next step concrete. A passing local test suite is not evidence that a Kubernetes deployment launches or reproduces a reported number. Completed local checks are recorded in [VALIDATION.md](VALIDATION.md).
 
-Start by copying this entire directory to the Mac and running:
+On the experiment Mac, clone the repository into a new directory alongside the original experiment workspace. Keep the original workspace and its models, traces, logs and cluster configuration available for comparison. From the new checkout, record its commit and run:
 
 ```console
+git clone https://github.com/kyw144/confscale.git
+cd confscale
+git rev-parse HEAD
+python3 --version
 python3 -m confscale verify
 python3 -m confscale reproduce --output generated/mac-paper
 python3 -m confscale demo --output generated/mac-demo

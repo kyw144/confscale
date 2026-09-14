@@ -1,6 +1,15 @@
 # ConfScale: inspect the controller, reproduce the paper tables
 
-Local artifact for **Coverage Monitoring and Online Recalibration for Predictive Autoscaling under Deployment Drift**, accepted to CNSM 2026. This snapshot is prepared for local review; it has no public release URL or assigned distribution license yet.
+Code and evidence artifact for **Coverage Monitoring and Online Recalibration for Predictive Autoscaling under Deployment Drift**, accepted to CNSM 2026. Repository: [kyw144/confscale](https://github.com/kyw144/confscale). No distribution license has been assigned yet.
+
+The original experiments ran on the author's Mac using a kind cluster. This exported artifact supports offline inspection and paper-table regeneration; additional validation of the exported package on that Mac and cluster is pending. See the [Mac verification handoff](docs/MAC_VERIFICATION.md).
+
+Clone the complete artifact:
+
+```console
+git clone https://github.com/kyw144/confscale.git
+cd confscale
+```
 
 From this directory, with Python 3.10 or newer:
 
@@ -11,7 +20,7 @@ python -m confscale demo
 python -m unittest discover -s tests -v
 ```
 
-These commands need **no third-party packages, network, Docker, Kubernetes, trained models, or trace downloads**. They write only under `generated/` (or an explicit `--output` directory). They have been checked on Windows with Python 3.12; Mac execution is the next verification step.
+These commands need **no third-party packages, network, Docker, Kubernetes, trained models, or trace downloads**. They write only under `generated/` (or an explicit `--output` directory). See the [validation record](docs/VALIDATION.md) for tested environments and results; Mac execution of this exported package is the next verification step.
 
 `reproduce` regenerates all **five main paper tables** as Markdown and CSV under `generated/paper/`, and supporting SVG figures under `generated/paper/supporting_entities/figures/`. It checks every table's numerical data and row identity against text extracted independently from the latest paper. Table 5 also recomputes means and sample deviations from the retained per-run values. Tables 1 and 3 start from frozen aggregate tables; this command does not rerun the original experiments or establish their external validity.
 

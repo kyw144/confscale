@@ -1,8 +1,9 @@
 cff-version: 1.2.0
-message: "Please cite the paper. This is a local preparation snapshot; no public artifact DOI or release is assigned."
+message: "Please cite the paper. No artifact DOI or versioned release is assigned."
 type: software
 title: "ConfScale paper artifact"
 version: 0.1.0
+repository-code: "https://github.com/kyw144/confscale"
 authors:
   - family-names: Morhoiev
     given-names: Kostiantyn

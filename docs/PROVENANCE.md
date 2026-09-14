@@ -31,4 +31,4 @@ New code consists of the offline CLI, teaching harness, table wrapper/checks, pr
 | Legacy operator/compute-service scaffolds and open-loop generator | Outside the paper's selected testbed/runtime surface. The four-service InfoSys testbed remains included. |
 | Other-paper experiments, working records, reviewer material, manuscripts and Git history | Outside the visitor artifact's purpose. |
 
-No distribution license has been assigned and no public upload has occurred. A public release needs a license choice, data-term decisions for any newly included inputs, and an actual tested-platform statement. These do not prevent the current local inspection and preparation.
+The public source repository is [kyw144/confscale](https://github.com/kyw144/confscale). No distribution license has been assigned. Omitted inputs remain excluded; any future inclusion requires a separate data-term decision. See [VALIDATION.md](VALIDATION.md) for tested environments and [MAC_VERIFICATION.md](MAC_VERIFICATION.md) for the pending validation on the original experiment Mac and kind cluster.
