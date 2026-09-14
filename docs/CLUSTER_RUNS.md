@@ -13,9 +13,7 @@ one minor release of the API server. Allow at least 8 GiB of Docker memory for
 this testbed; measure actual available CPU/memory before a scientific run.
 
 ```sh
-uv venv --python 3.12 .venv
-uv pip sync --python .venv/bin/python --require-hashes --torch-backend cpu \
-  requirements/runtime.lock requirements/test.lock
+python3 scripts/setup_runtime.py
 .venv/bin/python scripts/validate.py --runtime-tests
 .venv/bin/python -m confscale.cluster render
 ```

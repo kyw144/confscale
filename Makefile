@@ -5,8 +5,7 @@ check:
 	$(PYTHON) scripts/validate.py
 
 runtime-env:
-	uv venv --python 3.12 .venv
-	uv pip sync --python .venv/bin/python --require-hashes --torch-backend cpu requirements/runtime.lock requirements/test.lock
+	$(PYTHON) scripts/setup_runtime.py
 
 runtime-check:
 	.venv/bin/python scripts/validate.py --runtime-tests

@@ -4,20 +4,22 @@ The offline CLI requires Python >=3.10 and no dependencies. Live execution and
 the complete regression suite use **Python 3.12**. Tested tooling: uv 0.11.6.
 
 ```sh
-uv venv --python 3.12 .venv
-uv pip sync --python .venv/bin/python --require-hashes --torch-backend cpu \
-  requirements/runtime.lock requirements/test.lock
+python3 scripts/setup_runtime.py
 .venv/bin/python scripts/validate.py --runtime-tests
 ```
 
 `runtime.in` retains the original direct runtime version pins. `runtime.lock`
 adds all transitive dependencies and distribution hashes; on Linux/Windows
 it selects CPU PyTorch from the PyTorch index, and on macOS the ordinary
-PyTorch distribution. CPU is the reference controller's inference device.
-`--torch-backend cpu` is required when installing this lock with uv. A pip
-alternative is `python -m pip install --require-hashes --extra-index-url
-https://download.pytorch.org/whl/cpu -r requirements/runtime.lock` inside a
-Python 3.12 environment.
+PyTorch distribution from PyPI. CPU is the reference controller's inference
+device. The setup script adds `--torch-backend cpu` only on Linux/Windows;
+macOS must use the PyPI wheel whose hash is in the lock. The CPU index also
+serves a same-version Mac wheel with different bytes, which correctly fails
+hash verification. Do not disable hashes to work around this.
+
+A pip alternative is `python -m pip install --require-hashes -r
+requirements/runtime.lock` on macOS, adding `--extra-index-url
+https://download.pytorch.org/whl/cpu` on Linux/Windows, inside Python 3.12.
 
 For only the offline/configuration/failure-injection tests, sync `test.lock`.
 Reference controller tests also need `runtime.lock`. The service images use

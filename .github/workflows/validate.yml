@@ -44,8 +44,7 @@ jobs:
           version: '0.11.6'
           enable-cache: true
           cache-dependency-glob: requirements/*.lock
-      - run: uv venv --python 3.12 .venv
-      - run: uv pip sync --python .venv/bin/python --require-hashes --torch-backend cpu requirements/runtime.lock requirements/test.lock
+      - run: python3 scripts/setup_runtime.py
       - run: .venv/bin/python scripts/validate.py --runtime-tests
       - run: .venv/bin/python -m confscale.cluster render
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
