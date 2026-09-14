@@ -38,7 +38,8 @@ from orchestrator.clusters import (  # noqa: E402
     render_kind_config,
 )
 from orchestrator.methods import (  # noqa: E402
-    DEFAULT_KUBE_CONTEXT,
+    KUBE_CONTEXT as DEFAULT_KUBE_CONTEXT,
+    current_kube_context, set_thread_kube_context, clear_thread_kube_context, kubectl,
     HPAMethod,
     get_method,
 )
@@ -53,6 +54,7 @@ results: list[tuple[str, bool, str]] = []
 
 
 def check(label: str, condition: bool, detail: str = "") -> None:
+    assert condition, f"{label}: {detail}"
     results.append((label, condition, detail))
     glyph = PASS if condition else FAIL
     print(f"  {glyph} {label}" + (f"  — {detail}" if detail else ""))
@@ -101,28 +103,22 @@ def test_kind_config_render():
 
 
 def test_get_method_returns_fresh_copies():
-    print("\n[3] get_method() returns fresh, parallel-safe copies")
-    a = get_method("hpa-reactive", kube_context="kind-foo")
-    b = get_method("hpa-reactive", kube_context="kind-bar")
-    check("two calls return different instances", a is not b)
-    check("a kube_context honored", a.kube_context == "kind-foo")
-    check("b kube_context honored", b.kube_context == "kind-bar")
-    # mutating one must not affect the other
+    a = get_method("hpa-reactive")
+    b = get_method("hpa-reactive")
     a.max_replicas = 99
-    check("mutation isolation", b.max_replicas != 99,
-          f"a.max_replicas={a.max_replicas} b.max_replicas={b.max_replicas}")
-    # default context preserved when not provided
-    c = get_method("hpa-reactive")
-    check("default context", c.kube_context == DEFAULT_KUBE_CONTEXT)
+    check("mutation isolation", b.max_replicas != 99)
 
 
 def test_method_uses_its_kube_context():
-    print("\n[4] HPAMethod kubectl calls use self.kube_context")
-    # We can't run kubectl, but we can verify the field is wired up.
-    m = HPAMethod(kube_context="kind-totally-fake-w7")
-    check("kube_context set", m.kube_context == "kind-totally-fake-w7")
-    state = m.get_state()
-    check("get_state() doesn't crash", isinstance(state, dict))
+    from unittest.mock import patch
+    try:
+        set_thread_kube_context("kind-totally-fake-w7")
+        with patch("orchestrator.methods.subprocess.run") as run:
+            kubectl(["get", "pods"])
+            check("explicit thread context", "--context=kind-totally-fake-w7" in run.call_args.args[0])
+    finally:
+        clear_thread_kube_context()
+    check("default context restored", current_kube_context() == DEFAULT_KUBE_CONTEXT)
 
 
 def test_imports_clean():
@@ -147,6 +143,7 @@ def test_dry_run_serial():
          "--config", str(_HERE / "matrix.yaml"),
          "--dry-run", "--workers", "1"],
         capture_output=True, text=True, timeout=30,
+        env={**__import__("os").environ, "CONFSCALE_ENABLE_REFERENCE_RUNTIME": "1"},
     )
     check("exit code 0", proc.returncode == 0,
           f"stderr: {proc.stderr[-200:] if proc.stderr else ''}")
@@ -161,6 +158,7 @@ def test_dry_run_parallel():
          "--config", str(_HERE / "matrix.yaml"),
          "--dry-run", "--workers", "4"],
         capture_output=True, text=True, timeout=30,
+        env={**__import__("os").environ, "CONFSCALE_ENABLE_REFERENCE_RUNTIME": "1"},
     )
     output = proc.stdout + proc.stderr
     check("exit code 0", proc.returncode == 0,

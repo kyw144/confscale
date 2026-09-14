@@ -159,8 +159,8 @@
       "source": "src/stage3_scale/collector/collect.py",
       "source_sha256": "c3b57810527023868a27d34d8d8e14ebde755b393134c0c4a964d432b811d1a2",
       "destination": "reference/stage3_scale/collector/collect.py",
-      "destination_sha256": "ff3dabf044fa11dfbcbf36af8b3c6e832667a6168f0cde63bf69f4c50002d6fc",
-      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+      "destination_sha256": "5637786886dd8cb19faca5fb7c02bfe30f3af412fa2035742621c9e03536df7c",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Anchor instant Prometheus queries to the recorded workload end time; configurable client evaluation timestamp."
     },
     {
       "source": "src/stage3_scale/collector/queries.py",
@@ -257,8 +257,8 @@
       "source": "src/stage3_scale/orchestrator/controller.py",
       "source_sha256": "65bf688816d8d3bf89149df5280fca2d2c5f668ba96b40e59f04fbfc5eadc569",
       "destination": "reference/stage3_scale/orchestrator/controller.py",
-      "destination_sha256": "f0b00f79aa89bbd263615cf8e263d24df1360598f0a0c507ec4c8ac526ccdd44",
-      "adaptation": "removed out-of-paper experimental levers and external telemetry; warm-start retained; direct runtime execution disabled unless explicitly enabled"
+      "destination_sha256": "9a3d93bd6d44ecdb35dcb331025edc1cc0db77473bdcbc12f4ac3819dea28e3d",
+      "adaptation": "removed out-of-paper experimental levers and external telemetry; warm-start retained; direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Explicit metrics port, ready-replica observation distinct from requests, honest actual-replica gauge, forecast flags, and scale-command failure propagation."
     },
     {
       "source": "src/stage3_scale/orchestrator/coverage_monitor.py",
@@ -341,15 +341,15 @@
       "source": "src/stage3_scale/orchestrator/methods.py",
       "source_sha256": "6ebfc61f924563b93463921133ed8d9646f72021a29036d8d23da24ca6f5148a",
       "destination": "reference/stage3_scale/orchestrator/methods.py",
-      "destination_sha256": "3589a5278d46185ef3ee4e2fdb2bf4f434b093756fff7e96bf5829612794f148",
-      "adaptation": "removed out-of-paper method knobs; active interpreter"
+      "destination_sha256": "1b03f54ef7f196a556c2b4aa20007cacf7c2481b35ddcb9c53f7b8c5d0c24244",
+      "adaptation": "removed out-of-paper method knobs; active interpreter; standalone runtime maintenance 2026-09-14/15: Explicit context/model root, file-backed controller logs, fail on missing models instead of HPA fallback, fresh method instances."
     },
     {
       "source": "src/stage3_scale/orchestrator/run_matrix.py",
       "source_sha256": "3e9287c2a7bf7f79a1cca0f668235a3b69e43b873d7be63e01a2bc02d03e37c6",
       "destination": "reference/stage3_scale/orchestrator/run_matrix.py",
-      "destination_sha256": "3c0b511efd99da2cbeb1b489bef1f8b4c94bf24a1a620919b9330c8799ad2fcc",
-      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+      "destination_sha256": "79cc9e287c6a89a0e32857cd0a6a11a429b57e5239d968d55cc84c33ffe2a5d5",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Active Python, reproducible seed forwarding, strict option names, unique output directories, workload/controller/collection/reset failure propagation and receipts, pre-reset runtime state, effective single-cell dry-run, nonzero CLI status."
     },
     {
       "source": "src/stage3_scale/orchestrator/simple-prometheus.yaml",
@@ -383,8 +383,8 @@
       "source": "src/stage3_scale/orchestrator/test_parallel_orchestrator.py",
       "source_sha256": "6012d7fe9cb22364570752cdf76732cd279b83031151121e0fc577d141e5acc7",
       "destination": "reference/stage3_scale/orchestrator/test_parallel_orchestrator.py",
-      "destination_sha256": "6012d7fe9cb22364570752cdf76732cd279b83031151121e0fc577d141e5acc7",
-      "adaptation": "byte-identical copy"
+      "destination_sha256": "8737575dd9732195388b68c3efcdb49f59a17715d4a9025731cf4d07c1254d06",
+      "adaptation": "byte-identical copy; standalone runtime maintenance 2026-09-14/15: Repair stale exported per-instance context tests to exercise actual thread-local routing; opt in only for dry-run subprocess tests; make counted assertions effective under pytest."
     },
     {
       "source": "src/stage3_scale/predictor/__init__.py",
@@ -544,8 +544,8 @@
       "source": "src/stage3_scale/workload_gen.py",
       "source_sha256": "aaa820d08799f41faff9d89f78f2a5addbb3fc2728f8c12a644bd9413e2f572b",
       "destination": "reference/stage3_scale/workload_gen.py",
-      "destination_sha256": "0ae93efc795be483890abbe62931503bdeae593006e8e5bfb37e9f166c34b05c",
-      "adaptation": "direct runtime execution disabled unless explicitly enabled"
+      "destination_sha256": "b2d1ba02e9cf687a1dae066d0bdf40fe95eda27bb8d8d69a6715f3dcf077cd88",
+      "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Explicit deterministic RNG seed, passed through CLI and generator including burst/noise/regime paths; no wall-clock-derived seed."
     },
     {
       "source": "src/stage3_scale/uq/conformal_pid.py",

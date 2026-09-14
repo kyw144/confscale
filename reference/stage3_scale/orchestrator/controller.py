@@ -372,25 +372,26 @@ def kubectl_scale(context: str, namespace: str, deployment: str, replicas: int):
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
-            logger.warning("kubectl scale failed: %s", result.stderr.strip())
+            raise RuntimeError(f"kubectl scale failed: {result.stderr.strip()}")
         else:
             logger.debug("Scaled %s to %d", deployment, replicas)
     except Exception as e:
         logger.error("kubectl scale error: %s", e)
+        raise
 
 
 def kubectl_get_replicas(context: str, namespace: str, deployment: str) -> Optional[int]:
-    """Get current replica count of a deployment."""
+    """Get observed ready replica count of a deployment (not its requested spec)."""
     cmd = [
         'kubectl', f'--context={context}',
         'get', 'deployment', deployment,
         '-n', namespace,
-        '-o', 'jsonpath={.spec.replicas}',
+        '-o', 'jsonpath={.status.readyReplicas}',
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-        if result.returncode == 0 and result.stdout.strip():
-            return int(result.stdout.strip())
+        if result.returncode == 0:
+            return int(result.stdout.strip() or 0)
     except Exception as e:
         logger.warning("kubectl get replicas failed: %s", e)
     return None
@@ -448,7 +449,7 @@ def main():
                        help='History window size (h) for predictor')
     parser.add_argument('--context', default='kind-p3-experiments',
                        help='Kube context name')
-    parser.add_argument('--metrics-port', type=int, default=9091,
+    parser.add_argument('--metrics-port', type=int, default=int(os.environ.get('CONFSCALE_METRICS_PORT', '9091')),
                        help='Port for Prometheus /metrics endpoint '
                             '(default 9091 to avoid conflict with Prometheus on 9090)')
     parser.add_argument('--policy', choices=['tier', 'ci-upper'], default='tier',
@@ -912,10 +913,12 @@ def main():
         if delta >= args.hysteresis:
             if target != current_replicas:
                 old_replicas = current_replicas
-                current_replicas = target
                 kubectl_scale(args.context, args.namespace, args.deployment, target)
+                current_replicas = target
         else:
             target = current_replicas  # No-op: below hysteresis threshold
+
+        observed_replicas = kubectl_get_replicas(args.context, args.namespace, args.deployment)
 
         # 7. Update Prometheus metrics
         try:
@@ -924,7 +927,7 @@ def main():
                 pred=pred,
                 tier=tier,
                 target_replicas=target,
-                current_replicas=current_replicas,
+                current_replicas=observed_replicas if observed_replicas is not None else float("nan"),
                 latency_s=decision_latency,
             )
         except Exception as e:
@@ -943,7 +946,9 @@ def main():
             'raw_tier': raw_tier,
             'target_replicas': target,
             'raw_target': raw_target,
-            'actual_replicas': current_replicas,
+            'last_requested_replicas': current_replicas,
+            'observed_replicas': observed_replicas,
+            'prediction_made': prediction_made,
             'history_len': len(history),
             'seeded': seeded,
             'decision_latency_s': round(decision_latency, 4),

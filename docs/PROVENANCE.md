@@ -1,5 +1,23 @@
 # Provenance, adaptations and omissions
 
+## Standalone runtime maintenance — 2026-09-14
+
+The original extraction commit and source hashes below remain unchanged.
+`provenance/runtime_adaptations.json` records subsequent fixes to runtime paths,
+explicit workload seeds, failure propagation, replica observations, collection
+timestamps and stale exported tests, including each previous shipped hash.
+`confscale verify` checks their new destination hashes as well as unchanged evidence.
+New cluster/configuration/assurance code, dependency locks, CI and run guides are
+versioned normally in Git. These changes establish a supported execution route;
+they do not adopt new scientific findings or alter the frozen tables.
+
+The optional local restore can convert text line endings only when the converted
+bytes hash-match the exported input manifest exactly. Models and trace inputs
+remain excluded from Git. Runtime setup and outcomes are documented in
+[CLUSTER_RUNS.md](CLUSTER_RUNS.md) and [VALIDATION.md](VALIDATION.md).
+
+## Original extraction
+
 `provenance/source_manifest.json` pins each included source-derived file to its relative source path and SHA-256 at source commit `18aa3ebba5d5dd0e5fac594c2a6d1aebb426036d`. It separately records the shipped hash and adaptation description. This is a fresh artifact tree, not a copy of the source repository's history. The private source workspace is not required for supported local commands.
 
 The artifact's `.gitattributes` uses `* -text` so Git preserves the original bytes rather than converting line endings between Windows and Mac. This is required for the source/evidence hashes to remain meaningful after a checkout.

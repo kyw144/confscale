@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind_node": "kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f",
+  "kind_version": "0.31.0",
+  "architectures": {
+    "arm64": {
+      "python": "python:3.12.13-slim-bookworm@sha256:3f9c7f75b916e8279e24136d7a57769aba9e193715be52570417698c52d6eed0",
+      "redis": "redis:7.4.2-alpine@sha256:90cac51530a49aaa42eaf65712e84005677a0c44191e721e2de756927031fb9d",
+      "prometheus": "prom/prometheus:v2.55.0@sha256:04c6fc0a8fef778461095cff7f50f7d8c32d11e1fb10517c0ac2f0a1e6756ccf",
+      "kube_state_metrics": "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0@sha256:888486e7e0a53aa7293b223bddc8db077c4bb7f7b41140f32aa04880a10c6c24",
+      "metrics_server": "registry.k8s.io/metrics-server/metrics-server:v0.8.1@sha256:9ece07f21cfaf3c2398bd4e0de1f127cfad23ec40d29ceffd8323b4f34744eb8"
+    },
+    "amd64": {
+      "python": "python:3.12.13-slim-bookworm@sha256:6e13e65c55e33adf203d77ee371cf8bf5d81bd4902ef07565721f46bf44917af",
+      "redis": "redis:7.4.2-alpine@sha256:519f0189dfdee3bc0bad61fb265fe73d864b5c64020e6579ad48a45c49965635",
+      "prometheus": "prom/prometheus:v2.55.0@sha256:fe47ca5a4eb2ef06d7adaa583776b1f8e57f1e2a509ab500c538a3c07ebd9625",
+      "kube_state_metrics": "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0@sha256:cfef7d6665aab9bfeecd9f738a23565cb57f038a4dfb2fa6b36e2d80a8333a0a",
+      "metrics_server": "registry.k8s.io/metrics-server/metrics-server:v0.8.1@sha256:6231fb0a1ffab76c92ab880f51a0d11b290f688373647bcedff85af025dfd8a9"
+    }
+  }
+}

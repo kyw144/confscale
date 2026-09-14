@@ -1,5 +1,10 @@
 # Mac verification handoff
 
+> Historical handoff from the initial Windows export. The standalone setup and
+> commands now live in [CLUSTER_RUNS.md](CLUSTER_RUNS.md), with checks and actual
+> outcomes in [VALIDATION.md](VALIDATION.md). The pending-state descriptions below
+> record the original handoff, not the current software validation status.
+
 ## Current boundary
 
 The original experiments ran on the author's Mac using kind. This exported package has local Python verification, but **its standalone Mac execution, model training, trace replay and cluster execution remain unverified**. Reference files are preserved to make that next step concrete. A passing local test suite is not evidence that a Kubernetes deployment launches or reproduces a reported number. Completed local checks are recorded in [VALIDATION.md](VALIDATION.md).

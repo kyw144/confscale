@@ -263,7 +263,7 @@ class WorkloadGenerator:
                  duration_s: int, pattern_name: str,
                  complexity: int = 50000, items: int = 2,
                  max_workers: int = 200, output_dir: str = "outputs",
-                 trace_only: bool = False):
+                 trace_only: bool = False, seed: int = 0):
         self.target_url = f"{target_url.rstrip('/')}/api/process"
         self.health_url = f"{target_url.rstrip('/')}/health"
         self.rps_fn = rps_fn
@@ -274,6 +274,7 @@ class WorkloadGenerator:
         self.max_workers = max_workers
         self.output_dir = output_dir
         self.trace_only = trace_only
+        self.seed = seed
         os.makedirs(output_dir, exist_ok=True)
 
         self.running = True
@@ -295,6 +296,7 @@ class WorkloadGenerator:
 
     def run(self):
         """Main loop: one tick per second for duration_s seconds."""
+        random.seed(self.seed)
         mode_tag = "[TRACE-ONLY] " if self.trace_only else ""
         print(f"{mode_tag}Workload: {self.pattern_name} | {self.duration_s}s | target={self.target_url}")
         print(f"Complexity: n={self.complexity} items={self.items}")
@@ -308,8 +310,7 @@ class WorkloadGenerator:
         # Initialize bursty pattern spike events if needed
         if self.pattern_name == "B":
             # Use a fixed seed for reproducibility but vary across replicates
-            seed = int(time.time()) % 10000
-            random.seed(seed)
+            random.seed(self.seed)
             n_spikes = random.randint(5, 8)
             spike_events = []
             for _ in range(n_spikes):
@@ -540,7 +541,9 @@ def main():
     parser.add_argument("--transition-window", type=float, default=120,
                         help="Duration of the H crossfade in seconds (default: 120)")
 
+    parser.add_argument("--seed", type=int, default=0, help="Recorded workload RNG seed")
     args = parser.parse_args()
+    random.seed(args.seed)
 
     # B's spike train is sampled once upfront so it's stable across the
     # whole run (including when B appears as a sub-pattern inside H).
@@ -548,8 +551,7 @@ def main():
     # need spikes when H references B.
     spike_events_for_H = None
     if args.pattern == "H" and "B" in (args.from_pattern, args.to_pattern):
-        seed = int(time.time()) % 10000
-        random.seed(seed)
+        random.seed(args.seed)
         n_spikes = random.randint(5, 8)
         spike_events_for_H = []
         for _ in range(n_spikes):
@@ -605,6 +607,7 @@ def main():
         max_workers=args.max_workers,
         output_dir=args.output_dir,
         trace_only=args.trace_only,
+        seed=args.seed,
     )
 
     # Graceful shutdown

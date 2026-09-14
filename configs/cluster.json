@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "name": "confscale-repro",
+  "frontend_port": 32080,
+  "prometheus_port": 9290,
+  "controller_metrics_port": 9291
+}

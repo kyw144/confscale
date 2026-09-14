@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "confscale-paper-artifact"
-version = "0.1.0"
-description = "Local inspection and frozen-evidence regeneration for the ConfScale paper"
+version = "0.2.0"
+description = "ConfScale paper artifact with offline regeneration and an explicit kind experiment runtime"
 requires-python = ">=3.10"
 dependencies = []
 

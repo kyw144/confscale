@@ -12,6 +12,7 @@ is unverified in this standalone layout; see docs/MAC_VERIFICATION.md.
 """
 
 import logging
+import os
 import sys
 import subprocess
 import tempfile
@@ -25,7 +26,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-KUBE_CONTEXT = "kind-p3-experiments"
+KUBE_CONTEXT = os.environ.get("CONFSCALE_KUBE_CONTEXT", "kind-p3-experiments")
 NAMESPACE = "infosys-benchmark"
 
 # Thread-local kube-context override. Parallel run_matrix workers call
@@ -419,7 +420,8 @@ def _make_stub(name: str, description: str) -> StubMethod:
 # ── Confidence-Aware Scaling Methods ──────────────────────────────────
 
 # Paths for UQ models (trained by uq/train_all.py)
-UQ_MODELS_DIR = Path(__file__).resolve().parent.parent / 'models' / 'uq'
+MODELS_DIR = Path(os.environ.get('CONFSCALE_MODELS_DIR', Path(__file__).resolve().parent.parent / 'models'))
+UQ_MODELS_DIR = MODELS_DIR / 'uq'
 
 # Controller script
 CONTROLLER_SCRIPT = Path(__file__).resolve().parent / 'controller.py'
@@ -528,11 +530,7 @@ class ConfScaleMethod(MethodConfig):
         # Determine model directory — auto-select based on workload pattern
         model_dir = UQ_MODELS_DIR / pattern_name / self.uq_method
         if not model_dir.exists():
-            logger.warning("UQ model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         # Start controller
         output_dir = self.controller_output_dir()
@@ -606,12 +604,10 @@ class ConfScaleMethod(MethodConfig):
             ]
 
         logger.info("Starting controller: %s", ' '.join(cmd[:4]) + ' ...')
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         # Wait for controller to initialize
         time.sleep(5)
@@ -682,7 +678,7 @@ class ConfScaleMethod(MethodConfig):
 
 # Paths for baseline controller
 BASELINE_CONTROLLER_SCRIPT = Path(__file__).resolve().parent.parent / 'baselines' / 'controller.py'
-GRU_MODELS_DIR = Path(__file__).resolve().parent.parent / 'models' / 'gru'
+GRU_MODELS_DIR = MODELS_DIR / 'gru'
 
 
 @dataclass
@@ -724,11 +720,7 @@ class PredictiveMethod(MethodConfig):
         # Resolve GRU model dir
         model_dir = GRU_MODELS_DIR / f"gru_compute-worker_{pattern_name}"
         if not model_dir.exists():
-            logger.warning("GRU model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         output_dir = self.controller_output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -750,12 +742,10 @@ class PredictiveMethod(MethodConfig):
         ]
 
         logger.info("Starting baseline controller: %s ...", ' '.join(cmd[:4]))
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         time.sleep(5)
         if self.controller_process.poll() is not None:
@@ -822,11 +812,7 @@ class PredictiveSafetyMethod(PredictiveMethod):
         pattern_name = _resolve_model_pattern(self.workload_pattern)
         model_dir = GRU_MODELS_DIR / f"gru_compute-worker_{pattern_name}"
         if not model_dir.exists():
-            logger.warning("GRU model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         output_dir = self.controller_output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -849,12 +835,10 @@ class PredictiveSafetyMethod(PredictiveMethod):
         ]
 
         logger.info("Starting baseline controller: %s ...", ' '.join(cmd[:4]))
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         time.sleep(5)
         if self.controller_process.poll() is not None:
@@ -903,11 +887,7 @@ class BASEInspiredMethod(PredictiveMethod):
         pattern_name = _resolve_model_pattern(self.workload_pattern)
         model_dir = GRU_MODELS_DIR / f"gru_compute-worker_{pattern_name}"
         if not model_dir.exists():
-            logger.warning("GRU model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         output_dir = self.controller_output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -931,12 +911,10 @@ class BASEInspiredMethod(PredictiveMethod):
         ]
 
         logger.info("Starting baseline controller: %s ...", ' '.join(cmd[:4]))
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         time.sleep(5)
         if self.controller_process.poll() is not None:
@@ -1001,11 +979,7 @@ class ErrorMonitoredMethod(PredictiveMethod):
         pattern_name = _resolve_model_pattern(self.workload_pattern)
         model_dir = GRU_MODELS_DIR / f"gru_compute-worker_{pattern_name}"
         if not model_dir.exists():
-            logger.warning("GRU model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         output_dir = self.controller_output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -1030,12 +1004,10 @@ class ErrorMonitoredMethod(PredictiveMethod):
         ]
 
         logger.info("Starting baseline controller: %s ...", ' '.join(cmd[:4]))
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         time.sleep(5)
         if self.controller_process.poll() is not None:
@@ -1106,11 +1078,7 @@ class HPAUQMethod(MethodConfig):
         # Resolve UQ model dir — same convention as ConfScaleMethod.
         model_dir = UQ_MODELS_DIR / pattern_name / self.uq_method
         if not model_dir.exists():
-            logger.warning("UQ model not found at %s — falling back to HPA", model_dir)
-            return HPAMethod(
-                min_replicas=self.min_replicas,
-                max_replicas=self.max_replicas,
-            ).configure(namespace)
+            raise FileNotFoundError(f"Required model missing: {model_dir}; refusing HPA fallback")
 
         output_dir = self.controller_output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -1138,12 +1106,10 @@ class HPAUQMethod(MethodConfig):
             ]
 
         logger.info("Starting baseline controller: %s ...", ' '.join(cmd[:4]))
-        self.controller_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+        with open(output_dir / "controller.log", "a") as controller_log:
+            self.controller_process = subprocess.Popen(
+                cmd, stdout=controller_log, stderr=subprocess.STDOUT, text=True,
+            )
 
         time.sleep(5)
         if self.controller_process.poll() is not None:
@@ -1507,9 +1473,7 @@ def get_method(name: str) -> MethodConfig:
         # required so parallel workers don't clobber each other (and so the
         # setattr never pollutes the registry singleton).
         return replace(base)
-    # NOTE: StaticReplicasMethod / StubMethod still return the singleton; safe
-    # only as long as they aren't run in parallel with per-cell field overrides.
-    return base
+    return replace(base)
 
 
 def list_methods() -> list[str]:

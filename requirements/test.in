@@ -1,0 +1,6 @@
+# Offline assurance/config tests; no model training or cluster access.
+-c runtime.lock
+numpy==2.4.3
+PyYAML==6.0.3
+requests==2.33.1
+pytest==9.1.1

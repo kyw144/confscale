@@ -6,3 +6,8 @@ generated/
 build/
 dist/
 .DS_Store
+.metadata_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+inputs/

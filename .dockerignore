@@ -1,0 +1,10 @@
+*
+!requirements/
+!requirements/services.lock
+!cluster/
+!cluster/Dockerfile
+!reference/
+!reference/stage3_scale/
+!reference/stage3_scale/infosys-benchmark/
+!reference/stage3_scale/infosys-benchmark/*/
+!reference/stage3_scale/infosys-benchmark/*/app.py

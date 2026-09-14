@@ -44,8 +44,9 @@ logger = logging.getLogger(__name__)
 class PrometheusClient:
     """Minimal Prometheus HTTP API client with retry logic."""
 
-    def __init__(self, base_url: str, max_retries: int = 3, backoff_s: float = 5.0):
+    def __init__(self, base_url: str, max_retries: int = 3, backoff_s: float = 5.0, evaluation_time=None):
         self.base_url = base_url.rstrip("/")
+        self.evaluation_time = evaluation_time
         self.max_retries = max_retries
         self.backoff_s = backoff_s
 
@@ -71,7 +72,10 @@ class PrometheusClient:
 
     def query(self, promql: str) -> list[dict]:
         """Execute an instant query. Returns list of result dicts."""
-        data = self._request("query", {"query": promql})
+        params = {"query": promql}
+        if self.evaluation_time is not None:
+            params["time"] = self.evaluation_time
+        data = self._request("query", params)
         return data["data"]["result"]
 
     def query_range(self, promql: str, start: float, end: float, step: str) -> list[dict]:
@@ -249,7 +253,7 @@ def collect_metrics(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    client = PrometheusClient(prometheus_url)
+    client = PrometheusClient(prometheus_url, evaluation_time=end_time.timestamp())
 
     # Convert datetimes to epoch seconds for Prometheus queries
     start_epoch = start_time.timestamp()

@@ -98,8 +98,9 @@ def _resolve_method_spec(spec) -> "MethodConfig":
             raise KeyError(f"method spec missing 'name' or 'base': {spec!r}")
         method = get_method(base_name)
         for k, v in spec.items():
-            if hasattr(method, k):
-                setattr(method, k, v)
+            if k not in method.__dataclass_fields__ or not method.__dataclass_fields__[k].init:
+                raise ValueError(f"Unknown method option: {k}")
+            setattr(method, k, v)
         return method
     raise TypeError(f"unsupported method spec type: {type(spec).__name__}")
 
@@ -107,7 +108,7 @@ def _resolve_method_spec(spec) -> "MethodConfig":
 # ── Constants ───────────────────────────────────────────────────────────
 
 WORKLOAD_GEN_SCRIPT = Path(__file__).resolve().parent.parent / "workload_gen.py"
-PYTHON = Path(__file__).resolve().parent.parent.parent / ".venv" / "bin" / "python"
+PYTHON = sys.executable
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs"
 DEFAULT_CONFIG = Path(__file__).resolve().parent / "matrix.yaml"
 
@@ -261,7 +262,7 @@ def execute_single_run(
         dict with status, run_id, and summary metrics.
     """
     run_start = datetime.now(timezone.utc)
-    run_id = f"{method.name}_{workload_pattern.lower()}_rep{replicate}_{run_start.strftime('%Y%m%d_%H%M%S')}"
+    run_id = f"{method.name}_{workload_pattern.lower()}_rep{replicate}_{run_start.strftime('%Y%m%d_%H%M%S_%f')}"
     # E-V6 fix (Anomaly A4): resolve to an absolute path so the workload
     # generator subprocess (launched with cwd=run_dir) cannot re-resolve a
     # relative --output-dir against its own cwd and double the path
@@ -270,7 +271,7 @@ def execute_single_run(
     # invisible to the flat run_dir.glob() below, so collect.py never saw a
     # trace_csv_path and metrics.json got no e2e.* block.
     run_dir = (output_dir / run_id).resolve()
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_dir.mkdir(parents=True, exist_ok=False)
 
     logger.info("=" * 60)
     logger.info("RUN: %s", run_id)
@@ -282,6 +283,11 @@ def execute_single_run(
 
     status = "ok"
     error_message = ""
+    summary = {}
+    run_config = {}
+    start_time = run_start
+    workload_returncode = None
+    reset_ok = False
 
     try:
         # 0. Tell the method which workload pattern is about to run
@@ -318,6 +324,7 @@ def execute_single_run(
             "--complexity", str(complexity),
             "--target", frontend_url,
             "--output-dir", str(run_dir),
+            "--seed", str(replicate),
         ]
 
         # Add pattern-specific args
@@ -340,11 +347,19 @@ def execute_single_run(
             cwd=str(run_dir),
         )
 
+        workload_returncode = proc.returncode
+        (run_dir / "workload.stdout.log").write_text(proc.stdout or "")
+        (run_dir / "workload.stderr.log").write_text(proc.stderr or "")
         if proc.returncode != 0:
-            logger.warning("Workload generator exit code: %d", proc.returncode)
-            stderr_tail = proc.stderr.strip()[-500:] if proc.stderr else ""
-            if stderr_tail:
-                logger.warning("Stderr: ...%s", stderr_tail)
+            raise RuntimeError(f"Workload generator exited {proc.returncode}")
+        controller = getattr(method, 'controller_process', None)
+        if controller is not None and controller.poll() is not None:
+            raise RuntimeError(f"Controller exited during workload: {controller.returncode}")
+
+        runtime_state = kubectl(["get", "deployments,hpa", "-n", NAMESPACE, "-o", "json"])
+        if runtime_state.returncode != 0:
+            raise RuntimeError("Cannot capture controller/deployment state before reset")
+        (run_dir / "before_reset_status.json").write_text(runtime_state.stdout)
 
         end_time = datetime.now(timezone.utc)
         actual_duration = int((end_time - start_time).total_seconds())
@@ -356,7 +371,7 @@ def execute_single_run(
         if trace_csv_path:
             logger.info("Found workload trace: %s", trace_csv_path)
         else:
-            logger.warning("No workload trace CSV found in %s", run_dir)
+            raise RuntimeError(f"No workload trace CSV found in {run_dir}")
 
         # 4. Collect metrics
         logger.info("Step 4/5: Collecting metrics from Prometheus...")
@@ -385,6 +400,9 @@ def execute_single_run(
                 "workload": workload_pattern,
                 "replicate": replicate,
             }
+
+        if summary.get("status") != "ok":
+            raise RuntimeError(f"Metrics collection status: {summary.get('status')}")
 
         # 5. Write run_config.yaml
         logger.info("Step 5/5: Saving run configuration...")
@@ -423,9 +441,25 @@ def execute_single_run(
         # 6. Reset method
         try:
             logger.info("Resetting %s to baseline...", method.name)
-            method.reset(NAMESPACE)
+            reset_ok = method.reset(NAMESPACE) is True
+            if not reset_ok:
+                raise RuntimeError("method.reset() returned failure")
         except Exception as e:
-            logger.warning("Reset failed (non-fatal): %s", e)
+            status = "failed"
+            error_message = (error_message + f"; Reset failed: {e}").lstrip("; ")
+            logger.error("Reset failed: %s", e)
+        run_config.update({
+            "run_id": run_id, "method": method.name, "workload": workload_pattern,
+            "replicate": replicate, "duration_s": duration_s, "complexity": complexity,
+            "frontend_url": frontend_url, "prometheus_url": prometheus_url,
+            "start_time": start_time.isoformat(),
+            "end_time": datetime.now(timezone.utc).isoformat(),
+            "status": status, "error_message": error_message,
+            "workload_returncode": workload_returncode, "reset_ok": reset_ok,
+            "workload_extra_args": workload_extra_args or [],
+        })
+        (run_dir / "run_config.yaml").write_text(yaml.safe_dump(run_config))
+        (run_dir / "collection_summary.json").write_text(json.dumps(summary, indent=2))
 
     result = {
         "run_id": run_id,
@@ -433,6 +467,8 @@ def execute_single_run(
         "workload": workload_pattern,
         "replicate": replicate,
         "status": status,
+        "reset_ok": reset_ok,
+        "workload_returncode": workload_returncode,
         "error_message": error_message,
         "duration_s": duration_s,
         "start_time": start_time.isoformat() if 'start_time' in dir() else run_start.isoformat(),
@@ -641,7 +677,7 @@ def run_matrix(
     logger.info("Run log: %s", output_dir / "run_log.csv")
 
     return {
-        "status": "complete" if not terminated else "terminated",
+        "status": "terminated" if terminated else ("failed" if runs_failed else "complete"),
         "runs_completed": runs_completed,
         "runs_failed": runs_failed,
         "total_cells": total_cells,
@@ -867,7 +903,7 @@ def _run_matrix_parallel(
     logger.info("Run log: %s", output_dir / "run_log.csv")
 
     return {
-        "status": "complete" if not terminated.is_set() else "terminated",
+        "status": "terminated" if terminated.is_set() else ("complete" if completed[0] == total_cells and failed[0] == 0 else "failed"),
         "runs_completed": completed[0],
         "runs_failed": failed[0],
         "total_cells": total_cells,
@@ -938,6 +974,10 @@ def main():
         method = get_method(args.method)
         logger.info("Single-cell mode: %s × %s × rep %d", args.method, args.workload, args.replicate)
 
+        if args.dry_run:
+            print(json.dumps({"status": "dry_run", "method": args.method, "workload": args.workload}))
+            return
+
         prometheus_pf = PortForward(
             namespace=PROMETHEUS_NS, service=PROMETHEUS_SVC,
             local_port=PROMETHEUS_PORT, remote_port=PROMETHEUS_PORT,
@@ -973,6 +1013,9 @@ def main():
         if not args.dry_run:
             print(json.dumps({k: v for k, v in result.items() if k != "runs"},
                              indent=2, default=str))
+
+    if result.get("status") not in {"ok", "complete", "dry_run"}:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

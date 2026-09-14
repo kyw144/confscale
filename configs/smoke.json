@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "cluster": "cluster.json",
+  "purpose": "technical_smoke",
+  "methods": ["hpa-reactive", "confscale-pid"],
+  "workloads": ["B"],
+  "seeds": [144],
+  "duration_s": 180,
+  "cooldown_s": 30,
+  "complexity": 50000,
+  "models_dir": "../inputs/models",
+  "assurance": {
+    "min_trace_ticks": 2,
+    "min_predictions": 2,
+    "min_validated_intervals": 1
+  }
+}
