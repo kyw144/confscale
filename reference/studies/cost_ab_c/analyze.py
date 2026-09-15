@@ -18,18 +18,18 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 from analysis.stats import welch_t_test  # noqa: E402
 
 ANCHOR_NAME = "hpa-anchor-u50-s300"
 SCP_NAME = "confscale-scp"
-# Pre-registered gate tolerances (verbatim ev7).
+# Fixed tolerances shared with the pattern-D comparison.
 P95_TOL_FRAC = 0.05              # e2e p95 within +5% of SCP counts as "matched"
 VIOL_TOL_PP = 0.03              # e2e violation within +3 pp of SCP counts as "matched"
-# Card §2 thresholds.
+# Fixed cost-verdict thresholds.
 SAVING_MIN_PCT = 10.0           # "genuine A/B saving" requires Saving% >= 10%
 ANCHOR_RAILS_REPL = 18.0        # anchor "rails" (pins HPA near ceiling 20) iff mean_replicas >= this
 
@@ -111,7 +111,7 @@ def config_stats(reps: list[dict]) -> dict:
 
 
 def meets_slo(cfg: dict, scp: dict) -> dict:
-    """Matched-p95-SLO gate vs the in-batch SCP arm (verbatim ev7_cost_analyze.meets_slo)."""
+    """Matched-p95-SLO gate vs the in-batch SCP arm (same criterion as tuned_hpa/analyze.py)."""
     cp95, sp95 = cfg["e2e_p95_ms"], scp["e2e_p95_ms"]
     cv, sv = cfg["e2e_violation"], scp["e2e_violation"]
     detail = {"reason": []}
@@ -139,8 +139,8 @@ def meets_slo(cfg: dict, scp: dict) -> dict:
     return detail
 
 
-def verdict_card_s2(comparator, scp_mean, scp_vals, anchor_rails: bool | None) -> dict:
-    """Card P3-C-T4 §2 per-pattern LOCKED verdict."""
+def cost_verdict(comparator, scp_mean, scp_vals, anchor_rails: bool | None) -> dict:
+    """Fixed per-pattern cost verdict."""
     if comparator is None or scp_mean is None:
         return {"verdict": "FAIL-INCONCLUSIVE",
                 "detail": "no tuned config passed the matched-SLO gate (or SCP missing) — "
@@ -243,7 +243,7 @@ def main():
                   "comparator_overhead_per_hour": comp, "scp_overhead_per_hour": sm,
                   "saving_pct": (comp - sm) / comp * 100.0 if comp else None}
 
-    final = verdict_card_s2(comparator, sm, scp_vals, anchor_rails)
+    final = cost_verdict(comparator, sm, scp_vals, anchor_rails)
 
     report = {
         "pattern": args.pattern, "batch": str(args.batch),
@@ -251,12 +251,12 @@ def main():
         "config_table": sorted(table, key=lambda t: (t["overhead_per_hour_mean"] is None,
                                                       t["overhead_per_hour_mean"] or 0)),
         "slo_gate_detail": gate, "comparator_and_saving": saving,
-        "card_s2_verdict": final,
+        "cost_verdict": final,
     }
-    (args.out / f"t4_cost_analysis_{args.pattern}.json").write_text(
+    (args.out / f"cost_analysis_{args.pattern}.json").write_text(
         json.dumps(report, indent=2, default=str))
 
-    print(f"\n========== T4 PATTERN {args.pattern} TUNED-HPA COST ANALYSIS ==========")
+    print(f"\n========== PATTERN {args.pattern} TUNED-HPA COST ANALYSIS ==========")
     if anchor_report:
         print(f"Anchor ({ANCHOR_NAME}): {anchor_report['mean_replicas']:.1f} mean repl "
               f"(max {anchor_report['max_replicas']:.1f}) -> rails_like_D={anchor_report['rails_like_D']}")
@@ -271,7 +271,7 @@ def main():
     if saving:
         print(f"\nComparator (lowest-overhead SLO-meeting HPA): {saving['comparator_config']} "
               f"@ {saving['comparator_overhead_per_hour']:.0f} rs/h; SCP saving {saving['saving_pct']:.1f}%")
-    print(f"\nCARD §2 VERDICT [{args.pattern}]: {final['verdict']}")
+    print(f"\nCOST VERDICT [{args.pattern}]: {final['verdict']}")
     print(f"  {final['detail']}")
     print("==============================================================\n")
 

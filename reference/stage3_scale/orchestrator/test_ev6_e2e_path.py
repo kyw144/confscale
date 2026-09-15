@@ -54,7 +54,7 @@ def test_resolved_run_dir_prevents_doubling() -> None:
         root = Path(td).resolve()  # stands in for the orchestrator launch cwd
         gen_abs = root / "_fake_gen.py"
         gen_abs.write_text(_FAKE_GEN)
-        rel_output = Path("data/p3_runs/outputs/test_batch")  # relative --output-dir
+        rel_output = Path("generated/runs/test_batch")  # relative --output-dir
         run_id = "confscale-pid_g_rep1_20260531_000000"
         prev = os.getcwd()
         os.chdir(root)
@@ -65,7 +65,7 @@ def test_resolved_run_dir_prevents_doubling() -> None:
                      cwd=str(old_run_dir))
             old_flat = list(old_run_dir.glob("workload_*_timeseries.csv"))
             doubled = list(old_run_dir.glob(
-                "data/p3_runs/outputs/**/workload_*_timeseries.csv"))
+                "generated/runs/**/workload_*_timeseries.csv"))
             check("OLD relative run_dir DOUBLES the trace (bug reproduced)",
                   len(old_flat) == 0 and len(doubled) == 1,
                   f"flat={len(old_flat)} doubled={len(doubled)}")
@@ -77,7 +77,7 @@ def test_resolved_run_dir_prevents_doubling() -> None:
                      cwd=str(new_run_dir))
             new_flat = list(new_run_dir.glob("workload_*_timeseries.csv"))
             new_doubled = list(new_run_dir.glob(
-                "data/p3_runs/outputs/**/workload_*_timeseries.csv"))
+                "generated/runs/**/workload_*_timeseries.csv"))
             check("(a) FIXED absolute run_dir lands trace FLAT",
                   len(new_flat) == 1 and len(new_doubled) == 0,
                   f"flat={len(new_flat)} doubled={len(new_doubled)}")

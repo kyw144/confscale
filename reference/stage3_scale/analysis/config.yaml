@@ -24,7 +24,7 @@ tables:
   latex:
     column_format: "lcccccc"
     label_prefix: "tab:"
-    caption_prefix: "P3 Results — "
+    caption_prefix: "ConfScale Results — "
   markdown: true
 
 figures:

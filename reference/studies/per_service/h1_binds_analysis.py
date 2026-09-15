@@ -7,10 +7,12 @@ if __name__ == "__main__":
         raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
+from pathlib import Path
+
 import sys, json, importlib.util
 from collections import deque
 import numpy as np
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 import torch
 from predictor.data import NormalizationParams
 from uq.conformal import SplitConformal
@@ -18,13 +20,14 @@ from uq.conformal_pid import ConformalPID
 from uq.aci import ACI
 from baselines.escalation_ladder import EscalationLadder
 
-DIR = "data/p3_runs/results/ev8b_perservice_20260601_024537"
-spec = importlib.util.spec_from_file_location("p2", f"{DIR}/pass2_perservice.py")
+DIR = "generated/studies/per_service"
+Path(DIR).mkdir(parents=True, exist_ok=True)
+spec = importlib.util.spec_from_file_location("p2", "reference/studies/per_service/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
 H, K, ALPHA = p2.H, p2.K, p2.ALPHA
 NOMINAL = 90.0
 R = 6
-# LOCKED MS_7129 volatility windows (ev8b_LOCK_2026-06-01.md) — verbatim from recal_perservice.py
+# LOCKED MS_7129 volatility windows (fixed service windows) — verbatim from recal_perservice.py
 TRAIN, REF, DEPLOY = (120, 840), (480, 720), (840, 960)
 COVWIN = 30
 
@@ -209,7 +212,7 @@ for m in METHODS:
     r = out['methods'][m]; hb = r['h1_binds_pct']; cc = r['crosscheck_vs_recal_volatility_json']
     print(f"{m:9s} {hb['mean']:6.1f} ± {hb['sd']:4.1f}  {r['h0_binds_pct_mean']:9.1f}  | "
           f"{cc['cov_h0'][0]:6.1f}±{cc['cov_h0'][1]:.1f} {cc['cov_h1_mean']:6.1f} {cc['width_h0_mean']:7.4f}")
-print("\nPRIMARY read-band per method (aci/pid are the task targets):")
+print("\nPrimary comparison for ACI and PID:")
 for m in ['aci', 'pid', 'aci-lad', 'pid-lad', 'frozen']:
     print(f"  {m:9s} {out['methods'][m]['h1_binds_pct']['mean']:5.1f}% -> {out['methods'][m]['read_band']}")
 print("\nCOMPLEMENT (h0-binding cycles, recalibrated vs frozen h0):")

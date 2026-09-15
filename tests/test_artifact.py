@@ -115,7 +115,7 @@ class ArtifactIntegrity(unittest.TestCase):
     def test_direct_runtime_launch_disabled_before_heavy_imports(self):
         env = os.environ.copy(); env.pop('CONFSCALE_ENABLE_REFERENCE_RUNTIME',None)
         for rel in ['stage3_scale/orchestrator/controller.py','stage3_scale/orchestrator/run_matrix.py',
-                    'stage3_scale/workload_gen.py','studies/binding/rc5_driver.py',
+                    'stage3_scale/workload_gen.py','studies/binding/driver.py',
                     'stage3_scale/load_gen.py',
                     'stage3_scale/infosys-benchmark/frontend/app.py',
                     'stage3_scale/infosys-benchmark/processor/app.py',

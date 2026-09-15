@@ -366,7 +366,7 @@ def main():
                        help='Min replica change to trigger scaling')
     parser.add_argument('--history-length', type=int, default=60,
                        help='History window size (h) for predictor')
-    parser.add_argument('--context', default='kind-p3-experiments',
+    parser.add_argument('--context', default='kind-confscale-experiments',
                        help='Kube context name')
     parser.add_argument('--metrics-port', type=int, default=int(os.environ.get('CONFSCALE_METRICS_PORT', '9091')),
                        help='Port for Prometheus /metrics endpoint '

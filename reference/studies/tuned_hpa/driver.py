@@ -22,8 +22,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 
@@ -41,16 +41,16 @@ COMPUTE_NS = "infosys-benchmark"
 COMPUTE_DEPLOY = "compute-worker"
 PROM_NS = "monitoring"
 PROM_DEPLOY = "prometheus"
-EV7_DURATION = 1800         # 6 × 300 s periods; per-hour-normalized, anchor (pinned
+DURATION = 1800         # 6 × 300 s periods; per-hour-normalized, anchor (pinned
                             # at max) reproduces the 3600 s 67,806 -> duration-invariant
 ACIH_DURATION = 1800        # matches the ACI-laddered/H drift batch (6 × 300 s)
 
-logger = logging.getLogger("ev7")
+logger = logging.getLogger("tuned_hpa")
 
 
 def build_cells() -> list[dict]:
     cells: list[dict] = []
-    # E-V7: anchor + 2×2 tuned grid (all the v2 behavior path), Pattern D, n=5.
+    # anchor + 2×2 tuned grid (all the v2 behavior path), Pattern D, n=5.
     hpa_grid = [
         ("hpa-anchor-u50-s300", 50, 300),   # reproduction anchor
         ("hpa-tuned-u50-s60",   50, 60),
@@ -60,20 +60,20 @@ def build_cells() -> list[dict]:
     ]
     for name, util, stab in hpa_grid:
         cells.append({
-            "label": f"{name}/D", "task": "E-V7",
+            "label": f"{name}/D", "task": "tuned_hpa",
             "method_spec": {"base": "hpa-reactive", "name": name,
                             "cpu_target": util, "downscale_stabilization_s": stab},
-            "pattern": "D", "duration_s": EV7_DURATION, "n_reps": 5,
+            "pattern": "D", "duration_s": DURATION, "n_reps": 5,
         })
-    # E-V7: in-batch ConfScale-SCP/D re-run (matched current-cluster comparator).
+    # in-batch ConfScale-SCP/D re-run (matched current-cluster comparator).
     cells.append({
-        "label": "confscale-scp/D", "task": "E-V7",
+        "label": "confscale-scp/D", "task": "tuned_hpa",
         "method_spec": "confscale-scp",
-        "pattern": "D", "duration_s": EV7_DURATION, "n_reps": 5,
+        "pattern": "D", "duration_s": DURATION, "n_reps": 5,
     })
-    # E-V3-ACIH: ACI raw arm on Pattern H at K=8.
+    # ACI raw arm on Pattern H at K=8.
     cells.append({
-        "label": "confscale-aci/H", "task": "E-V3-ACIH",
+        "label": "confscale-aci/H", "task": "aci_pattern_h",
         "method_spec": "confscale-aci",
         "pattern": "H", "duration_s": ACIH_DURATION, "n_reps": 8,
     })
@@ -254,7 +254,7 @@ def preflight(slots) -> bool:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="E-V7 + E-V3-ACIH unified wave driver")
+    ap = argparse.ArgumentParser(description="Tuned-HPA and ACI comparison experiment")
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--seed", type=int, default=20260601)
     ap.add_argument("--settle", type=int, default=30,
@@ -293,14 +293,14 @@ def main():
         datefmt="%H:%M:%S",
         handlers=[logging.StreamHandler(), logging.FileHandler(out_dir / "driver.log")],
     )
-    logger.info("E-V7+ACIH driver: %d cells in %d waves, output=%s seed=%d",
+    logger.info("Tuned-HPA and ACI driver: %d cells in %d waves, output=%s seed=%d",
                 sum(len(w["units"]) for w in plan), len(plan), out_dir, args.seed)
 
     if not preflight(slots):
         logger.error("Preflight failed — cluster unresponsive. Stopping (no repair).")
         sys.exit(2)
 
-    runlog_path = out_dir / "ev7_run_log.csv"
+    runlog_path = out_dir / "run_log.csv"
     fields = ["wave", "task", "label", "method", "workload", "replicate", "duration_s",
               "worker_id", "cluster", "status", "coverage_rate", "run_id",
               "start_time", "end_time", "error_message", "output_dir"]

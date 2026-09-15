@@ -7,13 +7,16 @@ if __name__ == "__main__":
         raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
+from pathlib import Path
+
 import sys, time, json, glob, tarfile
 from multiprocessing import Pool
 import pandas as pd
 import numpy as np
 
-DIR = "data/p3_runs/results/ev8_etl_build_20260531_215632"
-RAW = "data/alibaba_2022/raw/MSRTMCR"
+DIR = "generated/studies/etl"
+Path(DIR).mkdir(parents=True, exist_ok=True)
+RAW = "inputs/traces/MSRTMCR"
 COLS = ['timestamp', 'msname', 'msinstanceid', 'nodeid', 'providerrpc_mcr', 'http_mcr']
 MCR = ['providerrpc_mcr', 'http_mcr']
 DTYPES = {'timestamp': 'int64', 'msname': 'object', 'msinstanceid': 'object',

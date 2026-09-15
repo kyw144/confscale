@@ -1,8 +1,8 @@
 # Working on ConfScale
 
-This repository is the public artifact and supported local runtime. The separate
-`~/claude-workspace/dissertation` checkout is an original-source reference; do not
-edit its papers, ledgers, evidence or cluster resources as part of maintenance here.
+This repository is the public artifact and supported local runtime. Treat external
+source checkouts as read-only references; do not edit their documents, evidence
+or cluster resources as part of maintenance here.
 
 - Keep `evidence/` byte-identical. New runs belong under ignored `generated/`.
 - Keep models/traces/credentials private under ignored `inputs/` or explicit

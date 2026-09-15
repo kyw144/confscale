@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -10,7 +11,43 @@ from unittest.mock import patch
 from confscale.assurance import assess
 from confscale.cluster import load_profile, kube_command
 from confscale.experiment import audit, load_config, plan
+from confscale.inputs import restore
 from confscale.run_support import ROOT, sha256, write_json
+
+
+class ModelRestoreTests(unittest.TestCase):
+    def test_restore_direct_model_directory_and_archived_bundle(self):
+        for layout in ('uq/diurnal/scp/model.json', 'archive/models/uq/diurnal/scp/model.json'):
+            with self.subTest(layout=layout), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp).resolve()
+                data = b'{"model": "fixture"}\r\n'
+                row = {'source': 'archive/models/uq/diurnal/scp/model.json',
+                       'path': 'models/uq/diurnal/scp/model.json',
+                       'sha256': hashlib.sha256(data).hexdigest()}
+                write_json(root / 'provenance/omitted_inputs.json',
+                           {'source_commit': 'fixture', 'inputs': [row]})
+                original = root / 'bundle' / layout
+                original.parent.mkdir(parents=True)
+                original.write_bytes(data.replace(b'\r\n', b'\n'))
+                with patch('confscale.inputs.ROOT', root):
+                    result = restore(root / 'bundle', root / 'inputs/models')
+                self.assertEqual(result['models_verified'], 1)
+                self.assertEqual((root / 'inputs/models/uq/diurnal/scp/model.json').read_bytes(), data)
+
+    def test_restore_rejects_mismatched_models_before_copying(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            rows = []
+            for name, actual in [('valid.json', b'expected'), ('invalid.json', b'wrong')]:
+                source = root / 'bundle/uq' / name
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_bytes(actual)
+                rows.append({'source': 'archive/uq/' + name, 'path': 'models/uq/' + name,
+                             'sha256': hashlib.sha256(b'expected').hexdigest()})
+            write_json(root / 'provenance/omitted_inputs.json', {'source_commit': 'fixture', 'inputs': rows})
+            with patch('confscale.inputs.ROOT', root), self.assertRaisesRegex(ValueError, 'Input hash mismatch'):
+                restore(root / 'bundle', root / 'inputs/models')
+            self.assertFalse((root / 'inputs/models').exists())
 
 
 class PlanningTests(unittest.TestCase):
@@ -40,7 +77,7 @@ class PlanningTests(unittest.TestCase):
 
     def test_cluster_must_be_named_and_ports_distinct(self):
         profile = load_profile(ROOT / 'configs/cluster.json')
-        for edit in ({'name': 'p4-hotel'}, {'frontend_port': profile['prometheus_port']},
+        for edit in ({'name': 'unrelated-cluster'}, {'frontend_port': profile['prometheus_port']},
                      {'frontend_port': True}, {'frontned_port': 12345}):
             with self.subTest(edit=edit), tempfile.TemporaryDirectory() as tmp:
                 path = Path(tmp) / 'cluster.json'

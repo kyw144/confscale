@@ -9,11 +9,10 @@ if __name__ == "__main__":
 
 import sys, json, importlib.util, time, traceback
 import numpy as np
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 
-DIR = open('/tmp/ev8b_pass2_full_dir.txt').read().strip()
-P2DIR = "data/p3_runs/results/ev8b_perservice_20260601_024537"   # locked harness lives here (orig)
-spec = importlib.util.spec_from_file_location("p2", f"{P2DIR}/pass2_perservice.py")
+DIR = "generated/studies/per_service_full"
+spec = importlib.util.spec_from_file_location("p2", "reference/studies/per_service/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
 
 LOCK = json.load(open(f"{DIR}/pass2_full_windows.json"))
@@ -50,7 +49,7 @@ for c in CELLS:
 
 def write():
     with open(OUT, 'w') as f:
-        json.dump(dict(lock='ev8b_LOCK_2026-06-01', R=R, nominal=NOMINAL,
+        json.dump(dict(lock='per_service_windows', R=R, nominal=NOMINAL,
                        n_level_cells=LOCK['n_level_cells'], n_vol_cells=LOCK['n_vol_cells'],
                        windowing=LOCK['windowing_rule'], cells=list(results.values()),
                        blocked=LOCK['blocked'], distribution=DISTRIB), f, indent=2)

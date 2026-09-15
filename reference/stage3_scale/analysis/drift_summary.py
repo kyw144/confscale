@@ -14,14 +14,14 @@ import yaml
 
 try:
     from .loader import _parse_run_dirname
-except ImportError:  # script-style invocation (`python analysis/post_reframe.py`)
+except ImportError:  # script-style invocation (`python analysis/drift_summary.py`)
     from analysis.loader import _parse_run_dirname  # type: ignore
 
 logger = logging.getLogger(__name__)
 
 
 # subdirs contains nested run directories; stream_a_nesting handles historical
-# outputs written under a duplicated data/p3_runs path.
+# outputs written under a duplicated archive path.
 
 @dataclass
 class BatchSpec:
@@ -32,7 +32,7 @@ class BatchSpec:
     note: str = ""
 
 
-POST_REFRAME_BATCHES: list[BatchSpec] = [
+DRIFT_BATCHES: list[BatchSpec] = [
     BatchSpec(
         name="drift_injection_e1_20260523_020148",
         subdirs=["F_phase1", "F_phase2", "G", "H"],
@@ -54,7 +54,7 @@ POST_REFRAME_BATCHES: list[BatchSpec] = [
     BatchSpec(
         name="hpa_reactive_drift_20260525",
         stream_a_nesting=True,
-        note="Stream A; F/G/H complete (9 cells); no coverage monitor by design",
+        note="HPA drift batch; F/G/H complete (9 cells); no coverage monitor by design",
     ),
     BatchSpec(
         name="hpa_qr_drift_20260525",
@@ -62,7 +62,7 @@ POST_REFRAME_BATCHES: list[BatchSpec] = [
     ),
     BatchSpec(
         name="h_divergence_rerun_20260525",
-        note="Stream B (hpa-error-monitored gauge-enabled rerun); not launched as of 2026-05-25",
+        note="HPA error-monitor rerun with coverage gauges; no completed runs in the retained archive",
     ),
 ]
 
@@ -163,13 +163,13 @@ def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
     return row
 
 
-def discover_post_reframe_runs(outputs_root: Path) -> pd.DataFrame:
-    """Walk all post-reframe batches and return a one-row-per-cell DataFrame."""
+def discover_drift_summary_runs(outputs_root: Path) -> pd.DataFrame:
+    """Walk all drift batches and return a one-row-per-cell DataFrame."""
     outputs_root = Path(outputs_root)
     rows: list[dict] = []
     anomalies: list[str] = []
 
-    for spec in POST_REFRAME_BATCHES:
+    for spec in DRIFT_BATCHES:
         batch_dir = outputs_root / spec.name
         if not batch_dir.exists():
             anomalies.append(f"batch_missing: {spec.name}")
@@ -195,10 +195,10 @@ def discover_post_reframe_runs(outputs_root: Path) -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
     if len(df) == 0:
-        logger.warning("Discovered zero post-reframe cells under %s", outputs_root)
+        logger.warning("Discovered zero drift cells under %s", outputs_root)
     else:
         logger.info(
-            "Discovered %d post-reframe cells across %d batches",
+            "Discovered %d drift cells across %d batches",
             len(df), df["batch"].nunique(),
         )
     df.attrs["anomalies"] = anomalies
@@ -224,7 +224,7 @@ COVERAGE_FLAG_THRESHOLD = 0.85
 
 
 def select_pool(df: pd.DataFrame, method: str, pattern: str) -> pd.DataFrame:
-    """Pull the per-rep pool for (method, pattern) per the agenda §3.2 rule."""
+    """Pull the per-rep pool for (method, pattern) using the fixed replicate selection."""
     if method in LADDERED_POOL_SOURCES:
         batches = LADDERED_POOL_SOURCES[method]
     elif method in RAW_BASELINE_BATCH:
@@ -286,7 +286,7 @@ def build_table_a(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
           "Per-cell `coverage_rate` from `operator_metrics_summary.json.coverage_monitor`,",
           "and `overhead_replica_seconds_per_hour = overhead_replica_seconds / (duration_s/3600)`",
           "from `metrics.json.resources`. Laddered methods pool n=5 (drift batch + replication extension);",
-          "raw methods n=3 (drift batch). Coverage < 0.85 flagged ⚠️ per agenda §3.2.",
+          "raw methods n=3 (drift batch). Coverage < 0.85 flagged ⚠️.",
           "",
           "| method | pattern | coverage (mean ± std) | overhead_rs/h (mean ± std) | n (cov/cost) |",
           "|---|---|---|---|---|"]
@@ -299,8 +299,8 @@ def build_table_a(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
         "",
         "## Notes",
         "- `hpa-reactive` has no coverage monitor by design; cost-only.",
-        "- `hpa-error-monitored` coverage is NaN until Stream B (gauge-enabled rerun) lands. Cost rows populated from the drift batch.",
-        "- Stream A produced Pattern F only — `hpa-reactive` G and H rows are empty pending additional runs.",
+        "- `hpa-error-monitored` coverage is NaN without a rerun that records coverage gauges. Cost rows populated from the drift batch.",
+        "- The retained HPA results contain Pattern F only — `hpa-reactive` G and H rows are empty pending additional runs.",
     ])
     return out, "\n".join(md)
 
@@ -393,9 +393,9 @@ def build_table_c(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     md = ["# Table C — Resource overhead with laddered methods (Pattern A 60-min)",
           "",
           "Appends confscale-pid and confscale-pid-laddered Pattern A 60-min rows to the",
-          "structure of `results/real/tables/table_2_resource_overhead.md` (pre-reframe baseline).",
+          "structure of `results/real/tables/table_2_resource_overhead.md` (baseline).",
           "B and D are intentionally empty: no laddered runs exist for those patterns at 60-min.",
-          "Closing that gap is an optional follow-up per agenda §7.",
+          "Additional runs are needed to fill those cells.",
           "",
           "| method | pattern | overhead_rs/h (mean ± std) | mean_replicas (mean ± std) | coverage (mean ± std) | n |",
           "|---|---|---|---|---|---|"]
@@ -410,13 +410,13 @@ def build_table_c(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     md.extend([
         "",
         "## Gap",
-        "- `confscale-pid-laddered × {B, D} × 60-min` not run. Agenda §7 lists this as a deferred follow-up.",
+        "- `confscale-pid-laddered × {B, D} × 60-min` not run.",
     ])
     return out, "\n".join(md)
 
 
 def run_pairwise_tests(df: pd.DataFrame) -> dict:
-    """Per agenda §3.3: Welch's t-test + Cohen's d, Holm-Bonferroni across 9 comparisons."""
+    """Welch's t-test + Cohen's d, Holm-Bonferroni across 9 comparisons."""
     try:
         from .stats import welch_t_test, cohens_d_independent, bonferroni_holm_correction
     except ImportError:
@@ -566,16 +566,16 @@ def cross_check_against_extracts(df: pd.DataFrame, results_root: Path) -> list[d
 
 
 def run_pipeline(outputs_root: Path, results_root: Path) -> dict:
-    out_dir = results_root / "post_reframe"
+    out_dir = results_root / "drift_summary"
     (out_dir / "tables").mkdir(parents=True, exist_ok=True)
     (out_dir / "figures").mkdir(parents=True, exist_ok=True)
     (out_dir / "statistics").mkdir(parents=True, exist_ok=True)
 
-    df = discover_post_reframe_runs(outputs_root)
+    df = discover_drift_summary_runs(outputs_root)
     if len(df) == 0:
-        raise RuntimeError(f"No post-reframe cells discovered under {outputs_root}")
+        raise RuntimeError(f"No drift cells discovered under {outputs_root}")
 
-    csv_path = out_dir / "aggregated_metrics_post_reframe.csv"
+    csv_path = out_dir / "aggregated_metrics_drift_summary.csv"
     df.to_csv(csv_path, index=False)
     logger.info("Wrote %s (%d rows)", csv_path, len(df))
 
@@ -624,11 +624,11 @@ def _json_default(o):
 def main() -> None:
     import argparse
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s | %(message)s")
-    ap = argparse.ArgumentParser(description="Stream C — post-reframe cost extraction pipeline")
-    ap.add_argument("--outputs", default="data/p3_runs/outputs",
-                    help="Path to data/p3_runs/outputs/")
-    ap.add_argument("--results", default="data/p3_runs/results",
-                    help="Path to data/p3_runs/results/")
+    ap = argparse.ArgumentParser(description="Drift coverage and cost analysis")
+    ap.add_argument("--outputs", default="inputs/episodes",
+                    help="Directory containing archived experiment batches")
+    ap.add_argument("--results", default="generated/analysis",
+                    help="Analysis output directory")
     args = ap.parse_args()
     result = run_pipeline(Path(args.outputs), Path(args.results))
     print(json.dumps({k: v for k, v in result.items() if k != "stats"}, indent=2, default=_json_default))

@@ -52,7 +52,7 @@ def copy_snapshot(snapshot_name: str, output_dir: Path,
                   pod_name: str = "prometheus-prometheus-kube-prometheus-prometheus-0",
                   namespace: str = "monitoring",
                   container: str = "prometheus",
-                  kube_context: str = "kind-p3-experiments") -> bool:
+                  kube_context: str = "kind-confscale-experiments") -> bool:
     """Copy a TSDB snapshot from the Prometheus pod to a local directory."""
     snapshot_path = f"/prometheus/snapshots/{snapshot_name}"
     dest_dir = output_dir / "prometheus_snapshot"

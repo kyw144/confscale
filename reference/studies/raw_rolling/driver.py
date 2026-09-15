@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run paired HPA cost comparisons for workloads A and B."""
+"""Run rolling-origin recalibration on workloads F–H."""
 from __future__ import annotations
 
 if __name__ == "__main__":
@@ -22,8 +22,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 
@@ -36,39 +36,30 @@ from orchestrator.methods import (  # noqa: E402
 )
 from orchestrator.clusters import make_slots  # noqa: E402
 
-COMPLEXITY = 50000          # matches the original D cost runs (ev7_driver.py:79)
+COMPLEXITY = 50000          # matches the locked laddered F/G/H baseline run_config.yaml
 COMPUTE_NS = "infosys-benchmark"
 COMPUTE_DEPLOY = "compute-worker"
 PROM_NS = "monitoring"
 PROM_DEPLOY = "prometheus"
-T4_DURATION = 1800          # ev7 EV7_DURATION; per-hour-normalized cost is duration-invariant
+DURATION = 1800          # 6 x 300 s periods; matches the laddered baseline duration
+REPS = 6                 # Drift variance convention: R=6; escalate to 8 if inconclusive
 
-logger = logging.getLogger("t4")
+logger = logging.getLogger("raw_rolling")
 
 
-def build_cells(pattern: str, duration_s: int) -> list[dict]:
+def build_cells() -> list[dict]:
+    """3 cells: RAW confscale-rolling-origin x pattern in {F, G, H}, R=6 each."""
     cells: list[dict] = []
-    # anchor + 2×2 tuned grid (all the v2 behavior path), n=5 — exactly ev7_driver.py:96-109.
-    hpa_grid = [
-        ("hpa-anchor-u50-s300", 50, 300),   # reproduction anchor
-        ("hpa-tuned-u50-s60",   50, 60),
-        ("hpa-tuned-u50-s120",  50, 120),
-        ("hpa-tuned-u70-s60",   70, 60),
-        ("hpa-tuned-u70-s120",  70, 120),
-    ]
-    for name, util, stab in hpa_grid:
+    for pat in ("F", "G", "H"):
         cells.append({
-            "label": f"{name}/{pattern}", "task": "T4",
-            "method_spec": {"base": "hpa-reactive", "name": name,
-                            "cpu_target": util, "downscale_stabilization_s": stab},
-            "pattern": pattern, "duration_s": duration_s, "n_reps": 5,
+            "label": f"confscale-rolling-origin/{pat}", "task": "raw_rolling",
+            "method_spec": {
+                "base": "confscale-rolling-origin",
+                "name": "confscale-rolling-origin",
+                "coverage_monitor": True,
+            },
+            "pattern": pat, "duration_s": DURATION, "n_reps": REPS,
         })
-    # in-batch ConfScale-SCP re-run (matched current-cluster comparator) — ev7_driver.py:111-115.
-    cells.append({
-        "label": f"confscale-scp/{pattern}", "task": "T4",
-        "method_spec": "confscale-scp",
-        "pattern": pattern, "duration_s": duration_s, "n_reps": 5,
-    })
     return cells
 
 
@@ -86,6 +77,7 @@ def _pack_group(units_by_label: dict[str, list[dict]], n_workers: int,
     if len(labels) == 1:
         u = units_by_label[labels[0]][:]
         return [u[i:i + n_workers] for i in range(0, len(u), n_workers)]
+
     counts = {lbl: len(units_by_label[lbl]) for lbl in labels}
     R = counts[labels[0]]
     assert all(c == R for c in counts.values()), \
@@ -123,9 +115,11 @@ def plan_waves(cells: list[dict], n_workers: int, seed: int) -> list[dict]:
     for c in cells:
         for rep in range(1, c["n_reps"] + 1):
             groups[c["task"]][c["label"]].append(_unit(c, rep))
+
     group_waves: dict[str, list[list[dict]]] = {}
     for gkey in sorted(groups, reverse=True):
         group_waves[gkey] = _pack_group(groups[gkey], n_workers, rng)
+
     ordered = _interleave(group_waves)
     plan = []
     for wi, wave_units in enumerate(ordered, 1):
@@ -242,45 +236,34 @@ def preflight(slots) -> bool:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="T4 Pattern A/B/C tuned-HPA cost wave driver")
+    ap = argparse.ArgumentParser(description="Rolling-origin F/G/H experiment")
     ap.add_argument("--output-dir", type=Path, required=True)
-    ap.add_argument("--pattern", required=True, choices=["A", "B", "C"],
-                    help="which sub-run grid to execute")
-    ap.add_argument("--seed", type=int, default=20260624)
+    ap.add_argument("--seed", type=int, default=20260621)
     ap.add_argument("--settle", type=int, default=30,
                     help="seconds to let Prometheus scrape after reset")
     ap.add_argument("--start-wave", type=int, default=1, help="resume from wave N (1-based)")
-    ap.add_argument("--duration-override", type=int, default=None,
-                    help="SMOKE ONLY: per-cell duration (s) instead of 1800")
-    ap.add_argument("--max-waves", type=int, default=None,
-                    help="SMOKE ONLY: run at most this many waves")
     ap.add_argument("--dry-run", action="store_true", help="print the wave plan and exit")
     args = ap.parse_args()
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    duration = args.duration_override or T4_DURATION
-    cells = build_cells(args.pattern, duration)
+    cells = build_cells()
     slots = make_slots(3)
     plan = plan_waves(cells, n_workers=len(slots), seed=args.seed)
-    if args.max_waves is not None:
-        plan = plan[:args.max_waves]
 
     plan_summary = [{
         "wave": w["wave"], "duration_s": w["duration_s"],
         "cells": [u["label"] for u in w["units"]],
     } for w in plan]
     (out_dir / "wave_plan.json").write_text(json.dumps({
-        "pattern": args.pattern, "seed": args.seed, "duration_s": duration,
-        "n_waves": len(plan), "n_cells": sum(len(w["units"]) for w in plan),
-        "waves": plan_summary,
+        "study": "raw_rolling", "seed": args.seed, "n_waves": len(plan),
+        "n_cells": sum(len(w["units"]) for w in plan), "waves": plan_summary,
     }, indent=2))
 
     if args.dry_run:
         total_s = sum(w["duration_s"] + args.settle + 90 for w in plan)
-        print(json.dumps({"pattern": args.pattern, "seed": args.seed, "duration_s": duration,
-                          "n_waves": len(plan),
+        print(json.dumps({"study": "raw_rolling", "seed": args.seed, "n_waves": len(plan),
                           "n_cells": sum(len(w['units']) for w in plan),
                           "est_wall_h": round(total_s / 3600.0, 1),
                           "waves": plan_summary}, indent=2))
@@ -291,15 +274,14 @@ def main():
         datefmt="%H:%M:%S",
         handlers=[logging.StreamHandler(), logging.FileHandler(out_dir / "driver.log")],
     )
-    logger.info("T4 driver: pattern=%s, %d cells in %d waves, dur=%ds, output=%s seed=%d",
-                args.pattern, sum(len(w["units"]) for w in plan), len(plan), duration,
-                out_dir, args.seed)
+    logger.info("Rolling-origin driver: %d cells in %d waves, output=%s seed=%d",
+                sum(len(w["units"]) for w in plan), len(plan), out_dir, args.seed)
 
     if not preflight(slots):
-        logger.error("Preflight failed — cluster unresponsive. Stopping (no repair).")
+        logger.error("Preflight failed — cluster unresponsive. Stopping.")
         sys.exit(2)
 
-    runlog_path = out_dir / "ev7ab_run_log.csv"
+    runlog_path = out_dir / "run_log.csv"
     fields = ["wave", "task", "label", "method", "workload", "replicate", "duration_s",
               "worker_id", "cluster", "status", "coverage_rate", "run_id",
               "start_time", "end_time", "error_message", "output_dir"]
@@ -363,12 +345,8 @@ def main():
                     (time.time() - overall_start) / 3600.0)
 
     runlog.close()
-    logger.info("DRIVER COMPLETE: pattern=%s waves %d..%d, total %.2f h",
-                args.pattern, args.start_wave, len(plan),
-                (time.time() - overall_start) / 3600.0)
-    (out_dir / "_DRIVER_DONE").write_text(
-        json.dumps({"pattern": args.pattern, "n_waves": len(plan),
-                    "elapsed_h": round((time.time() - overall_start) / 3600.0, 2)}) + "\n")
+    logger.info("DRIVER COMPLETE: waves %d..%d, total %.2f h",
+                args.start_wave, len(plan), (time.time() - overall_start) / 3600.0)
 
 
 if __name__ == "__main__":

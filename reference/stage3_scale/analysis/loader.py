@@ -162,7 +162,7 @@ def load_runs(input_dir: Path) -> pd.DataFrame:
             "duration_s": r.duration_s,
             "actual_duration_s": r.actual_duration_s,
             # SLO latency / violation columns — explicit per-basis, e2e never
-            # silently backfilled with the controller proxy (E-V6b).
+            # silently backfilled with the controller proxy.
             **_slo_metric_columns(m),
             "mean_replicas": resources.get("mean_replicas", np.nan),
             "max_replicas": resources.get("max_replicas", np.nan),
@@ -182,7 +182,7 @@ def load_runs(input_dir: Path) -> pd.DataFrame:
         logger.warning("No runs found in %s", input_dir)
         return df
 
-    # E-V6b: surface (never silently absorb) cells whose e2e block is missing —
+    # Surface (never silently absorb) cells whose e2e block is missing —
     # their bare p95_ms / slo_violation_rate are NaN, not the controller proxy.
     if "metric_basis" in df.columns:
         n_missing = int((df["metric_basis"] == "e2e_MISSING").sum())

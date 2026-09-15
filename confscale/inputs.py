@@ -12,12 +12,15 @@ def restore(source, destination):
     if not destination.is_relative_to(ROOT / 'inputs'):
         raise ValueError('Restore destination must be under the ignored inputs/ directory')
     manifest = json.loads((ROOT / 'provenance/omitted_inputs.json').read_text())
-    rows = [r for r in manifest['inputs'] if r['source'].startswith('data/p3_runs/models/')]
+    rows = [r for r in manifest['inputs'] if r['path'].startswith('models/')]
     verified = []
     for row in rows:
-        original = (source / row['source']).resolve()
+        relative = Path(row['path']).relative_to('models')
+        original = (source / relative).resolve()
+        if not original.is_file():
+            original = (source / row['source']).resolve()
         if not original.is_relative_to(source):
-            raise ValueError('Input path escapes source checkout')
+            raise ValueError('Input path escapes source directory')
         data = original.read_bytes()
         source_hash = hashlib.sha256(data).hexdigest()
         conversion = 'none'
@@ -29,8 +32,10 @@ def restore(source, destination):
                     data, conversion = candidate, label
                     break
         if hashlib.sha256(data).hexdigest() != row['sha256']:
-            raise ValueError(f'Input hash mismatch: {row["source"]}')
-        target = destination / Path(row['source']).relative_to('data/p3_runs/models')
+            raise ValueError(f'Input hash mismatch: {row["path"]}')
+        target = (destination / relative).resolve()
+        if not target.is_relative_to(destination):
+            raise ValueError('Input path escapes destination directory')
         if target.exists() and sha256(target) != row['sha256']:
             raise ValueError(f'Refusing to replace different local input: {target}')
         verified.append((data, target, {**row, 'local_source_sha256': source_hash,
@@ -46,7 +51,7 @@ def restore(source, destination):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', required=True, type=Path, help='Input bundle containing data/p3_runs/models')
+    parser.add_argument('--source', required=True, type=Path, help='Model directory containing gru/ and uq/')
     parser.add_argument('--destination', type=Path, default=ROOT / 'inputs/models')
     args = parser.parse_args()
     print(json.dumps(restore(args.source, args.destination), indent=2))

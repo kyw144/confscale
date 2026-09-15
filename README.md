@@ -69,11 +69,11 @@ certificate. Image digests are in [cluster/images.lock.json](cluster/images.lock
 
 ### Supply models
 
-For predictive runs, provide an input bundle with `data/p3_runs/models/` matching
+For predictive runs, provide a model directory with `gru/` and `uq/` matching
 [provenance/omitted_inputs.json](provenance/omitted_inputs.json):
 
 ```sh
-.venv/bin/python -m confscale.inputs --source /path/to/input-bundle
+.venv/bin/python -m confscale.inputs --source /path/to/models
 .venv/bin/python -m confscale.experiment check-inputs
 ```
 
@@ -175,9 +175,18 @@ Cluster deletion removes its temporary Prometheus data; exported run files remai
 | `reference/stage3_scale/` | Controllers, predictors, uncertainty models and testbed |
 | `reference/studies/` | Study-specific analysis and drivers |
 | `configs/`, `cluster/`, `requirements/` | Experiment settings, image pins and dependency locks |
-| `evidence/` | Frozen paper results |
+| `evidence/` | Frozen results grouped by calibration, cost, drift and study |
 | `provenance/`, `validation/` | Source/input manifests, adaptations and validation receipts |
 | `inputs/`, `generated/` | Local inputs and outputs; ignored by Git |
+
+Evidence filenames describe their contents, such as `cost/pattern_d.json` and
+`per_horizon/pool.json`. The source manifest and frozen result contents retain
+original identifiers.
+Reference study scripts run from the checkout root and use `generated/studies/`
+for new outputs. Trace archives belong in `inputs/traces/MSRTMCR/`; expanded-pool
+replays read `inputs/studies/expanded_pool/{candidates.csv,sanity_gate.json}`.
+These scripts require the omitted datasets and are outside the validated smoke workflow.
+Reference parallel workers use the `confscale-experiments-w<N>` cluster names.
 
 ACI/PID update interval widths from residuals; the coverage monitor scores prior
 intervals; the ladder widens intervals after persistent undercoverage. The planner
@@ -188,9 +197,9 @@ ACI/PID adjust h0; another horizon can still determine the replica target.
 |---|---|
 | 1: calibration | `reference/stage3_scale/analysis/calibration.py` |
 | 2: tuned HPA cost | `reference/studies/tuned_hpa/` |
-| 3: drift and escalation | `reference/stage3_scale/analysis/post_reframe.py` |
+| 3: drift and escalation | `reference/stage3_scale/analysis/drift_summary.py` |
 | 4: per-service coverage | `reference/studies/per_service/` |
-| 5: worker-binding latency | `reference/studies/binding/rc5_driver.py` |
+| 5: worker-binding latency | `reference/studies/binding/driver.py` |
 
 [confscale/reproduce.py](confscale/reproduce.py) maps these tables to retained
 inputs. [source_manifest.json](provenance/source_manifest.json) records original
@@ -205,7 +214,7 @@ license has been assigned; third-party notices are retained.
 |---|---|
 | Source integrity | 119 source-derived files verified |
 | Paper tables | 132 data cells, 195 numeric values and 24 row labels matched |
-| Software tests | 111 tests and 18 subtests passed |
+| Software tests | 113 tests and 20 subtests passed |
 | Live smoke | HPA and PID passed; PID issued 7 forecasts and validated 6 intervals |
 
 The [live receipt](validation/mac-arm64-smoke.json) pins its tested commit, inputs,
@@ -214,6 +223,8 @@ trace replay remain unverified. Historical test environments and CI results are
 in the [previous validation record](https://github.com/kyw144/confscale/blob/d10776f040a55256d81a7793bd0825974cef2c4d/docs/VALIDATION.md).
 The [documentation cleanup receipt](provenance/comment_cleanup.json) records
 software checks and code/config equivalence; it includes no new live runs.
+The [path normalization receipt](provenance/public_paths.json) records file moves
+and validation of the public layout.
 
 Run `python scripts/validate.py` for offline checks or
 `.venv/bin/python scripts/validate.py --runtime-tests` for the full suite.

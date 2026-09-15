@@ -10,16 +10,15 @@ if __name__ == "__main__":
 import sys, json, importlib.util
 from collections import deque
 import numpy as np
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 import torch
 from predictor.data import NormalizationParams
 from uq.conformal import SplitConformal
 from uq.conformal_pid import ConformalPID
 from uq.aci import ACI
 
-DIR = open('/tmp/ev8b_pass2_full_dir.txt').read().strip()
-P2DIR = "data/p3_runs/results/ev8b_perservice_20260601_024537"
-spec = importlib.util.spec_from_file_location("p2", f"{P2DIR}/pass2_perservice.py")
+DIR = "generated/studies/per_service_full"
+spec = importlib.util.spec_from_file_location("p2", "reference/studies/per_service/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
 H, K, ALPHA = p2.H, p2.K, p2.ALPHA
 NOMINAL, R, COVWIN = 90.0, 6, 30

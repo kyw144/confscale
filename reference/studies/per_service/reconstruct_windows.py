@@ -7,13 +7,16 @@ if __name__ == "__main__":
         raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
+from pathlib import Path
+
 import sys, json
 import numpy as np
 import pandas as pd
 
-PASS1 = "data/p3_runs/results/ev8b_pass1_20260601"
-DIR = open('/tmp/ev8b_pass2_full_dir.txt').read().strip()
-LOCK_MD = "docs/papers/p3/ev8b_LOCK_2026-06-01.md"
+PASS1 = "generated/studies/service_selection"
+DIR = "generated/studies/per_service_full"
+Path(DIR).mkdir(parents=True, exist_ok=True)
+LOCK_MD = "generated/studies/per_service_full/windows.md"
 W, HALF = 120, 60
 GAP = (1080, 1140)
 N_TS = 1440
@@ -134,7 +137,7 @@ if m69:
 print("VALIDATION PASS: windowing rule reproduces anchor MS_7129 + MS_69588 level windows verbatim.")
 
 lock = dict(
-    name='ev8b_LOCK_2026-06-01', rematerialized=True, basis='load-stats only (means, first-diff-std)',
+    name='per_service_windows', rematerialized=True, basis='load-stats only (means, first-diff-std)',
     windowing_rule=dict(W=W, gap=list(GAP),
         level='cal=[lo_c±60], deploy=[hi_c±60], train=[max(0,HI-720),HI) (deploy in-sample)',
         volatility='cal=[lo_c±60], deploy=[hi_c±60], train=[max(0,dep_lo-720),dep_lo) (deploy out-of-sample)',
@@ -159,13 +162,11 @@ def fmt_cells(ch):
     return "\n".join(out)
 
 vol_blocked = [b['service'] for b in blocked if b['channel'] == 'volatility']
-md = f"""# ev8b_LOCK_2026-06-01 — Pre-Registration Lock (RE-MATERIALISED 2026-06-01)
+md = f"""# Fixed service evaluation windows
 
-**Re-materialised** from inline window records (`pass1_selected_candidates.csv` plateau centers +
-`_TRACE_PERSERVICE_*` status files), **load-stats only** (means + first-diff-stds; NO coverage). The
-named file was missing from disk; this restores the pre-registration record before Pass-2 (full) runs.
-Windowing rule reproduces the inline anchors **MS_7129 level** (cal[165,285]/deploy[674,794]) and
-**MS_69588 level** (cal[304,424]/deploy[842,962]) **verbatim** (asserted in `lock_rematerialize.py`).
+Reconstructed from candidate plateau centers and fixed anchor windows using load
+statistics only. Coverage is not used for selection. Assertions check the
+MS_7129 and MS_69588 anchor windows.
 
 ## Locked parameters
 - W = {W} bins (2 h plateau); data gap **[{GAP[0]},{GAP[1]})** avoided by every window + train.

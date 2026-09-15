@@ -66,8 +66,8 @@ def plan(config, profile):
 
 def verify_models(config):
     manifest = json.loads((ROOT / 'provenance/omitted_inputs.json').read_text())
-    expected = {r['source'].removeprefix('data/p3_runs/models/'): r['sha256']
-                for r in manifest['inputs'] if r['source'].startswith('data/p3_runs/models/')}
+    expected = {r['path'].removeprefix('models/'): r['sha256']
+                for r in manifest['inputs'] if r['path'].startswith('models/')}
     files = {}
     for workload in config['workloads']:
         pattern = MODEL_PATTERN.get(workload, 'diurnal')

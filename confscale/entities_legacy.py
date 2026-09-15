@@ -59,7 +59,7 @@ def parse_markdown_table(path: Path):
 
 
 def table_1_calibration():
-    src = ROOT / "data" / "p3_runs" / "results" / "real" / "tables" / "table_3_calibration.md"
+    src = ROOT / "calibration" / "coverage.md"
     header, rows = parse_markdown_table(src)
     wanted = []
     for row in rows:
@@ -84,13 +84,13 @@ def table_1_calibration():
     text += ["| " + " | ".join(row) + " |" for row in wanted]
     text += [
         "",
-        f"Source: `{src.relative_to(ROOT).as_posix()}`.",
+        f"Source: `evidence/{src.relative_to(ROOT).as_posix()}`.",
     ]
     write_text(TABLES / "table_1_uq_calibration.md", "\n".join(text))
 
 
 def table_2_tuned_hpa():
-    src = ROOT / "data" / "p3_runs" / "results" / "ev7_tuned_baseline_20260601_203020" / "ev7_cost_analysis.json"
+    src = ROOT / "cost" / "pattern_d.json"
     data = load_json(src)
     rows = []
     rows.append(
@@ -157,13 +157,13 @@ def table_2_tuned_hpa():
     text += [
         "",
         "Strict matched-SLO comparison: ConfScale-SCP is +5.8% cheaper than `hpa-tuned-u50-s60`, within n=5 noise. Cheapest SLO-meeting comparison: ConfScale-SCP is 43.3% more expensive than `hpa-tuned-u70-s60`.",
-        f"Source: `{src.relative_to(ROOT).as_posix()}`.",
+        f"Source: `evidence/{src.relative_to(ROOT).as_posix()}`.",
     ]
     write_text(TABLES / "table_2_tuned_hpa_pattern_d.md", "\n".join(text))
 
 
 def drift_summary_from_table_a():
-    src = ROOT / "data" / "p3_runs" / "results" / "post_reframe" / "tables" / "table_a_coverage_cost_drift.md"
+    src = ROOT / "drift" / "coverage_cost.md"
     header, rows = parse_markdown_table(src)
     data = {}
     for row in rows:
@@ -205,14 +205,14 @@ def table_3_drift():
         text.append("| " + " | ".join(row) + " |")
     text += [
         "",
-        f"Source: `{src.relative_to(ROOT).as_posix()}`.",
+        f"Source: `evidence/{src.relative_to(ROOT).as_posix()}`.",
     ]
     write_text(TABLES / "table_3_drift_coverage_cost.md", "\n".join(text))
 
 
 def table_4_rescue_k8():
-    ev3 = load_json(ROOT / "data" / "p3_runs" / "results" / "variance_recheck_20260530_175923" / "ev3_analysis.json")
-    acih = load_json(ROOT / "data" / "p3_runs" / "results" / "ev7_tuned_baseline_20260601_203020" / "ev3_acih_analysis.json")
+    ev3 = load_json(ROOT / "drift" / "ladder_comparison.json")
+    acih = load_json(ROOT / "drift" / "aci_pattern_h.json")
     rows = []
     for key, short in [("confscale-aci|G", "ACI on G"), ("confscale-pid|G", "PID on G")]:
         item = ev3["rederived"][key]
@@ -255,15 +255,15 @@ def table_4_rescue_k8():
     text += ["| " + " | ".join(str(cell) for cell in row) + " |" for row in rows]
     text += [
         "",
-        "Sources: `data/p3_runs/results/variance_recheck_20260530_175923/ev3_analysis.json`; `data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev3_acih_analysis.json`.",
+        "Sources: `evidence/drift/ladder_comparison.json`; `evidence/drift/aci_pattern_h.json`.",
     ]
     write_text(TABLES / "table_4_k8_ladder_rescue.md", "\n".join(text))
 
 
 def table_5_perservice():
-    summary = load_json(ROOT / "data" / "p3_runs" / "results" / "ev8b_pass2_full_20260601_210028" / "pass2_full_summary.json")
-    recal = load_json(ROOT / "data" / "p3_runs" / "results" / "ev8b_pass2_full_20260601_210028" / "pass2_full_recal.json")
-    anchor = load_json(ROOT / "data" / "p3_runs" / "results" / "ev8b_perservice_20260601_024537" / "recal_volatility.json")
+    summary = load_json(ROOT / "per_service" / "coverage.json")
+    recal = load_json(ROOT / "per_service" / "recalibration.json")
+    anchor = load_json(ROOT / "per_service" / "anchor_recalibration.json")
     recovery = {}
     for item in recal["services"]:
         recovery[item["service"]] = {
@@ -327,13 +327,13 @@ def table_5_perservice():
             f"{summary['volatility']['granularity_effect_x']}x granularity effect. That analysis uses "
             "different windows, so its per-service magnitudes differ slightly from the deploy-window gaps above."
         ),
-        "Sources: `data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_summary.json`; `pass2_full_recal.json`; `data/p3_runs/results/ev8b_perservice_20260601_024537/recal_volatility.json`.",
+        "Sources: `evidence/per_service/coverage.json`; `evidence/per_service/recalibration.json`; `evidence/per_service/anchor_recalibration.json`.",
     ]
     write_text(TABLES / "table_5_perservice_volatility.md", "\n".join(text))
 
 
 def table_6_h1_binds():
-    src = ROOT / "data" / "p3_runs" / "results" / "ev8b_perservice_20260601_024537" / "h1_binds.json"
+    src = ROOT / "per_service" / "horizon_binding.json"
     data = load_json(src)
     text = [
         "# Table 6 - h0-Only Recalibration Reach",
@@ -360,7 +360,7 @@ def table_6_h1_binds():
         )
     text += [
         "",
-        f"Source: `{src.relative_to(ROOT).as_posix()}`.",
+        f"Source: `evidence/{src.relative_to(ROOT).as_posix()}`.",
     ]
     write_text(TABLES / "table_6_h1_binds.md", "\n".join(text))
 
@@ -507,7 +507,7 @@ def bar_chart(path, labels, values, colors, ylabel="", target_lines=None, height
 
 
 def figure_tuned_hpa():
-    data = load_json(ROOT / "data" / "p3_runs" / "results" / "ev7_tuned_baseline_20260601_203020" / "ev7_cost_analysis.json")
+    data = load_json(ROOT / "cost" / "pattern_d.json")
     items = [
         ("HPA 70/60", data["config_table"][0]["overhead_per_hour_mean"]),
         ("ConfScale SCP", data["scp"]["overhead_per_hour_mean"]),
@@ -525,7 +525,7 @@ def figure_tuned_hpa():
 
 
 def figure_perservice():
-    summary = load_json(ROOT / "data" / "p3_runs" / "results" / "ev8b_pass2_full_20260601_210028" / "pass2_full_summary.json")
+    summary = load_json(ROOT / "per_service" / "coverage.json")
     services = summary["volatility"]["distribution"]["services"]
     labels = [s for s, _g in services]
     values = [g for _s, g in services]
@@ -542,8 +542,8 @@ def figure_perservice():
 
 
 def figure_ladder_rescue():
-    ev3 = load_json(ROOT / "data" / "p3_runs" / "results" / "variance_recheck_20260530_175923" / "ev3_analysis.json")
-    acih = load_json(ROOT / "data" / "p3_runs" / "results" / "ev7_tuned_baseline_20260601_203020" / "ev3_acih_analysis.json")
+    ev3 = load_json(ROOT / "drift" / "ladder_comparison.json")
+    acih = load_json(ROOT / "drift" / "aci_pattern_h.json")
     labels = ["ACI G raw", "ACI G ladder", "PID G raw", "PID G ladder", "ACI H raw", "ACI H ladder"]
     values = [
         ev3["rederived"]["confscale-aci|G"]["raw_mean"],
@@ -565,7 +565,7 @@ def figure_ladder_rescue():
 
 
 def figure_h1_binds():
-    data = load_json(ROOT / "data" / "p3_runs" / "results" / "ev8b_perservice_20260601_024537" / "h1_binds.json")
+    data = load_json(ROOT / "per_service" / "horizon_binding.json")
     methods = ["aci", "pid", "aci-lad", "pid-lad"]
     labels = ["ACI", "PID", "ACI ladder", "PID ladder"]
     values = [data["methods"][m]["h1_binds_pct"]["mean"] for m in methods]
@@ -665,7 +665,7 @@ def figure_control_loop():
 
 
 def copy_existing_pdf_note():
-    src = ROOT / "data" / "p3_runs" / "results" / "post_reframe" / "figures" / "figure_a_cost_vs_coverage.pdf"
+    src = ROOT / "drift" / "coverage_cost.pdf"
     # Keep the generated SVG as the reviewer-facing figure, but copy the original PDF for provenance if present.
     if src.exists():
         dest = FIGURES / "source_figure_a_cost_vs_coverage.pdf"

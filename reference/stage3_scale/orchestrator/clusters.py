@@ -13,7 +13,7 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_CLUSTER_PREFIX = "p3-experiments"
+DEFAULT_CLUSTER_PREFIX = "confscale-experiments"
 DEFAULT_BASE_FRONTEND_PORT = 31080      # NOT 30080 — leaves the existing single cluster usable
 DEFAULT_BASE_PROMETHEUS_PORT = 9190     # NOT 9090 — same reason
 DEFAULT_BASE_INGRESS_HTTPS_PORT = 31443

@@ -11,19 +11,19 @@ import sys, json, importlib.util, os
 import numpy as np
 import pandas as pd
 
-T2 = "data/p3_runs/reopen_2026-06/T2"
-OUTDIR = "data/p3_runs/reopen_2026-06/T1b"
+POOL_INPUTS = "inputs/studies/expanded_pool"
+OUTDIR = "generated/studies/per_horizon_pool"
 OUT = f"{OUTDIR}/recal_pool_h1.json"
 AGG = f"{OUTDIR}/recal_pool_h1_aggregate.json"
 
-T1SCRIPT = "data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.py"
+T1SCRIPT = "reference/studies/per_horizon/recal_perservice_h1.py"
 spec = importlib.util.spec_from_file_location("t1h1", T1SCRIPT)
 t1 = importlib.util.module_from_spec(spec); spec.loader.exec_module(t1)
 R, NOMINAL = t1.R, t1.NOMINAL
 
-CAND = pd.read_csv(f"{T2}/t2_candidates.csv")
-GATE = f"{T2}/t2_sanity_gate.json"
-METHODS = ['frozen', 'aci', 'pid']   # T1's non-anchor protocol (ladder is anchor-only; verdict is on plain ACI)
+CAND = pd.read_csv(f"{POOL_INPUTS}/candidates.csv")
+GATE = f"{POOL_INPUTS}/sanity_gate.json"
+METHODS = ['frozen', 'aci', 'pid']   # Non-anchor protocol (ladder is anchor-only; verdict is on plain ACI)
 
 
 def select_cells():
@@ -41,7 +41,7 @@ def select_cells():
             'ref':    (int(row['cal_lo']),   int(row['cal_hi'])),
             'deploy': (int(row['dep_lo']),   int(row['dep_hi'])),
             'anchor': False,
-            'src': 'T2 vol_band_disjoint (t2_candidates.csv + t2_sanity_gate.json; P3-D003/D004)',
+            'src': 'expanded_pool: disjoint volatility candidates passing the sanity gate',
             'idx': i, 'ratio': float(g.get('ratio')),
             'gate_frozen_cov_h0': g.get('deploy_cov_h0'), 'gate_frozen_cov_h1': g.get('deploy_cov_h1'),
         })
@@ -60,7 +60,7 @@ def run_range(start, end):
     assert len(cells) == 16, f"expected 16 vol_band_disjoint sanity-passing cells, got {len(cells)}"
     os.makedirs(OUTDIR, exist_ok=True)
     done = load_out()
-    print(f"T1b pool: {len(cells)} cells | R={R} | methods={METHODS} | nominal {NOMINAL}% | range [{start},{end})",
+    print(f"Per-horizon pool: {len(cells)} cells | R={R} | methods={METHODS} | nominal {NOMINAL}% | range [{start},{end})",
           flush=True)
     for i in range(start, min(end, len(cells))):
         c = cells[i]
@@ -118,7 +118,7 @@ def aggregate():
          for r in results if r['methods']['aci']['per_horizon']['gap_h1'] > 5.0],
         key=lambda x: -x['aci_ph_gap_h1'])
     out = dict(
-        task='T1b — per-horizon h1 recal generalized to 16 disjoint volatility candidates (OFFLINE, R=6)',
+        task='per-horizon h1 recalibration generalized to 16 disjoint volatility candidates (OFFLINE, R=6)',
         n_cells=len(results), R=R, nominal_pct=NOMINAL,
         verdict_criterion='PASS: mean ACI per-horizon h1 gap <= 5.0pp AND median h1 width mult <= 6x; '
                           'PARTIAL: gap <= 10pp AND width <= 10x; FAIL: gap > 10pp OR width > 10x',

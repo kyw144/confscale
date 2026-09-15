@@ -795,7 +795,7 @@ def _run_matrix_parallel(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="P3 Experiment Matrix Orchestrator"
+        description="ConfScale Experiment Matrix Orchestrator"
     )
     parser.add_argument(
         "--config", type=Path, default=DEFAULT_CONFIG,

@@ -7,10 +7,12 @@ if __name__ == "__main__":
         raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
+from pathlib import Path
+
 import sys, json, time
 import numpy as np
 import pandas as pd
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 import torch
 torch.manual_seed(42); np.random.seed(42)
 from predictor.data import NormalizationParams
@@ -19,8 +21,7 @@ from uq.conformal import SplitConformal
 from uq.quantile import QuantileRegressor
 from uq.evaluate import evaluate_uq_method
 
-PASS1 = "data/p3_runs/results/ev8b_pass1_20260601"
-EV8 = "data/p3_runs/results/ev8_etl_build_20260531_215632"
+PASS1 = "generated/studies/service_selection"
 H, K, ALPHA = 60, 2, 0.1
 NOMINAL = (1 - ALPHA) * 100
 GAP = (1080, 1140)   # global 1 h data gap — all windows must avoid it
@@ -117,7 +118,8 @@ def run_test(ms, label, train_win, cal_win, deploy_win, heads=('be', 'scp', 'qr'
 
 if __name__ == '__main__':
     only = sys.argv[1] if len(sys.argv) > 1 else 'headline'
-    DIR = open('/tmp/ev8b_pass2_dir.txt').read().strip()
+    DIR = "generated/studies/per_service"
+    Path(DIR).mkdir(parents=True, exist_ok=True)
     results = []
     if only in ('headline', 'all'):
         # MS_7129 — primary dual exemplar (lock windows verbatim)

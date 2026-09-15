@@ -38,7 +38,7 @@ def check_table_cells(table_id, rows, expected):
     return count
 
 def build_binding_table(evidence):
-    rel = 'data/p3_runs/outputs/slo_binding_existence_proof_20260621_134302/rc5_results.json'
+    rel = 'binding/results.json'
     data = json.loads((evidence/rel).read_text(encoding='utf-8'))
     text = ['# Table 5. Coverage repair and end-to-end p95 on the worker-binding testbed', '',
             'Frozen measurements; mean +/- sample s.d. in ms, R=3; 18/18 cells completed.',
@@ -82,7 +82,6 @@ def reproduce(output, evidence=None):
             text = text.replace('Drift Coverage and Cost Geometry', 'Coverage and Replica Cost under Drift')
             text = text.replace('Raw G/H correction notes are in Table 4.',
                                 'Raw G/H comparisons are retained in `supporting_entities/tables/table_4_k8_ladder_rescue.md` (older supporting-table numbering).')
-        text = text.replace('`data/p3_runs/', '`evidence/data/p3_runs/')
         tables[str(number)] = text
     tables['5'] = build_binding_table(evidence)
     expected = json.loads((PACKAGE_ROOT/'provenance/paper_tables_expected.json').read_text(encoding='utf-8'))

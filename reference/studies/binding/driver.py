@@ -23,8 +23,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 
@@ -37,25 +37,25 @@ from orchestrator.methods import (  # noqa: E402
 )
 from orchestrator.clusters import make_slots  # noqa: E402
 
-COMPLEXITY = 50000          # matches the locked rig (card §4, HELD)
+COMPLEXITY = 50000          # Fixed worker workload complexity
 COMPUTE_NS = "infosys-benchmark"
 COMPUTE_DEPLOY = "compute-worker"
 COMPUTE_CONTAINER = "compute-worker"
 PROM_NS = "monitoring"
 PROM_DEPLOY = "prometheus"
-DURATION = 1800             # Stage B per-cell (card §3)
-REPS = 3                   # card §3 (R=3; verdict written against pooled n=3 std)
+DURATION = 1800             # Per-cell duration
+REPS = 3                   # Verdict uses sample standard deviation across three replicates
 
-# The binding knob (card §4): live-patch only, restore after.
+# Patch worker limits for this run, then restore them.
 WORKER_LIMIT_BIND = "80m"
 WORKER_LIMIT_LOCKED = "500m"
-WORKER_CONTEXTS = ["kind-p3-experiments-w0", "kind-p3-experiments-w1",
-                   "kind-p3-experiments-w2"]
+WORKER_CONTEXTS = ["kind-confscale-experiments-w0", "kind-confscale-experiments-w1",
+                   "kind-confscale-experiments-w2"]
 
-# Stage A probe (card §3; E-V1 grid analyze.py / sweep_driver.py)
-PROBE_CTX = "kind-p3-experiments-w2"
+# Probe for worker binding before the main experiment.
+PROBE_CTX = "kind-confscale-experiments-w2"
 PROBE_TARGET = "http://localhost:31082"     # w2 frontend NodePort (clusters.py:39 + i=2)
-PROBE_LOADS = [150, 100]                     # >=1 offered load (card §3); two for robustness
+PROBE_LOADS = [150, 100]                     # Check binding at two offered loads
 PROBE_REPLICAS = [2, 4, 6, 8, 10, 12, 16, 20]
 PROBE_DURATION = 120
 PROBE_WARMUP = 30
@@ -235,7 +235,7 @@ def build_cells() -> list[dict]:
     for mname, mspec in methods:
         for pat in ("F", "G"):
             cells.append({
-                "label": f"{mname}/{pat}", "task": "T5d",
+                "label": f"{mname}/{pat}", "task": "binding",
                 "method_spec": mspec, "pattern": pat,
                 "duration_s": DURATION, "n_reps": REPS,
             })
@@ -449,7 +449,7 @@ def compute_verdict(stage_a: dict, cell_stats: dict) -> dict:
     elif nominal_within:
         verdict = "INCONCLUSIVE"
         why = ("bound, some (method,pattern) nominally lower but within pooled std (n=3); "
-               "card §2 -> escalate those cells + baseline to R=6 before calling")
+               "Repeat those cells and their baseline at R=6 before drawing a conclusion")
     else:
         verdict = "FAIL"
         why = "binding took (ratio>=1.30) but no recalibrated method beats hpa-qr-monitored on e2e p95"
@@ -474,7 +474,7 @@ def aggregate_cells(runlog_rows: list[dict]) -> dict:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="P3-C-T5d RC5 SLO-binding existence-proof driver")
+    ap = argparse.ArgumentParser(description="Worker-binding latency experiment")
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--seed", type=int, default=20260621)
     ap.add_argument("--settle", type=int, default=30)
@@ -498,7 +498,7 @@ def main():
     plan = plan_waves(cells, n_workers=len(slots), seed=args.seed)
 
     if args.dry_run:
-        summary = {"card": "P3-C-T5d", "seed": args.seed, "n_waves": len(plan),
+        summary = {"study": "binding", "seed": args.seed, "n_waves": len(plan),
                    "n_cells": sum(len(w["units"]) for w in plan),
                    "worker_limit_bind": WORKER_LIMIT_BIND,
                    "probe_loads": PROBE_LOADS, "probe_replicas": PROBE_REPLICAS,
@@ -519,19 +519,19 @@ def main():
         runlog.flush()
 
     overall_start = time.time()
-    final = {"card": "P3-C-T5d", "started": datetime.now(timezone.utc).isoformat()}
+    final = {"study": "binding", "started": datetime.now(timezone.utc).isoformat()}
     patched = None
 
     def write_status(state):
         final["state"] = state
         final["elapsed_h"] = round((time.time() - overall_start) / 3600.0, 3)
-        (out_dir / "rc5_results.json").write_text(json.dumps(final, indent=2, default=str))
+        (out_dir / "results.json").write_text(json.dumps(final, indent=2, default=str))
 
     try:
-        # Preflight (abort, no repair — charter §2.8 / card §5).
+        # Abort on preflight failure.
         if not preflight(slots):
             write_status("preflight_failed")
-            logger.error("Preflight FAILED — no repair (charter §2.8). Stopping.")
+            logger.error("Preflight failed. Stopping.")
             return
 
         logger.info("Patching worker CPU limit -> %s on %s (live deploy only)",
@@ -548,7 +548,7 @@ def main():
             logger.info("SMOKE: single confscale-aci/F cell, 180 s, on w0")
             reset_cluster(slots[0].kube_context)
             time.sleep(args.settle)
-            u = _unit({"label": "confscale-aci/F", "task": "T5d",
+            u = _unit({"label": "confscale-aci/F", "task": "binding",
                        "method_spec": {"base": "confscale-aci", "name": "confscale-aci"},
                        "pattern": "F", "duration_s": 180, "n_reps": 1}, 1)
             rec = run_cell(slots[0], u, out_dir)
@@ -570,7 +570,7 @@ def main():
         final["stage_a"] = stage_a
 
         if not stage_a.get("bound"):
-            # Designed early-out (card §5): binding failed -> FAIL, do NOT run Stage B.
+            # Failed binding invalidates the main experiment.
             verdict = compute_verdict(stage_a, {})
             final["verdict"] = verdict
             write_status("done_stage_a_fail")
@@ -644,7 +644,7 @@ def main():
         logger.exception("FATAL in main")
     finally:
         runlog.close()
-        # HARD requirement (card §5): restore the worker limit to 500m, verify.
+        # Restore the worker limit to 500m and verify it.
         if patched is not None:
             logger.info("FINALLY: restoring worker CPU limit -> %s on all clusters",
                         WORKER_LIMIT_LOCKED)

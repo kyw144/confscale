@@ -16,7 +16,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-KUBE_CONTEXT = os.environ.get("CONFSCALE_KUBE_CONTEXT", "kind-p3-experiments")
+KUBE_CONTEXT = os.environ.get("CONFSCALE_KUBE_CONTEXT", "kind-confscale-experiments")
 NAMESPACE = "infosys-benchmark"
 
 # Each parallel worker routes kubectl and controller processes to its own context.
@@ -111,7 +111,7 @@ class HPAMethod(MethodConfig):
     min_replicas: int = 1
     max_replicas: int = 20
     cpu_target: int = 50
-    # E-V7: when set (seconds), use the autoscaling/v2 behavior path with this
+    # When set (seconds), use the autoscaling/v2 behavior path with this
     # scale-down stabilization window. None => original v1 kubectl-autoscale path.
     downscale_stabilization_s: Optional[int] = None
     upscale_stabilization_s: int = 0

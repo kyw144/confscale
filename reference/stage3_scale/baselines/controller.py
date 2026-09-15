@@ -274,7 +274,7 @@ def main():
     parser.add_argument('--output-dir', default='.')
     parser.add_argument('--history-length', type=int, default=60,
                         help='History window size (h) for predictor')
-    parser.add_argument('--context', default='kind-p3-experiments',
+    parser.add_argument('--context', default='kind-confscale-experiments',
                         help='Kube context name')
 
     args = parser.parse_args()

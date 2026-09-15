@@ -25,7 +25,7 @@ from collector.collect import collect_metrics
 
 logger = logging.getLogger(__name__)
 
-KUBE_CONTEXT = "kind-p3-experiments"
+KUBE_CONTEXT = "kind-confscale-experiments"
 NAMESPACE = "infosys-benchmark"
 FRONTEND_NODEPORT = 30080
 PROMETHEUS_POD = "prometheus-prometheus-kube-prometheus-prometheus-0"

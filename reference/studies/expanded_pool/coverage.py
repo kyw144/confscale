@@ -11,7 +11,7 @@ import sys, json, importlib.util, os
 from collections import deque
 import numpy as np
 import pandas as pd
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 import torch
 from predictor.data import NormalizationParams
 from uq.conformal import SplitConformal
@@ -19,9 +19,8 @@ from uq.conformal_pid import ConformalPID
 from uq.aci import ACI
 from baselines.escalation_ladder import EscalationLadder
 
-T2 = "data/p3_runs/reopen_2026-06/T2"
-LOCK = "data/p3_runs/results/ev8b_perservice_20260601_024537"
-spec = importlib.util.spec_from_file_location("p2", f"{LOCK}/pass2_perservice.py")
+POOL_INPUTS = "inputs/studies/expanded_pool"
+spec = importlib.util.spec_from_file_location("p2", "reference/studies/per_service/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
 H, K, ALPHA = p2.H, p2.K, p2.ALPHA
 NOMINAL = 90.0
@@ -29,9 +28,9 @@ R = 3
 COVWIN = 30
 METHODS = ['frozen', 'aci', 'pid', 'aci-lad', 'pid-lad']
 
-CAND = pd.read_csv(f"{T2}/t2_candidates.csv")
-GATE = f"{T2}/t2_sanity_gate.json"
-OUT = f"{T2}/t2_coverage_batch.json"
+CAND = pd.read_csv(f"{POOL_INPUTS}/candidates.csv")
+GATE = f"{POOL_INPUTS}/sanity_gate.json"
+OUT = "generated/studies/expanded_pool/coverage.json"
 
 
 def forecasts(u, seg_arr, mu, sigma):
@@ -158,6 +157,7 @@ def load_out():
 
 
 def main():
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
     start, end = int(sys.argv[1]), int(sys.argv[2])
     batch = select_batch()
     print(f"batch ({len(batch)}): " + ", ".join(f"{s}|{c}" for s, c, _, _ in batch), flush=True)

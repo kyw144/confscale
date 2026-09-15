@@ -1,0 +1,384 @@
+{
+  "kind": "PUBLIC_PATH_NORMALIZATION",
+  "base_commit": "fb361ce0809a1da2e70d6a96e299b8eab2c6cce9",
+  "scope": "Remove personal workspace references and internal task labels from the public layout. Original source paths and historical evidence contents remain unchanged.",
+  "changes": [
+    {
+      "previous_destination": "reference/stage3_scale/analysis/config.yaml",
+      "destination": "reference/stage3_scale/analysis/config.yaml",
+      "previous_sha256": "55f63a95dd730f6f347e2a8c5bb41d06574465e1062c85559e5cdcd26b3f5939",
+      "destination_sha256": "b4f9e161426277ede77706a91120a4fd9a96fc3d4b0f33142f77c994a912cd81",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/analysis/loader.py",
+      "destination": "reference/stage3_scale/analysis/loader.py",
+      "previous_sha256": "b9fb9719847758d0deb81fad607c15724a1ccb0a7bad941e45adef463885b22c",
+      "destination_sha256": "2e470975e9bcaf2edaadc33ca41ac6f2c68898895460984887e625f2e054f831",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/analysis/post_reframe.py",
+      "destination": "reference/stage3_scale/analysis/drift_summary.py",
+      "previous_sha256": "feb68a05cc818bef5f1769fde883d075928d622d277f7a14e1da15e05229f07e",
+      "destination_sha256": "740477526a42de1894b23a7aced100beea9a6e29fa6bdeac0cecf08bf60b365b",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/analysis/report.py",
+      "destination": "reference/stage3_scale/analysis/report.py",
+      "previous_sha256": "fca900cb641da8c74206e82f75a091f0cc04b16564291d7807ff9d3ff89f7c8a",
+      "destination_sha256": "74705ff97c7fde3f3527ea8bed95ffc34902595104612d594784e0eee2b1fec0",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/baselines/controller.py",
+      "destination": "reference/stage3_scale/baselines/controller.py",
+      "previous_sha256": "ac8d5b3ebad6755b3978c857c4130e7b91568c33990dadb44bbcbc96697fbde4",
+      "destination_sha256": "5588612e38f45966b9b90021fabd457f83b99d17a22197b75bd218b0d9713752",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/baselines/test_baseline_coverage_monitor.py",
+      "destination": "reference/stage3_scale/baselines/test_baseline_coverage_monitor.py",
+      "previous_sha256": "8b90023e36566714bd6c0a96b003c5f713e107570ea91195c5c66cc554182b72",
+      "destination_sha256": "b29759e26908d03cf8d7e8bee8669008567b6c8f62d6da888405190aa6d4cf98",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/collector/snapshot.py",
+      "destination": "reference/stage3_scale/collector/snapshot.py",
+      "previous_sha256": "213c6c4ae5beadd3d9870c34a7492ec8325420d322a972f11ca4a24da14939c2",
+      "destination_sha256": "a2a250c9d2f1cc6f96c1e67add492e4a6e5de3afcabb10b40b0a3e0606f2d18b",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/clusters.py",
+      "destination": "reference/stage3_scale/orchestrator/clusters.py",
+      "previous_sha256": "3879c72c904d0d4f78fbe082231b913f4054c0501085f0790ea2dc49af2c48ba",
+      "destination_sha256": "817804b4b964a3da20ffe6b73c127520af4ef19fef633cf50f36eff373b9cf7d",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/controller.py",
+      "destination": "reference/stage3_scale/orchestrator/controller.py",
+      "previous_sha256": "e7071ff7ff796eca7ec470e1cfa9c011d9045d3fefa24f29704237c56f8aa563",
+      "destination_sha256": "87417f5cdbe23cec199549c25ed2eb3afdeb77b1f0fb9a1b09adf96f8fd5c936",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/methods.py",
+      "destination": "reference/stage3_scale/orchestrator/methods.py",
+      "previous_sha256": "9f0bbaedc65b7687bed876542c10748ac9e4fb1e8dacdb06c76d592e13d66c38",
+      "destination_sha256": "1804bbc57cc29acbce777ec01a7a3007935855957605284d9efbe277b487f9c1",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/run_matrix.py",
+      "destination": "reference/stage3_scale/orchestrator/run_matrix.py",
+      "previous_sha256": "a1adef305d969eae4731f22f7d997aa997a2ff10e6d2e7dff607719d3d630398",
+      "destination_sha256": "408ec7d2f3abacb9feaad44c2db709a18aa3249e20144e2870445d91661f8115",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/test_ev6_e2e_path.py",
+      "destination": "reference/stage3_scale/orchestrator/test_ev6_e2e_path.py",
+      "previous_sha256": "835821d4d1153abf661445973640bff14ce3c62ab4dba7db89e6b5a517873657",
+      "destination_sha256": "0e0cdc51327f23bb3e3c5583039be3ff2362004071d8929443cb407d4fa27614",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/orchestrator/test_parallel_orchestrator.py",
+      "destination": "reference/stage3_scale/orchestrator/test_parallel_orchestrator.py",
+      "previous_sha256": "6cc4a5b7087158bddd5ef5c4572162b0f5b5b7d7e8cb59bf949ab86b6eae8ac4",
+      "destination_sha256": "7ffee203d6d035c02f73000f210f889d0250da000c353679f562072d5812c5e8",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/stage3_scale/profiler/profile.py",
+      "destination": "reference/stage3_scale/profiler/profile.py",
+      "previous_sha256": "ac585fb46fa1e2b9500fec291831a9663cb9a4f03b17060d3675c3601681c275",
+      "destination_sha256": "7aaea93fb7b44e0474daf0bd7136674f35b9fd6fcc485382e43169dafa2c35d5",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/real/tables/table_3_calibration.md",
+      "destination": "evidence/calibration/coverage.md",
+      "previous_sha256": "f8c49db285d01c0b16c917378cbf1b0b322e95f06ed9b31964a5684f3c550d00",
+      "destination_sha256": "f8c49db285d01c0b16c917378cbf1b0b322e95f06ed9b31964a5684f3c550d00",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/post_reframe/tables/table_a_coverage_cost_drift.md",
+      "destination": "evidence/drift/coverage_cost.md",
+      "previous_sha256": "82632e9787d3f44815b1b125bd70f86543910fdd85998ceb4388c3e8244d2894",
+      "destination_sha256": "82632e9787d3f44815b1b125bd70f86543910fdd85998ceb4388c3e8244d2894",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/variance_recheck_20260530_175923/ev3_analysis.json",
+      "destination": "evidence/drift/ladder_comparison.json",
+      "previous_sha256": "72fcdb386c4b6b0dadab42ea2cf7ecd48a524062d7f31824438caf5a8a5b4fd2",
+      "destination_sha256": "72fcdb386c4b6b0dadab42ea2cf7ecd48a524062d7f31824438caf5a8a5b4fd2",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_cost_analysis.json",
+      "destination": "evidence/cost/pattern_d.json",
+      "previous_sha256": "718fdc5655110d7fa9666845948c8dfffe79f6f85e1b463be6ae5829c6d49947",
+      "destination_sha256": "718fdc5655110d7fa9666845948c8dfffe79f6f85e1b463be6ae5829c6d49947",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev3_acih_analysis.json",
+      "destination": "evidence/drift/aci_pattern_h.json",
+      "previous_sha256": "e7197645802edc5ffb2f3fd7068339cd269a07667d12b857d9a6018c76a128ca",
+      "destination_sha256": "e7197645802edc5ffb2f3fd7068339cd269a07667d12b857d9a6018c76a128ca",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_summary.json",
+      "destination": "evidence/per_service/coverage.json",
+      "previous_sha256": "abd1b015a0fceeeac4c55fa05e684e6a754150f83dd5de74e5b5d9c1494a8489",
+      "destination_sha256": "abd1b015a0fceeeac4c55fa05e684e6a754150f83dd5de74e5b5d9c1494a8489",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_recal.json",
+      "destination": "evidence/per_service/recalibration.json",
+      "previous_sha256": "e20a8af91d0fae5253236d6e0049f37421f5fe28fe993f74a98fb89c75dc6907",
+      "destination_sha256": "e20a8af91d0fae5253236d6e0049f37421f5fe28fe993f74a98fb89c75dc6907",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev8b_perservice_20260601_024537/recal_volatility.json",
+      "destination": "evidence/per_service/anchor_recalibration.json",
+      "previous_sha256": "aed36d95944ebd9b248e31d55733e28c94862ea05354cdfe19cc10fcd9a8f864",
+      "destination_sha256": "aed36d95944ebd9b248e31d55733e28c94862ea05354cdfe19cc10fcd9a8f864",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/results/ev8b_perservice_20260601_024537/h1_binds.json",
+      "destination": "evidence/per_service/horizon_binding.json",
+      "previous_sha256": "47eba37ee2cb4846db3dcd258dc0c7cc703fd974b69657e56e7c093ed599976f",
+      "destination_sha256": "47eba37ee2cb4846db3dcd258dc0c7cc703fd974b69657e56e7c093ed599976f",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/outputs/ev7_ab_cost_A_20260624_185820/t4_cost_analysis_A.json",
+      "destination": "evidence/cost/pattern_a.json",
+      "previous_sha256": "b08ba27b5ca1e7d2b73fd2f8ee4e23fd023e1074ac394eb6eb086fce7192de6c",
+      "destination_sha256": "b08ba27b5ca1e7d2b73fd2f8ee4e23fd023e1074ac394eb6eb086fce7192de6c",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/outputs/ev7_ab_cost_B_20260625_101524/t4_cost_analysis_B.json",
+      "destination": "evidence/cost/pattern_b.json",
+      "previous_sha256": "719418a082adb908664c4afbe7fd29d92d2f1fa2981f5d9c2aebecc6f2ccc89b",
+      "destination_sha256": "719418a082adb908664c4afbe7fd29d92d2f1fa2981f5d9c2aebecc6f2ccc89b",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/outputs/ev7_c_cost_20260627_021701/results/t4_cost_analysis_C.json",
+      "destination": "evidence/cost/pattern_c.json",
+      "previous_sha256": "aca4aacd22032385e42b17ea5a46958a2d641047fadd0372f8bb899d23671166",
+      "destination_sha256": "aca4aacd22032385e42b17ea5a46958a2d641047fadd0372f8bb899d23671166",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/reopen_2026-06/T2/t2_coverage_sweep_r6.json",
+      "destination": "evidence/expanded_pool/coverage.json",
+      "previous_sha256": "19c32053052ebc2ce81d355e96cc3a9691910d5734f6c8d4b401e8911ac6a775",
+      "destination_sha256": "19c32053052ebc2ce81d355e96cc3a9691910d5734f6c8d4b401e8911ac6a775",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.json",
+      "destination": "evidence/per_horizon/anchor.json",
+      "previous_sha256": "1bd72dbbd3e4df76cd6a0f4e5a6b933a9ceb88af7560b79554b68b1becd28cca",
+      "destination_sha256": "1bd72dbbd3e4df76cd6a0f4e5a6b933a9ceb88af7560b79554b68b1becd28cca",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.json",
+      "destination": "evidence/per_horizon/pool.json",
+      "previous_sha256": "9381d1d14b6588bd268f0ae78120ccb13f651c23a1e753a4d22c9725b123f51b",
+      "destination_sha256": "9381d1d14b6588bd268f0ae78120ccb13f651c23a1e753a4d22c9725b123f51b",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "evidence/data/p3_runs/outputs/slo_binding_existence_proof_20260621_134302/rc5_results.json",
+      "destination": "evidence/binding/results.json",
+      "previous_sha256": "cdc0bb7f1afe4db695b7f26958215963ae73d95d2eb3ad1839995783dda56199",
+      "destination_sha256": "cdc0bb7f1afe4db695b7f26958215963ae73d95d2eb3ad1839995783dda56199",
+      "adaptation": "Rename evidence; preserve exact bytes."
+    },
+    {
+      "previous_destination": "reference/studies/tuned_hpa/ev7_driver.py",
+      "destination": "reference/studies/tuned_hpa/driver.py",
+      "previous_sha256": "de36fefdd0efd60809c7876f589fa86606dfb40f75a5c325adacde217b4b9f29",
+      "destination_sha256": "1263b39924b215f218830979181a7fc3367aa2aa21de79a31ad1ae91d82cc4ef",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/tuned_hpa/ev7_cost_analyze.py",
+      "destination": "reference/studies/tuned_hpa/analyze.py",
+      "previous_sha256": "55f6f4038e825ebb00b12b6cabf7745a919d847549a9aac932c1dc17f698ab93",
+      "destination_sha256": "549cd10185fe0c68ed7b8e570d5035639cd1dba9fb6396efcff1e8876079fbf4",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/binding/rc5_driver.py",
+      "destination": "reference/studies/binding/driver.py",
+      "previous_sha256": "668242b2681c3068d59065d6ad650a1417f7424b04b2ce0bfd13a4fb8e115b0c",
+      "destination_sha256": "2dbc5ed991398eb0400e2396551a79997f2ce9a6f72d23cd521f27e5e4f97e75",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/cost_ab_c/t4_driver.py",
+      "destination": "reference/studies/cost_ab_c/driver.py",
+      "previous_sha256": "814ce3a7c1dd8d191e0923cca862779034cffc899abe0c617bd22423e049e276",
+      "destination_sha256": "b0a959cfb62147257382b9bc9d5c33a2262e14a7ea734cea2fbf34440544c6ae",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/cost_ab_c/t4_cost_analyze.py",
+      "destination": "reference/studies/cost_ab_c/analyze.py",
+      "previous_sha256": "291f58f77790c30a97ee37ea983261c4e62425f1670c7eec53f3a108b39a5e26",
+      "destination_sha256": "5b282995c82c12951053d16095a32248437ff15825a82ee9aebe8271c4484c06",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/raw_rolling/t3_driver.py",
+      "destination": "reference/studies/raw_rolling/driver.py",
+      "previous_sha256": "3c3b3d88d8f851ca2d04a456c14e4ef3473bbd2b269f24cc44bb5224a44a68f8",
+      "destination_sha256": "de2228f0a1e8a95c1090f0d1f62579ae107dc74b6cb645c920779bf5e5dc30a4",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/warmstart/t7b_driver.py",
+      "destination": "reference/studies/warmstart/driver.py",
+      "previous_sha256": "7dcaa0cbf97894ce6a318162596fa63f7914c8320757b74f966694f1804ff0b6",
+      "destination_sha256": "8e518175fdf294c69cfd9620b6fcc06aa3be9dc4707817005ebd27c938c66584",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/pass2_perservice.py",
+      "destination": "reference/studies/per_service/pass2_perservice.py",
+      "previous_sha256": "550d3269ed442b654ea28b28faec9fea1db534516e0d590b2a3fed7dbdcdccaa",
+      "destination_sha256": "8fe384d35e71e984d05a6de3367bc02b4ade9ed9d3e8ff41e3d5d64406cc84f9",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/recal_perservice.py",
+      "destination": "reference/studies/per_service/recal_perservice.py",
+      "previous_sha256": "d70215f2120364439cb3947c867ef7fcee04a3b08664dbb7bba16d0f7b68d86a",
+      "destination_sha256": "eb4dbad474e12138375b03fa05e4b945118e9ba1b03dbc682383742e0a520681",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/h1_binds_analysis.py",
+      "destination": "reference/studies/per_service/h1_binds_analysis.py",
+      "previous_sha256": "74398bd6e8ec48b57f5169088383ee16aa348d255b3aa7a2970dccbed100193d",
+      "destination_sha256": "57b783fcf38501c5be2e8b7baf91352dc808cabfb1767fd4c617a369d6eca6a2",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/pass2_full_coverage.py",
+      "destination": "reference/studies/per_service/pass2_full_coverage.py",
+      "previous_sha256": "db25cd0dee087a1d36850b108cac1d323e122efae736b1f79ba4149d46e694c7",
+      "destination_sha256": "817845d7bf1c8e93d4f9157010b39b1da10c54894efa7e506301499ec42bf994",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/pass2_full_recal.py",
+      "destination": "reference/studies/per_service/pass2_full_recal.py",
+      "previous_sha256": "83f24837c81c8b9f18bd365cee8e34876913e2a902dc05d8634dc482adb28ff2",
+      "destination_sha256": "91e3426b1394b5260040fd188f1c67ecb1a951e7660b803b780472d00857ad46",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_service/lock_rematerialize.py",
+      "destination": "reference/studies/per_service/reconstruct_windows.py",
+      "previous_sha256": "43216e5e66187b1153f874cc22e250f43c87c182bef9f76e60b155d120a564d2",
+      "destination_sha256": "519518c0b9ecc8e5a6da5cee0411f38edf86ec2f0546fe824b0b71033adbe5da",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_horizon/recal_perservice_h1.py",
+      "destination": "reference/studies/per_horizon/recal_perservice_h1.py",
+      "previous_sha256": "b7f77ad570a9686ed61e9672cf4ed5fd4e91c80eb4f09e24e08ea4e4b3c37275",
+      "destination_sha256": "72125013c4b8decba8f03be60e9736eec204f41a2fe8679ee32357eb940c5f89",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/per_horizon/recal_pool_h1.py",
+      "destination": "reference/studies/per_horizon/recal_pool_h1.py",
+      "previous_sha256": "ade49bc1676a221140cfd046d529a63000af265cb95de6edeca042c5f0d869a9",
+      "destination_sha256": "323d348613b85dd30df3887de3c6213744c13a063d50a5c5a29d8934556e5e67",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/expanded_pool/t2_coverage_batch.py",
+      "destination": "reference/studies/expanded_pool/coverage.py",
+      "previous_sha256": "a5ba68ebdbd1b6281e5204a0d5a6d793d67d0cf480dd3b79892de55915cd2b0e",
+      "destination_sha256": "99d597d98121534f920ecefd008c5778c4f4ebb62568e7df5d53fc6a71242383",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/etl/etl_build.py",
+      "destination": "reference/studies/etl/etl_build.py",
+      "previous_sha256": "cb1883f5ab7caca6f7789d7499d7a94a20dad91e99e06d0c407577a642554ddf",
+      "destination_sha256": "1a10407fafdd5238f7973b068426a93ce2c29a0b4dd608c381437d32fa448610",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "reference/studies/etl/pass1_perservice_etl.py",
+      "destination": "reference/studies/etl/pass1_perservice_etl.py",
+      "previous_sha256": "88f4d75c0753a05730d13a20f3abb288bfb3be11fb436c881bd06aed320bf1bc",
+      "destination_sha256": "9daea658e9790619766996aa7e59ebfca73683f0654fb80300b3abebe137b3b3",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    },
+    {
+      "previous_destination": "confscale/entities_legacy.py",
+      "destination": "confscale/entities_legacy.py",
+      "previous_sha256": "4112bd56d2c660bcbf5158ab80a1913d8bae420ac3c755906f97a78595ca05c6",
+      "destination_sha256": "3f548e65993e53f2d27967234fdda22d6669d3fed8329eec20f48fddad930f3a",
+      "adaptation": "Use public paths, repository imports and descriptive study labels; retain numerical methods and opt-in runtime guards."
+    }
+  ],
+  "layout": {
+    "evidence": "Descriptive study directories and filenames; bytes unchanged.",
+    "models": "Model directory with gru/ and uq/; archived bundle layout remains accepted.",
+    "study_outputs": "generated/studies/",
+    "reference_workers": "confscale-experiments-w<N>"
+  },
+  "validation": {
+    "command": ".venv/bin/python scripts/validate.py --runtime-tests --output generated/public-names/validation-complete",
+    "status": "pass",
+    "finished_at": "2026-09-15T15:51:17.517160+00:00",
+    "python": "3.12.13",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "unittest_tests": 28,
+    "pytest_tests": 113,
+    "pytest_subtests": 20,
+    "evidence_files_byte_identical": 16,
+    "paper_table_csvs_byte_identical": 5,
+    "original_source_and_input_metadata_preserved": true,
+    "historic_validation_and_vendor_files_unchanged": true,
+    "guarded_study_entrypoints": 18,
+    "offline_driver_plans": [
+      "binding",
+      "cost_ab_c",
+      "raw_rolling",
+      "tuned_hpa",
+      "warmstart"
+    ],
+    "processes_and_sockets_blocked_during_planning": true,
+    "study_import_targets": 7,
+    "live_runs": false
+  },
+  "limitations": [
+    "Study replays requiring omitted trace datasets were not executed. Historical output filenames and task labels changed; use the recorded path mapping for external consumers."
+  ]
+}

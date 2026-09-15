@@ -22,8 +22,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 
@@ -41,24 +41,24 @@ COMPUTE_NS = "infosys-benchmark"
 COMPUTE_DEPLOY = "compute-worker"
 PROM_NS = "monitoring"
 PROM_DEPLOY = "prometheus"
-T3_DURATION = 1800          # 6 x 300 s periods; matches the laddered baseline duration
-T3_REPS = 6                 # card §3 (R=6, the drift variance convention; escalate to 8 on INCONCLUSIVE)
+DURATION = 1800          # 6 x 300 s periods; matches the laddered baseline duration
+REPS = 6                 # Drift variance convention: R=6; escalate to 8 if inconclusive
 
-logger = logging.getLogger("t7b")
+logger = logging.getLogger("warmstart")
 
 
 def build_cells() -> list[dict]:
-    """T7b: 3 cells — WARM-STARTED rolling-origin x pattern in {F, G, H}, R=6 each."""
+    """Warm start: 3 cells — WARM-STARTED rolling-origin x pattern in {F, G, H}, R=6 each."""
     cells: list[dict] = []
     for pat in ("F", "G", "H"):
         cells.append({
-            "label": f"confscale-rolling-origin-warmstart/{pat}", "task": "T7b",
+            "label": f"confscale-rolling-origin-warmstart/{pat}", "task": "warmstart",
             "method_spec": {
                 "base": "confscale-rolling-origin-warmstart",
                 "name": "confscale-rolling-origin-warmstart",
                 "coverage_monitor": True,
             },
-            "pattern": pat, "duration_s": T3_DURATION, "n_reps": T3_REPS,
+            "pattern": pat, "duration_s": DURATION, "n_reps": REPS,
         })
     return cells
 
@@ -236,7 +236,7 @@ def preflight(slots) -> bool:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="P3-C-T3 raw rolling-origin F/G/H wave driver")
+    ap = argparse.ArgumentParser(description="Warm-start rolling-origin F/G/H experiment")
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--seed", type=int, default=20260621)
     ap.add_argument("--settle", type=int, default=30,
@@ -266,13 +266,13 @@ def main():
         "cells": [u["label"] for u in w["units"]],
     } for w in plan]
     (out_dir / "wave_plan.json").write_text(json.dumps({
-        "card": "P3-C-T7b", "seed": args.seed, "n_waves": len(plan),
+        "study": "warmstart", "seed": args.seed, "n_waves": len(plan),
         "n_cells": sum(len(w["units"]) for w in plan), "waves": plan_summary,
     }, indent=2))
 
     if args.dry_run:
         total_s = sum(w["duration_s"] + args.settle + 90 for w in plan)
-        print(json.dumps({"card": "P3-C-T7b", "seed": args.seed, "n_waves": len(plan),
+        print(json.dumps({"study": "warmstart", "seed": args.seed, "n_waves": len(plan),
                           "n_cells": sum(len(w['units']) for w in plan),
                           "est_wall_h": round(total_s / 3600.0, 1),
                           "waves": plan_summary}, indent=2))
@@ -283,14 +283,14 @@ def main():
         datefmt="%H:%M:%S",
         handlers=[logging.StreamHandler(), logging.FileHandler(out_dir / "driver.log")],
     )
-    logger.info("T7b driver: %d cells in %d waves, output=%s seed=%d",
+    logger.info("Warm-start driver: %d cells in %d waves, output=%s seed=%d",
                 sum(len(w["units"]) for w in plan), len(plan), out_dir, args.seed)
 
     if not preflight(slots):
-        logger.error("Preflight failed — cluster unresponsive. Stopping (no repair, card §5).")
+        logger.error("Preflight failed — cluster unresponsive. Stopping.")
         sys.exit(2)
 
-    runlog_path = out_dir / "t7b_run_log.csv"
+    runlog_path = out_dir / "run_log.csv"
     fields = ["wave", "task", "label", "method", "workload", "replicate", "duration_s",
               "worker_id", "cluster", "status", "coverage_rate", "run_id",
               "start_time", "end_time", "error_message", "output_dir"]
@@ -357,7 +357,7 @@ def main():
     logger.info("DRIVER COMPLETE: waves %d..%d, total %.2f h",
                 args.start_wave, len(plan), (time.time() - overall_start) / 3600.0)
     (out_dir / "_DRIVER_DONE").write_text(json.dumps({
-        "card": "P3-C-T7b", "n_waves": len(plan),
+        "study": "warmstart", "n_waves": len(plan),
         "elapsed_h": round((time.time() - overall_start) / 3600.0, 2)}) + "\n")
 
 

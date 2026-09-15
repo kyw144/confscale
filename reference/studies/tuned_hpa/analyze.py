@@ -18,8 +18,8 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-REPO = Path("<SOURCE_WORKSPACE>")
-STAGE3 = REPO / "src" / "stage3_scale"
+REPO = Path(__file__).resolve().parents[3]
+STAGE3 = REPO / "reference" / "stage3_scale"
 if str(STAGE3) not in sys.path:
     sys.path.insert(0, str(STAGE3))
 from analysis.stats import welch_t_test  # noqa: E402
@@ -235,9 +235,9 @@ def main():
         "slo_gate_detail": gate,
         "comparator_and_saving": saving,
     }
-    (args.out / "ev7_cost_analysis.json").write_text(json.dumps(report, indent=2, default=str))
+    (args.out / "cost_analysis.json").write_text(json.dumps(report, indent=2, default=str))
 
-    print("\n================ E-V7 TUNED-HPA COST ANALYSIS ================")
+    print("\n================ TUNED-HPA COST ANALYSIS ================")
     if anchor_report:
         print(f"Reproduction anchor ({ANCHOR_NAME}): {anchor_report['overhead_per_hour_mean']:.0f} rs/h "
               f"(orig {ORIG_HPA_OVERHEAD:.0f}; ratio {anchor_report['ratio_to_original']:.3f}; "

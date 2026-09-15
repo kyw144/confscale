@@ -10,7 +10,7 @@ if __name__ == "__main__":
 import sys, json, importlib.util
 from collections import deque
 import numpy as np
-sys.path.insert(0, 'src/stage3_scale')
+sys.path.insert(0, 'reference/stage3_scale')
 import torch
 from predictor.data import NormalizationParams
 from uq.conformal import SplitConformal
@@ -18,14 +18,13 @@ from uq.conformal_pid import ConformalPID
 from uq.aci import ACI
 from baselines.escalation_ladder import EscalationLadder
 
-P2DIR = "data/p3_runs/results/ev8b_perservice_20260601_024537"
-spec = importlib.util.spec_from_file_location("p2", f"{P2DIR}/pass2_perservice.py")
+spec = importlib.util.spec_from_file_location("p2", "reference/studies/per_service/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
 H, K, ALPHA = p2.H, p2.K, p2.ALPHA
 NOMINAL, R, COVWIN = 90.0, 6, 30
-OUTDIR = "data/p3_runs/reopen_2026-06/T1"
+OUTDIR = "generated/studies/per_horizon_anchor"
 
-# LOCKED windows (ev8b_LOCK_2026-06-01.md) — verbatim from the three source scripts.
+# LOCKED windows (fixed service windows) — verbatim from the three source scripts.
 # n=4 is the structural [1080,1140) trace-gap cap; do not invent windows.
 CELLS = [
     {"service": "MS_7129",  "train": (120, 840), "ref": (480, 720), "deploy": (840, 960),
@@ -205,7 +204,7 @@ def run_cell(cell, methods):
 
 
 if __name__ == '__main__':
-    print(f"T1 per-horizon h1 recalibration | R={R} | nominal {NOMINAL}% | h0=60s h1=120s grid\n")
+    print(f"Per-horizon h1 recalibration | R={R} | nominal {NOMINAL}% | h0=60s h1=120s grid\n")
     results = []
     for cell in CELLS:
         methods = ['frozen', 'aci', 'pid', 'aci-lad', 'pid-lad'] if cell['anchor'] else ['frozen', 'aci', 'pid']
@@ -226,7 +225,7 @@ if __name__ == '__main__':
         print(flush=True)
 
     payload = {
-        'task': 'T1 per-horizon h1 recalibration (P3 re-open, additive offline replay)',
+        'task': 'per-horizon h1 recalibration (offline replay)',
         'design': 'per-horizon recalibrator instances (list of k scalar ConformalPID/ACI); classes reused verbatim',
         'modes': {'frozen_h1': 'h0 recal, h1 frozen (reproduces locked baseline)',
                   'per_horizon': 'h0 + h1 recal (warm-started, 2-lag h1; ladder applied per-horizon)'},

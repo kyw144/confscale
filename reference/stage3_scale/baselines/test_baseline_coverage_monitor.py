@@ -140,7 +140,7 @@ def test_zero_validations_returns_none_coverage_rate():
 
 
 def test_schema_keys_match_orchestrator_contract():
-    print("\n[5] coverage_monitor block has all keys the post-reframe loader reads")
+    print("\n[5] coverage_monitor block has all keys the drift loader reads")
     monitor = CoverageMonitor(window_size=30, target_coverage=0.9)
     _feed(monitor, [(10.0, 20.0, 15.0)] * 10)
     summary = build_operator_metrics_summary(

@@ -146,7 +146,7 @@ def test_dry_run_parallel():
     check("exit code 0", proc.returncode == 0,
           f"stderr: {proc.stderr[-200:] if proc.stderr else ''}")
     check("parallel slots listed", "Parallel slots" in output)
-    check("4 slot lines", output.count("kind-p3-experiments-w") >= 4)
+    check("4 slot lines", output.count("kind-confscale-experiments-w") >= 4)
     check("frontend port 31080 mentioned", "31080" in output)
 
 
