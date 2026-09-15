@@ -1,23 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b Pass 2 — per-service offline coverage on the LOCKED config (ev8b_LOCK_2026-06-01.md).
+"""Evaluate coverage on the fixed per-service windows."""
 
-Reuses the E-V8 v2 designB machinery (heads BE/SCP/QR + GRU UNMODIFIED). The only changes the
-lock allows: (1) per-service / per-bucket series instead of cluster-aggregate; (2) explicit
-calibration window for SCP (q̂ on the low plateau, not the internal tail); (3) report h0 AND h1;
-(4) sanity gate FIRST per service.
-
-Two distinct analyses (do not conflate):
-  A. MATCHED drift test (verdict-bearing) — headline services, locked windows, severity-matched.
-  B. coverage-vs-N aggregation ladder (characterization) — natural diurnal signal, no injected contrast.
-
-Run ONCE against the lock. No window/service iteration after coverage is seen.
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, time
@@ -93,7 +80,7 @@ def diag(u, X, Y):
 
 
 def run_test(ms, label, train_win, cal_win, deploy_win, heads=('be', 'scp', 'qr')):
-    """One (service, drift) test. Returns per-head sanity + h0/h1 coverage on deploy + cal-window ref."""
+    """One (service, drift) test."""
     s = load_series(ms)
     tr = seg(s.values, *train_win)
     cl = seg(s.values, *cal_win)

@@ -1,22 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b Pass 2 (FULL) — recalibrator closeout on the volatility-channel services with a gap.
+"""Evaluate recalibration on services with volatility-driven coverage gaps."""
 
-For each feasible volatility-channel service (≠ anchor MS_7129, already done) that shows a frozen-SCP
-deploy gap ≥10 pp AND passes the sanity gate, drive raw ACI (η=0.1) and PID (kp.1/ki.01/kd.05),
-h0-only, R=6 — and report whether the gap recovers to ≈ target (as on MS_7129: ACI 89.8 / PID 90.4)
-and the width ×frozen.
-
-REPLICATES recal_perservice.py's machinery VERBATIM (does not import it — that module writes
-recal_volatility.json at import). Same protocol: normalized-abs residuals, h0-only, warm-start q̂ =
-frozen SCP on the ref/cal window, R=6. Only generalization: per-service windows from the lock
-(train/cal/deploy) instead of the hardcoded MS_7129 windows. Heads/recalibrators unchanged as code.
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util

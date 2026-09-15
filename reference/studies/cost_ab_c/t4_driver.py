@@ -1,33 +1,11 @@
 #!/usr/bin/env python3
-"""T4 — Pattern A/B tuned-HPA cost re-measurement wave driver (card P3-C-T4).
-
-A faithful clone of the validated E-V7 cost driver
-(`data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_driver.py`,
-charter §2.6 reuse-don't-rebuild), with exactly three changes:
-
-  1. `build_cells(pattern)` re-points the ev7 Pattern-D grid to ONE pattern P ∈ {A, B}
-     and DROPS the E-V3-ACIH rider (not part of T4). One sub-run = one pattern's 6 cells:
-       hpa-anchor-u50-s300, hpa-tuned-u50-s60, hpa-tuned-u50-s120,
-       hpa-tuned-u70-s60, hpa-tuned-u70-s120, confscale-scp     (each n=5)
-     = 30 cell-runs → 10 clean waves of 3 (round-based packer, equal counts).
-  2. `--pattern {A,B}` (required) selects the sub-run.
-  3. `--duration-override` / `--max-waves` enable a fast smoke validation before the
-     ~5.3 h real run (does NOT touch the real output dir — use a separate --output-dir).
-
-Everything else — per-rep deployment + Prometheus TSDB reset (independence), randomized
-worker assignment, wall-clock Locust seed, the tested execute_single_run / _resolve_method_spec
-/ PortForward / make_slots plumbing, --start-wave resume — is IDENTICAL to ev7_driver.
-
-Cost analysis is a SEPARATE step (t4_cost_analyze.py); this driver only produces the cells.
-Scope: modifies NO src. Reuse source verified at card P3-C-T4 §4 (knob table).
-"""
+"""Run paired HPA cost comparisons for workloads A and B."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -44,7 +22,6 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-# --- wire src/stage3_scale onto the path ---
 REPO = Path("<SOURCE_WORKSPACE>")
 STAGE3 = REPO / "src" / "stage3_scale"
 if str(STAGE3) not in sys.path:
@@ -68,8 +45,6 @@ T4_DURATION = 1800          # ev7 EV7_DURATION; per-hour-normalized cost is dura
 
 logger = logging.getLogger("t4")
 
-
-# ── Cells (the ev7 D grid, re-pointed to ONE pattern; ACI-H rider dropped) ──────
 
 def build_cells(pattern: str, duration_s: int) -> list[dict]:
     cells: list[dict] = []
@@ -96,8 +71,6 @@ def build_cells(pattern: str, duration_s: int) -> list[dict]:
     })
     return cells
 
-
-# ── Wave planning (verbatim ev7_driver.py:127-204) ──────────────────────────────
 
 def _unit(cell: dict, replicate: int) -> dict:
     return {
@@ -163,8 +136,6 @@ def plan_waves(cells: list[dict], n_workers: int, seed: int) -> list[dict]:
     return plan
 
 
-# ── Cluster reset + cell execution (verbatim ev7_driver.py:209-311) ──────────────
-
 def kubectl_ctx(ctx: str, args: list[str], timeout: int = 200) -> subprocess.CompletedProcess:
     return subprocess.run(["kubectl", f"--context={ctx}", *args],
                           capture_output=True, text=True, timeout=timeout)
@@ -200,7 +171,7 @@ def coverage_from_run_dir(run_dir: Path):
 
 
 def run_cell(slot, unit: dict, output_dir: Path) -> dict:
-    """Run ONE cell on ONE worker slot, pinned to that slot's cluster. Never raises."""
+    """Run ONE cell on ONE worker slot, pinned to that slot's cluster."""
     set_thread_kube_context(slot.kube_context)
     pf = PortForward(namespace=PROMETHEUS_NS, service=PROMETHEUS_SVC,
                      local_port=slot.prometheus_port, remote_port=PROMETHEUS_PORT,
@@ -269,8 +240,6 @@ def preflight(slots) -> bool:
             ok = False
     return ok
 
-
-# ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
     ap = argparse.ArgumentParser(description="T4 Pattern A/B/C tuned-HPA cost wave driver")
@@ -397,7 +366,6 @@ def main():
     logger.info("DRIVER COMPLETE: pattern=%s waves %d..%d, total %.2f h",
                 args.pattern, args.start_wave, len(plan),
                 (time.time() - overall_start) / 3600.0)
-    # Completion marker for the out-of-foreground waiter.
     (out_dir / "_DRIVER_DONE").write_text(
         json.dumps({"pattern": args.pattern, "n_waves": len(plan),
                     "elapsed_h": round((time.time() - overall_start) / 3600.0, 2)}) + "\n")

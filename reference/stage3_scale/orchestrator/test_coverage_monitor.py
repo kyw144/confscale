@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the C2-Analyze online coverage monitor.
-
-Standalone unit test for the ``CoverageMonitor`` class in
-``orchestrator/controller.py``. No cluster, Prometheus, or UQ model
-required — we feed synthetic (predict, validate) sequences and check
-the trailing coverage / alert-state / lifetime-counter math.
-
-Run:
-  python test_coverage_monitor.py
-or:
-  pytest test_coverage_monitor.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -38,18 +25,9 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 
 
 def feed(monitor: CoverageMonitor, samples: list[tuple[float, float, float]]) -> None:
-    """Run a list of (ci_lower, ci_upper, observed) tuples through the monitor.
-
-    Each sample records then immediately validates with the given
-    observed RPS, mimicking the controller's iteration-by-iteration
-    flow (compressed: record + validate same call for test ergonomics).
-    """
     for lo, hi, obs in samples:
         monitor.record_prediction(lo, hi)
         monitor.validate_pending(obs)
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_empty_monitor():
@@ -136,8 +114,6 @@ def test_interval_endpoints_are_inclusive():
 
 def test_alert_state_thresholds():
     print("\n[6] Alert-state bands (target=0.9)")
-    # Build a window with a known number of covers/misses, then check
-    # the band. target=0.9, critical threshold = 0.85 * 0.9 = 0.765.
 
     # Window of 10: 9 covers + 1 miss → trailing=0.9 → nominal
     m = CoverageMonitor(window_size=10, target_coverage=0.9)
@@ -153,7 +129,6 @@ def test_alert_state_thresholds():
           abs(m.trailing_coverage - 0.8) < 1e-9 and m.alert_state == 1,
           f"trailing={m.trailing_coverage}, alert={m.alert_state}")
 
-    # Window of 10: 7 covers + 3 misses → trailing=0.7 → critical
     m = CoverageMonitor(window_size=10, target_coverage=0.9)
     feed(m, [(10.0, 20.0, 15.0)] * 7 + [(10.0, 20.0, 50.0)] * 3)
     check("trailing=0.7 → alert_state=2 (critical, below 0.85·T=0.765)",
@@ -221,7 +196,6 @@ def test_lifetime_counters_grow_unbounded():
 
 def test_needs_recalibration_only_critical():
     print("\n[10] needs_recalibration() True only when alert_state == 2")
-    # Nominal
     m = CoverageMonitor(window_size=10, target_coverage=0.9)
     feed(m, [(10.0, 20.0, 15.0)] * 10)
     check("nominal: needs_recalibration() == False",
@@ -276,9 +250,6 @@ def test_recorded_at_attached():
     check("recorded_at is between before/after wall-clock",
           before <= ts <= after,
           f"before={before} ts={ts} after={after}")
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

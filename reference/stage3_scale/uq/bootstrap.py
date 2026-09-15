@@ -1,10 +1,4 @@
-"""
-Bootstrap Ensemble (BE) — Uncertainty Quantification via model diversity.
-
-Trains B GRU models on bootstrap samples of the training data.
-Prediction intervals are derived from ensemble spread (percentiles).
-Confidence is measured via Coefficient of Variation (CV) across members.
-"""
+"""Bootstrap Ensemble (BE) — Uncertainty Quantification via model diversity."""
 
 import sys
 from pathlib import Path
@@ -16,7 +10,6 @@ import numpy as np
 import torch
 import yaml
 
-# Resolve sibling imports (uq/ and predictor/ are siblings under paper3_experiments/)
 _parent = str(Path(__file__).resolve().parent.parent)
 if _parent not in sys.path:
     sys.path.insert(0, _parent)
@@ -29,18 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class BootstrapEnsemble(UncertaintyQuantifier):
-    """B bootstrap GRU models; intervals from empirical quantiles.
-
-    Strengths:
-      - Model-agnostic (wraps any base predictor)
-      - Captures epistemic (model) uncertainty
-      - Simple to implement and interpret
-
-    Weaknesses:
-      - B× training cost
-      - B× inference cost
-      - No finite-sample coverage guarantee (asymptotic only)
-    """
+    """B bootstrap GRU models; intervals from empirical quantiles."""
 
     method = 'be'
 
@@ -57,7 +39,6 @@ class BootstrapEnsemble(UncertaintyQuantifier):
         self.models: list[WorkloadGRU] = []
         self.norm_params: Optional[NormalizationParams] = None
 
-        # Training hyperparameters
         self.hidden_size = 64
         self.num_layers = 2
         self.dropout = 0.2
@@ -68,22 +49,12 @@ class BootstrapEnsemble(UncertaintyQuantifier):
 
         self._rng = np.random.RandomState(seed)
 
-    # ── Training ────────────────────────────────────────────────────────
-
     def fit(self,
             train_data: tuple,
             calibration_data: tuple = None) -> 'BootstrapEnsemble':
-        """Train B GRU models on independent bootstrap samples.
-
-        Args:
-            train_data: (X_train, y_train) — normalized numpy arrays
-                        X_train: (N, h, 1) or (N, h)
-                        y_train: (N, k)
-            calibration_data: Unused for BE (set during training split)
-        """
+        """Train B GRU models on independent bootstrap samples."""
         X_train, y_train = train_data
         
-        # Ensure correct shape
         X_train = np.asarray(X_train, dtype=np.float32)
         y_train = np.asarray(y_train, dtype=np.float32)
         if X_train.ndim == 2:
@@ -104,12 +75,10 @@ class BootstrapEnsemble(UncertaintyQuantifier):
         for b in range(self.B):
             t0 = time.time()
 
-            # Bootstrap resample with replacement
             indices = self._rng.choice(N, size=N, replace=True)
             X_boot = X_train_be[indices]
             y_boot = y_train_be[indices]
 
-            # Create a new model
             model = WorkloadGRU(
                 input_size=1,
                 hidden_size=self.hidden_size,
@@ -118,7 +87,6 @@ class BootstrapEnsemble(UncertaintyQuantifier):
                 dropout=self.dropout,
             ).to(self.device)
 
-            # Train on bootstrap sample
             model = _train_gru(
                 model=model,
                 X=X_boot,
@@ -138,14 +106,8 @@ class BootstrapEnsemble(UncertaintyQuantifier):
         logger.info("BE: Ensemble of %d models trained", self.B)
         return self
 
-    # ── Inference ───────────────────────────────────────────────────────
-
     def predict_with_uncertainty(self, history: np.ndarray) -> dict:
-        """Predict with uncertainty from ensemble spread.
-
-        Args:
-            history: shape (h,) — raw RPS values (will be normalized)
-        """
+        """Predict with uncertainty from ensemble spread."""
         if not self.models:
             raise RuntimeError("BE not fitted. Call fit() first.")
         if self.norm_params is None:
@@ -158,7 +120,6 @@ class BootstrapEnsemble(UncertaintyQuantifier):
         x = self.norm_params.normalize(history.astype(np.float32, copy=False))
         x_tensor = torch.from_numpy(x).to(self.device).reshape(1, self.h, 1)
 
-        # Collect predictions from all ensemble members
         all_preds_norm = []
         with torch.inference_mode():
             for model in self.models:
@@ -168,25 +129,20 @@ class BootstrapEnsemble(UncertaintyQuantifier):
 
         preds_norm = np.array(all_preds_norm)  # (B, k)
 
-        # Denormalize
         preds_rps = np.array([
             self.norm_params.denormalize(preds_norm[i])
             for i in range(self.B)
         ])
 
-        # Point forecast: ensemble mean (denormalized)
         point_forecast = preds_rps.mean(axis=0)
 
-        # Prediction intervals: empirical quantiles
         ci_lower = np.percentile(preds_rps, self.alpha / 2 * 100, axis=0)
         ci_upper = np.percentile(preds_rps, (1 - self.alpha / 2) * 100, axis=0)
 
-        # Ensure non-negative bounds
         np.maximum(ci_lower, 0.0, out=ci_lower)
         np.maximum(ci_upper, 0.0, out=ci_upper)
         np.maximum(point_forecast, 0.0, out=point_forecast)
 
-        # Confidence score: mean CV across forecast horizon
         ensemble_std = preds_rps.std(axis=0)
         ensemble_mean = preds_rps.mean(axis=0)
         with np.errstate(divide='ignore', invalid='ignore'):
@@ -212,19 +168,12 @@ class BootstrapEnsemble(UncertaintyQuantifier):
             }
         }
 
-    # ── Evaluation ──────────────────────────────────────────────────────
-
     def evaluate_coverage(self, test_data: tuple) -> dict:
-        """Evaluate empirical coverage on held-out test data.
-
-        Args:
-            test_data: (X_test, y_test) — normalized arrays
-        """
+        """Evaluate empirical coverage on held-out test data."""
         X_test, y_test = test_data
         X_test = np.asarray(X_test, dtype=np.float32)
         y_test = np.asarray(y_test, dtype=np.float32)
 
-        # Denormalize y_test
         y_test_rps = np.array([
             self.norm_params.denormalize(y_test[i])
             for i in range(len(y_test))
@@ -270,17 +219,13 @@ class BootstrapEnsemble(UncertaintyQuantifier):
             'ensemble_size': self.B,
         }
 
-    # ── Persistence ─────────────────────────────────────────────────────
-
     def save(self, output_dir: str) -> None:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Save ensemble members
         for b, model in enumerate(self.models):
             torch.save(model.state_dict(), output_dir / f"member_{b:02d}.pt")
 
-        # Save config
         config = {
             'method': 'be',
             'B': self.B,
@@ -327,7 +272,6 @@ class BootstrapEnsemble(UncertaintyQuantifier):
                 sigma=config['normalization']['sigma'],
             )
 
-        # Load ensemble models
         for b in range(config['B']):
             model = WorkloadGRU(
                 input_size=1,
@@ -347,15 +291,9 @@ class BootstrapEnsemble(UncertaintyQuantifier):
         return be
 
 
-# ── Training Helper ──────────────────────────────────────────────────
-
 def _train_gru(model: WorkloadGRU, X: np.ndarray, y: np.ndarray,
                epochs: int, lr: float, batch_size: int, patience: int,
                device: str, seed: int) -> WorkloadGRU:
-    """Train a single GRU model on given data. Returns fitted model.
-
-    Uses 80/20 train/val split for early stopping.
-    """
     torch.manual_seed(seed)
     np.random.seed(seed)
 
@@ -376,7 +314,6 @@ def _train_gru(model: WorkloadGRU, X: np.ndarray, y: np.ndarray,
 
     for epoch in range(epochs):
         model.train()
-        # Mini-batch training
         perm = torch.randperm(n_train)
         total_loss = 0.0
         n_batches = 0
@@ -395,7 +332,6 @@ def _train_gru(model: WorkloadGRU, X: np.ndarray, y: np.ndarray,
             total_loss += loss.item()
             n_batches += 1
 
-        # Validation
         model.eval()
         with torch.inference_mode():
             val_pred = model(X_val)

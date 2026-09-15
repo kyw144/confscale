@@ -1,4 +1,4 @@
-"""Fail-closed technical checks on retained experiment outputs, offline."""
+"""Offline checks for experiment completeness and consistency."""
 import csv
 from collections import deque
 import json
@@ -11,7 +11,7 @@ def finite(value, minimum=0):
 
 
 def assess(run_dir, predictive, criteria):
-    """Technical validity only. Never compare newly observed values to a paper claim."""
+    """Technical validity only."""
     run_dir = Path(run_dir)
     checks = {}
     details = {}

@@ -1,9 +1,4 @@
-"""
-Training loop for GRU workload predictor.
-
-Trains per-pattern or combined models with early stopping, saves best checkpoint
-and normalization parameters as a self-contained model directory.
-"""
+"""Training loop for GRU workload predictor."""
 
 from pathlib import Path
 import json
@@ -18,7 +13,7 @@ from .gru_model import WorkloadGRU
 
 
 def get_device(prefer_mps: bool = True) -> torch.device:
-    """Select best available device. MPS on Apple Silicon, else CPU."""
+    """Select best available device."""
     if prefer_mps and torch.backends.mps.is_available():
         try:
             # Quick smoke test — some MPS ops can fail silently
@@ -43,21 +38,16 @@ def train_model(
     patience: int = 20,
     prefer_mps: bool = True,
 ) -> dict:
-    """Train a GRU model on a single workload pattern.
-
-    Returns dict with training metrics for documentation.
-    """
+    """Train a GRU model on a single workload pattern."""
     device = get_device(prefer_mps)
     print(f"Training on device: {device}")
 
-    # --- Data ---
     train_loader, val_loader, test_loader, norm = load_training_data(
         csv_path, h=h, k=k, batch_size=batch_size, device=str(device)
     )
     print(f"Train: {len(train_loader.dataset)} samples, "
           f"Val: {len(val_loader.dataset)}, Test: {len(test_loader.dataset)}")
 
-    # --- Model ---
     model = WorkloadGRU(
         input_size=1,
         hidden_size=hidden_size,
@@ -69,7 +59,6 @@ def train_model(
     print(f"Model: {model.param_count:,} params, "
           f"~{model.model_size_bytes / 1024:.1f} KB on disk")
 
-    # --- Training ---
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.MSELoss()
 
@@ -80,7 +69,6 @@ def train_model(
     t0 = time.time()
 
     for epoch in range(epochs):
-        # Train
         model.train()
         train_loss = 0.0
         for X_batch, y_batch in train_loader:
@@ -94,7 +82,6 @@ def train_model(
         train_loss /= len(train_loader.dataset)
         train_losses.append(train_loss)
 
-        # Validate
         model.eval()
         val_loss = 0.0
         with torch.no_grad():
@@ -104,11 +91,9 @@ def train_model(
         val_loss /= len(val_loader.dataset)
         val_losses.append(val_loss)
 
-        # Early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            # Save best model
             out = Path(output_dir)
             out.mkdir(parents=True, exist_ok=True)
             torch.save(model.state_dict(), out / 'model.pt')
@@ -126,11 +111,9 @@ def train_model(
     print(f"Training completed in {train_time:.1f}s, "
           f"best_val_loss={best_val_loss:.6f}")
 
-    # --- Load best model for evaluation ---
     model.load_state_dict(torch.load(Path(output_dir) / 'model.pt',
                          weights_only=True, map_location=device))
 
-    # --- Save config ---
     _save_config(output_dir, h, k, hidden_size, num_layers, dropout,
                  lr, batch_size, norm, train_time, best_val_loss,
                  len(train_loader.dataset))

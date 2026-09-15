@@ -1,42 +1,11 @@
 #!/usr/bin/env python3
-"""E-V7 tuned-HPA cost analysis (Pattern D, matched p95 SLO).
-
-Recomputes the ConfScale-SCP replica-seconds saving against a COMPETENTLY-TUNED
-HPA-reactive baseline, honestly, whatever it is. Reuses the EXACT cost metric
-from analysis/post_reframe.py — overhead_replica_seconds_per_hour = overhead /
-(duration_s/3600) — and only swaps the baseline run.
-
-Method (pre-registered, see _EV7_TUNED_BASELINE_STATUS.md)
---------------------------------------------------------
-1. Per config, per rep: read metrics.json (resources.overhead_replica_seconds,
-   resources.mean/max_replicas; e2e.p95_ms, e2e.slo_violation_rate; slo.p95_ms)
-   and run_config.yaml (method, workload, method_config). Compute
-   overhead_replica_seconds_per_hour. Aggregate mean±sd (n=5).
-2. Reproduction anchor: hpa-anchor-u50-s300 (v2 @ 50%/300s ≈ v1 default) must
-   reproduce ≈67,806 overhead_rs/h — validates the v2 path + 3600s duration +
-   current cluster vs the historical baseline.
-3. Matched-SLO gate: the original 71.9% held at matched e2e operating point
-   (both arms ~19.3% violation, ~980-1015 ms e2e p95). A tuned HPA config
-   "meets the matched p95 SLO" iff its e2e p95 is NOT statistically worse than
-   the in-batch ConfScale-SCP arm (Welch one-sided p>0.05 OR within +5%) AND its
-   e2e violation rate is within +3 pp of SCP's. Configs that "save" cost by
-   degrading service are disqualified.
-4. Comparator = the LOWEST overhead_rs/h tuned HPA config that meets the gate
-   (the strongest honest baseline). Saving% = (comparator - SCP)/comparator.
-5. Read-band verdict (pre-registered):
-     within noise of 71.9% -> ROBUST (keep headline, now defended)
-     shrinks               -> restate to the measured number ("competitive while honest")
-     vanishes / negative   -> drop the cost headline; lead on calibration honesty.
-
-Originals untouched; corrected numbers in this results dir only.
-"""
+"""Compare cost with SLO-matched and cheapest qualifying HPA settings."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -61,7 +30,6 @@ ORIG_SCP_OVERHEAD = 19039.0      # ConfScale-SCP/D n=5
 ORIG_SAVING_PCT = 71.9
 ANCHOR_NAME = "hpa-anchor-u50-s300"
 SCP_NAME = "confscale-scp"
-# Pre-registered gate tolerances.
 P95_TOL_FRAC = 0.05              # e2e p95 within +5% of SCP counts as "matched"
 VIOL_TOL_PP = 0.03              # e2e violation within +3 pp of SCP counts as "matched"
 ROBUST_BAND_PP = 4.0             # saving within ±4 pp of 71.9 -> "robust"
@@ -191,7 +159,6 @@ def main():
         raise SystemExit(f"ConfScale-SCP ('{SCP_NAME}') not found in batch — cannot compare.")
     scp = stats[SCP_NAME]
 
-    # Reproduction anchor.
     anchor = stats.get(ANCHOR_NAME)
     anchor_report = None
     if anchor:
@@ -205,7 +172,6 @@ def main():
             "reproduces": bool(am and 0.90 <= am / ORIG_HPA_OVERHEAD <= 1.10),
         }
 
-    # SCP drift check.
     sm = scp["overhead_per_hour"]["mean"]
     scp_report = {
         "overhead_per_hour_mean": sm, "sd": scp["overhead_per_hour"]["sd"],
@@ -249,7 +215,6 @@ def main():
             "saving_pct": saving_pct,
             "delta_vs_original_pp": saving_pct - ORIG_SAVING_PCT,
         }
-        # Read-band verdict.
         if saving_pct <= VANISH_PCT:
             verdict = ("VANISHES — drop the cost-savings headline; lead on the "
                        "calibration-honesty thesis")
@@ -272,7 +237,6 @@ def main():
     }
     (args.out / "ev7_cost_analysis.json").write_text(json.dumps(report, indent=2, default=str))
 
-    # Printed summary.
     print("\n================ E-V7 TUNED-HPA COST ANALYSIS ================")
     if anchor_report:
         print(f"Reproduction anchor ({ANCHOR_NAME}): {anchor_report['overhead_per_hour_mean']:.0f} rs/h "

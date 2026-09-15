@@ -287,11 +287,7 @@ def table_5_perservice():
         "pid_width_x": round(anchor["methods"]["pid"]["mean_width_h0"] / anchor["methods"]["frozen"]["mean_width_h0"], 1),
     }
     order = ["MS_21558", "MS_7129", "MS_41763", "MS_7420"]
-    # Gap is reported on a single, self-consistent basis: the deploy-window
-    # shortfall of frozen-SCP coverage below the 90% target (gap = 90 - coverage).
-    # The aggregate-vs-per-service masking ratio is a separate cut (the
-    # gap-distribution analysis); it is reported in the caption, not mixed into
-    # the per-cell rows, so a reader can always recover gap from coverage.
+    # Gap = 90 - deployment-window coverage; the masking ratio uses a separate distribution.
     text = [
         "# Table 5 - Real Per-Service Volatility Coverage",
         "",
@@ -390,7 +386,6 @@ def circle_el(x, y, r, fill, stroke="#1f2933"):
 
 def figure_cost_vs_coverage():
     data, _src = drift_summary_from_table_a()
-    # Parse simple "0.9000 +/- 0.0000" and "29500.0 +/- 692.8" strings.
     points = []
     for (method, pattern), vals in data.items():
         cov_s = vals["cov"]
@@ -486,7 +481,6 @@ def bar_chart(path, labels, values, colors, ylabel="", target_lines=None, height
         y = margin_t + plot_h - h
         svg.append(rect_el(x, y, bar_w, h, color))
         svg.append(text_el(x + bar_w / 2, y - 5, f"{value_prefix}{fmt_num(value, 1 if value < 100 else 0)}", "tiny", "middle"))
-        # wrap label manually
         parts = label.split()
         if len(parts) > 1:
             svg.append(text_el(x + bar_w / 2, margin_t + plot_h + 18, parts[0], "tiny", "middle"))
@@ -587,11 +581,7 @@ def figure_h1_binds():
 
 
 def figure_control_loop():
-    """MAPE-K dataflow diagram of one 30 s control cycle.
-
-    Referenced as Fig. 1 by the publication cut; equation tags (4)-(8) match
-    that surface's numbering. Pure architecture rendering - no run data.
-    """
+    """MAPE-K dataflow diagram of one 30 s control cycle."""
     width, height = 980, 600
     svg = svg_header(width, height)
     svg.append(
@@ -615,7 +605,6 @@ def figure_control_loop():
 
     svg.append(text_el(24, 26, "Calibration-aware control cycle (MAPE-K)", "title"))
 
-    # Knowledge bar.
     svg.append(rect_el(30, 42, 920, 32, "#eef2f6", "#c9d1da"))
     svg.append(
         text_el(
@@ -627,7 +616,6 @@ def figure_control_loop():
         )
     )
 
-    # Phase containers and blocks.
     svg.append(text_el(100, 132, "MONITOR", "label", "middle"))
     block(30, 140, 140, 90, ["Prometheus", "realized RPS y_t,", "end-to-end p95"])
 
@@ -658,7 +646,6 @@ def figure_control_loop():
         fill="#eef2f6",
     )
 
-    # Forward dataflow.
     arrow([(170, 170), (215, 170)], "history", 192, 162)
     arrow([(370, 175), (400, 175)], "μ_t(τ)", 385, 167)
     arrow([(555, 175), (615, 175)], "[L_t, U_t]", 585, 167)
@@ -667,7 +654,6 @@ def figure_control_loop():
     arrow([(890, 360), (890, 480)], "scale", 897, 424, anchor="start")
     arrow([(100, 480), (100, 230)], "served traffic, metrics", 106, 380, anchor="start")
 
-    # Validation and recalibration loop.
     arrow([(170, 210), (190, 210), (190, 300), (215, 300)], "y_t validate", 188, 252, anchor="start")
     arrow([(420, 205), (340, 265)], "enqueue pending [L, U]", 380, 230, dashed=True)
     arrow([(370, 310), (400, 310)], "miss, residual", 385, 332)

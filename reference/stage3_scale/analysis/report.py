@@ -1,24 +1,5 @@
 #!/usr/bin/env python3
-"""report.py — Master analysis pipeline for P3 experiments.
-
-Orchestrates: load → metrics → statistics → tables → figures → reproducibility package.
-
-Usage:
-    # Full analysis
-    python analysis/report.py --input outputs/ --output results/
-
-    # Partial (while experiments still running)
-    python analysis/report.py --input outputs/ --output results/ --methods-complete 4
-
-    # Regenerate just figures (after tweaking styling)
-    python analysis/report.py --input outputs/ --output results/ --figures-only
-
-    # Regenerate just tables
-    python analysis/report.py --input outputs/ --output results/ --tables-only
-
-    # Also generate a synthetic test dataset
-    python analysis/report.py --synthetic --output results/test/
-"""
+"""Run the experiment analysis pipeline."""
 
 import argparse
 import json
@@ -31,7 +12,6 @@ import numpy as np
 import pandas as pd
 import yaml
 
-# ── Add parent to path for local imports ────────────────────────────────────
 _here = Path(__file__).resolve().parent
 _parent = _here.parent
 if str(_parent) not in sys.path:
@@ -58,21 +38,8 @@ from analysis.figures import generate_all_figures
 logger = logging.getLogger("report")
 
 
-# ── Synthetic Data Generator ────────────────────────────────────────────────
-
 def generate_synthetic_runs(output_dir: Path) -> Path:
-    """Generate a synthetic experiment dataset for testing the analysis pipeline.
-
-    Creates mock data for 8 methods × 4 workloads × 3 replicates with
-    realistic but fake metrics. Useful for validating the pipeline
-    before real experiments are complete.
-
-    Args:
-        output_dir: Root directory where mock data is created
-
-    Returns:
-        Path to the output directory
-    """
+    """Generate a synthetic experiment dataset for testing the analysis pipeline."""
     METHODS = [
         "hpa-reactive", "hpa-predictive", "hpa-predictive-safety",
         "keda", "base-inspired",
@@ -82,7 +49,6 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
     REPLICATES = 3
     DURATION = 3600
 
-    # Seed for reproducibility
     rng = np.random.RandomState(42)
 
     # Realistic baseline SLO violation rates per workload (from plan estimates)
@@ -106,7 +72,6 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
         "confscale-qr": 0.63,
     }
 
-    # Resource overhead per workload (replica-seconds)
     base_overhead = {
         "A": 750,
         "B": 5200,
@@ -138,7 +103,6 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
                 run_dir = output_dir / run_id
                 run_dir.mkdir(parents=True, exist_ok=True)
 
-                # Generate metrics with realistic noise
                 base_rate = baseline_rates[workload]
                 effect = method_effects[method]
                 noise_factor = 0.15  # 15% noise
@@ -150,11 +114,9 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
                 p95_base = 80 + slo_rate * 150  # 80ms base, scales with violations
                 p95_ms = p95_base + rng.normal(0, 15)
 
-                # Replicas
                 mean_reps = 3 + rng.uniform(-0.5, 1.0) * (1 + int(workload != "A")) * (1 - effect)
                 mean_reps = max(1, mean_reps)
 
-                # Overhead
                 overhead = base_overhead[workload] * method_overhead_mult[method]
                 overhead *= (1 + rng.normal(0, 0.1))
                 overhead = max(0, int(overhead))
@@ -193,10 +155,8 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
                     },
                 }
 
-                # Write metrics.json
                 (run_dir / "metrics.json").write_text(json.dumps(metrics, indent=2))
 
-                # Write run_config.yaml
                 config = {
                     "run_id": run_id,
                     "method": method,
@@ -212,7 +172,6 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
                 }
                 (run_dir / "run_config.yaml").write_text(yaml.dump(config))
 
-                # Write timeseries.csv (minimal — just header + few points)
                 ts_path = run_dir / "timeseries.csv"
                 ts_lines = ["timestamp,p95_ms,p50_ms,rps,error_rps,replicas,cpu_cores,violating"]
                 ts_lines.append("1000000.0,100.0,50.0,30.0,0.0,3.0,0.1,0")
@@ -220,15 +179,12 @@ def generate_synthetic_runs(output_dir: Path) -> Path:
 
                 rows.append(metrics)
 
-    # Write run_log.csv
     log_path = output_dir / "run_log.csv"
     pd.DataFrame(rows).to_csv(log_path, index=False)
 
     logger.info("Generated %d synthetic runs in %s", len(rows), output_dir)
     return output_dir
 
-
-# ── Main Pipeline ───────────────────────────────────────────────────────────
 
 def run_pipeline(
     input_dir: Path,
@@ -237,22 +193,10 @@ def run_pipeline(
     tables_only: bool = False,
     synthetic: bool = False,
 ) -> dict:
-    """Run the complete analysis pipeline.
-
-    Args:
-        input_dir: Directory with experiment run outputs
-        output_dir: Directory for generated results
-        figures_only: Only regenerate figures
-        tables_only: Only regenerate tables
-        synthetic: Generate synthetic test data first
-
-    Returns:
-        dict with paths to all generated artifacts
-    """
+    """Run the complete analysis pipeline."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Handle synthetic mode
     if synthetic:
         input_dir = generate_synthetic_runs(output_dir / "synthetic_data")
         output_dir = output_dir / "synthetic_results"
@@ -265,7 +209,6 @@ def run_pipeline(
         "output_dir": str(output_dir),
     }
 
-    # ── Phase 1: Load ───────────────────────────────────────────────────────
     logger.info("=" * 60)
     logger.info("PHASE 1: Loading experiment data")
     logger.info("=" * 60)
@@ -275,7 +218,6 @@ def run_pipeline(
         logger.error("No valid runs found in %s", input_dir)
         return {"error": "No data found", "output_dir": str(output_dir)}
 
-    # Validate
     validation = validate_data(df)
     logger.info("Data validation: %d runs, %d methods, %d workloads",
                  validation["n_runs"], validation["n_methods"],
@@ -289,10 +231,8 @@ def run_pipeline(
         for w in validation["warnings"]:
             logger.warning("  ⚠ %s", w)
 
-    # Ensure SLO violation rate is computed
     df = compute_slo_violation_rate(df)
 
-    # ── Phase 2: Metrics ────────────────────────────────────────────────────
     if not figures_only and not tables_only:
         logger.info("=" * 60)
         logger.info("PHASE 2: Computing metrics")
@@ -305,7 +245,6 @@ def run_pipeline(
         logger.info("Summary: best method = %s (%.4f)",
                      summary.get("best_method"), summary.get("best_method_rate"))
 
-        # Aggregated metrics
         agg = aggregate_by_method_workload(df)
         agg_path = output_dir / "data" / "aggregated_metrics.csv"
         agg_path.parent.mkdir(parents=True, exist_ok=True)
@@ -319,7 +258,6 @@ def run_pipeline(
             uq.to_csv(uq_path, index=True, index_label="method")
             results["uq_comparison"] = str(uq_path)
 
-    # ── Phase 3: Statistics ─────────────────────────────────────────────────
     if not figures_only and not tables_only:
         logger.info("=" * 60)
         logger.info("PHASE 3: Statistical analysis")
@@ -327,20 +265,17 @@ def run_pipeline(
 
         stat_dir = output_dir / "statistics"
 
-        # All hypothesis tests
         all_tests = run_all_tests(df)
         test_path = stat_dir / "hypothesis_tests.json"
         stat_dir.mkdir(parents=True, exist_ok=True)
         test_path.write_text(json.dumps(all_tests, indent=2, default=str))
         results["hypothesis_tests"] = str(test_path)
 
-        # Log key results
         for h in ["h1", "h2", "h3", "h4"]:
             h_data = all_tests.get(h, {})
             verdict = h_data.get("verdict", h_data.get("status", "unknown"))
             logger.info("  %s: %s", h.upper(), verdict)
 
-        # Normality + heterogeneity diagnostics
         norm_df = normality_tests(df)
         norm_path = stat_dir / "normality_tests.csv"
         norm_df.to_csv(norm_path, index=False)
@@ -350,13 +285,11 @@ def run_pipeline(
         het_path = stat_dir / "heterogeneity_tests.csv"
         het_df.to_csv(het_path, index=False)
 
-        # Comparison matrix
         comparisons = compare_all_methods(df)
         comp_path = stat_dir / "comparison_matrix.json"
         comp_path.write_text(json.dumps(comparisons, indent=2, default=str))
         results["comparison_matrix"] = str(comp_path)
 
-        # Effect sizes CSV
         eff_path = stat_dir / "effect_sizes.csv"
         all_comps = comparisons.get("all_comparisons", [])
         if all_comps:
@@ -373,7 +306,6 @@ def run_pipeline(
             pd.DataFrame(eff_rows).to_csv(eff_path, index=False)
             results["effect_sizes"] = str(eff_path)
 
-    # ── Phase 4: Tables ─────────────────────────────────────────────────────
     if not figures_only:
         logger.info("=" * 60)
         logger.info("PHASE 4: Generating tables")
@@ -390,7 +322,6 @@ def run_pipeline(
             for name, paths in all_tables.items()
         }
 
-    # ── Phase 5: Figures ────────────────────────────────────────────────────
     if not tables_only:
         logger.info("=" * 60)
         logger.info("PHASE 5: Generating figures")
@@ -403,13 +334,11 @@ def run_pipeline(
             logger.info("  %s: %s", name, path)
         results["figures"] = {name: str(path) for name, path in all_figures.items()}
 
-    # ── Phase 6: Reproducibility Package ────────────────────────────────────
     if not figures_only and not tables_only:
         logger.info("=" * 60)
         logger.info("PHASE 6: Generating reproducibility package")
         logger.info("=" * 60)
 
-        # README
         readme = f"""# P3 Experiment Results — Reproducibility Package
 
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -485,7 +414,6 @@ echo "  Stats:   ${{OUTPUT_DIR}}/statistics/"
         script_path.write_text(reproduce)
         script_path.chmod(0o755)
 
-        # Requirements note
         req_path = output_dir / "requirements-analysis.txt"
         req_path.write_text(
             "pandas>=2.0.0\nnumpy>=1.24.0\nscipy>=1.10.0\n"
@@ -502,8 +430,6 @@ echo "  Stats:   ${{OUTPUT_DIR}}/statistics/"
 
     return results
 
-
-# ── CLI ─────────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(

@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the ACI (Adaptive Conformal Inference) baseline.
-
-ACI is a special case of ConformalPID with K_I = K_D = 0; most invariants
-are inherited from the PID test suite. This file covers the ACI-specific
-constructor / state surface and the discriminating-evidence claim from
-the E1 brief: ACI recovers more slowly than PID on volatility-break
-streams.
-
-Run:
-  python test_aci.py
-or:
-  pytest test_aci.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -42,7 +28,6 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 
 
 def run_feedback(recal, residuals, warmup_size=100):
-    """Same harness as test_conformal_pid.py."""
     for r in residuals[:warmup_size]:
         recal.residuals.append(abs(float(r)))
     alphas, miss = [], []
@@ -53,9 +38,6 @@ def run_feedback(recal, residuals, warmup_size=100):
         alphas.append(recal.alpha)
         miss.append(m)
     return np.array(alphas), np.array(miss)
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_construction_defaults():
@@ -142,9 +124,6 @@ def test_volatility_break_partial_recovery():
     # but don't hard-assert (the gap depends on default gains).
     check("logged: ACI vs PID first-30-cycles post-break", True,
           f"aci={aci_30:.4f} pid={pid_30:.4f}")
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

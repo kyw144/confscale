@@ -1,13 +1,4 @@
-"""Baseline autoscaling methods for P3 experiments.
-
-Provides three controller-based baselines (predictive, predictive-safety,
-BASE-inspired) and a KEDA ScaledObject manifest. All baselines implement
-the same controller subprocess pattern as the UQ methods, allowing the
-orchestrator to treat all 8 methods uniformly.
-
-Controller entry point:
-    baselines/controller.py --mode {predictive|predictive-safety|base-inspired}
-"""
+"""Baseline autoscaling methods."""
 
 __all__ = [
     "CONTROLLER_SCRIPT",

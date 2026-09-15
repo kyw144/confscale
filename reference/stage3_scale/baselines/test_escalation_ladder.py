@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the E1 coverage-conditional EscalationLadder.
-
-Covers: trigger exactly at escalation_persistence, de-escalation exactly
-at recovery_persistence, no level-skipping downward, oscillating coverage
-must not accumulate spurious escalation, apply() factors per level, and
-state-snapshot keys.
-
-Run:
-  python test_escalation_ladder.py
-or:
-  pytest test_escalation_ladder.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -38,11 +25,7 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 
 
 def step_n(ladder: EscalationLadder, coverage: float, n: int) -> list[int]:
-    """Step the ladder n times at constant coverage, return level history."""
     return [ladder.step(coverage) for _ in range(n)]
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_construction_defaults():
@@ -227,9 +210,6 @@ def test_brief_acceptance_pattern_h():
     else:
         check("De-escalated within 15 cycles of recovery", False,
               f"final level={L.level}")
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

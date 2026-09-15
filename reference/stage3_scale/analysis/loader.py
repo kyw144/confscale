@@ -1,19 +1,4 @@
-"""Loader: read experiment run directories into structured DataFrames.
-
-Each run directory contains:
-    metrics.json         — scalar metrics (SLO rate, overhead, etc.)
-    run_config.yaml      — method, workload, replicate, parameters
-    timeseries.csv       — 15s-resolution time series
-    predictions.csv      — if method produces predictions
-    metadata.yaml        — git commit, host, timestamps, exit status
-    summary.json         — orchestrator per-run summary
-
-This module provides:
-    load_runs(input_dir)          → pd.DataFrame (one row per run, flattened metrics)
-    load_timeseries(input_dir)    → pd.DataFrame (all time series concatenated)
-    discover_runs(input_dir)      → list[RunMeta] (raw discovery)
-    validate_data(df)             → dict with warnings about missing/failed data
-"""
+"""Loader: read experiment run directories into structured DataFrames."""
 
 import json
 import logging
@@ -27,7 +12,6 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-# ── Data Structures ────────────────────────────────────────────────────────
 
 @dataclass
 class RunMeta:
@@ -43,10 +27,8 @@ class RunMeta:
     actual_duration_s: int = 0
     error_message: str = ""
 
-    # Metrics from metrics.json
     metrics: dict = field(default_factory=dict)
 
-    # Config from run_config.yaml
     config: dict = field(default_factory=dict)
 
     @property
@@ -58,18 +40,9 @@ class RunMeta:
         return self.status not in ("failed", "timeout", "unknown")
 
 
-# ── Directory Discovery ────────────────────────────────────────────────────
-
 def _parse_run_dirname(dirname: str) -> Optional[dict]:
-    """Parse a directory name like 'hpa-reactive_a_rep1_20260510_163305'.
-
-    Returns dict with method, workload, replicate, timestamp or None if
-    the directory name doesn't match the expected pattern.
-    """
     parts = dirname.split("_")
-    # Expected: method_workload_repN_YYYYMMDD_HHMMSS
-    # Some methods have hyphens and multiple underscores in name
-    # Strategy: find "rep" marker, work backwards and forwards
+    # Method names may contain underscores; locate the replicate marker first.
     try:
         rep_idx = None
         for i, p in enumerate(parts):
@@ -97,14 +70,7 @@ def _parse_run_dirname(dirname: str) -> Optional[dict]:
 
 
 def discover_runs(input_dir: Path) -> list[RunMeta]:
-    """Walk input_dir and discover all run directories.
-
-    Args:
-        input_dir: Root output directory (e.g., paper3_experiments/outputs/)
-
-    Returns:
-        List of RunMeta objects, one per discovered run directory.
-    """
+    """Walk input_dir and discover all run directories."""
     input_dir = Path(input_dir)
     runs: list[RunMeta] = []
 
@@ -112,7 +78,6 @@ def discover_runs(input_dir: Path) -> list[RunMeta]:
         if not entry.is_dir():
             continue
 
-        # Skip non-run directories (profiling, training_data, uq_evaluation, etc.)
         parsed = _parse_run_dirname(entry.name)
         if parsed is None:
             continue
@@ -127,7 +92,6 @@ def discover_runs(input_dir: Path) -> list[RunMeta]:
             directory=entry,
         )
 
-        # Load config
         config_path = entry / "run_config.yaml"
         if config_path.exists():
             try:
@@ -138,7 +102,6 @@ def discover_runs(input_dir: Path) -> list[RunMeta]:
             except Exception as e:
                 logger.warning("Failed to read config for %s: %s", run_id, e)
 
-        # Load metrics
         metrics_path = entry / "metrics.json"
         if metrics_path.exists():
             try:
@@ -152,26 +115,7 @@ def discover_runs(input_dir: Path) -> list[RunMeta]:
     return runs
 
 
-# ── DataFrame Construction ──────────────────────────────────────────────────
-
 def _slo_metric_columns(m: dict) -> dict:
-    """Resolve SLO latency / violation columns WITHOUT silently collapsing the
-    e2e and controller-proxy bases (E-V6b).
-
-    The previous code did `e2e.get(k, slo.get(k, nan))` for p95_ms /
-    slo_violation_rate, so a cell missing its `e2e.*` block (e.g. the
-    post-2026-05-24 batches stripped by the path-doubling bug, Anomaly A4) was
-    silently backfilled with the frontend-internal Prometheus proxy — a
-    different metric (~1.3-1.5x lower). That made the same column e2e on some
-    cells and proxy on others, split by which batches the bug hit.
-
-    Fix (mirrors analysis/post_reframe.py): emit explicit per-basis columns and
-    a `metric_basis` flag, and make the bare p95_ms / slo_violation_rate
-    columns **e2e-only** (NaN when the e2e block is absent). A missing e2e block
-    is therefore visible (NaN + metric_basis=='e2e_MISSING'), never silently
-    substituted by the proxy. Callers that explicitly want the controller proxy
-    read the *_controller columns.
-    """
     e2e = m.get("e2e", {}) or {}
     slo = m.get("slo", {}) or {}
     has_e2e = e2e.get("p95_ms") is not None
@@ -182,7 +126,6 @@ def _slo_metric_columns(m: dict) -> dict:
         "p99_ms_e2e": e2e.get("p99_ms", np.nan),
         "slo_violation_rate_e2e": e2e.get("slo_violation_rate", np.nan),
         "slo_violation_intervals_e2e": e2e.get("slo_violation_intervals", np.nan),
-        # explicit controller-proxy basis (Prometheus frontend-internal histogram)
         "p50_ms_controller": slo.get("p50_ms", np.nan),
         "p95_ms_controller": slo.get("p95_ms", np.nan),
         "p99_ms_controller": slo.get("p99_ms", np.nan),
@@ -200,24 +143,7 @@ def _slo_metric_columns(m: dict) -> dict:
 
 
 def load_runs(input_dir: Path) -> pd.DataFrame:
-    """Load all runs into a flat DataFrame with one row per run.
-
-    Columns:
-        run_id, method, workload, replicate, status, duration_s,
-        actual_duration_s,
-        # From metrics.json (e2e section preferred):
-        slo_violation_rate, p50_ms, p95_ms, p99_ms,
-        mean_replicas, max_replicas, replica_churn,
-        total_requests, error_rate, overhead_replica_seconds,
-        # Optional UQ metrics:
-        coverage, mean_ci_width, inference_ms, efficiency_score
-
-    Args:
-        input_dir: Root output directory
-
-    Returns:
-        DataFrame with one row per valid run, with flattened metrics.
-    """
+    """Load all runs into a flat DataFrame with one row per run."""
     runs = discover_runs(input_dir)
     rows = []
 
@@ -238,15 +164,12 @@ def load_runs(input_dir: Path) -> pd.DataFrame:
             # SLO latency / violation columns — explicit per-basis, e2e never
             # silently backfilled with the controller proxy (E-V6b).
             **_slo_metric_columns(m),
-            # Resources
             "mean_replicas": resources.get("mean_replicas", np.nan),
             "max_replicas": resources.get("max_replicas", np.nan),
             "replica_churn": resources.get("replica_churn", np.nan),
             "overhead_replica_seconds": resources.get("overhead_replica_seconds", np.nan),
-            # Requests
             "total_requests": requests.get("total", np.nan),
             "error_rate": requests.get("error_rate", np.nan),
-            # UQ-specific (if present)
             "coverage": m.get("coverage", np.nan),
             "mean_ci_width": m.get("mean_ci_width", np.nan),
             "inference_ms": m.get("inference_ms", np.nan),
@@ -271,7 +194,6 @@ def load_runs(input_dir: Path) -> pd.DataFrame:
                 sorted(df.loc[df["metric_basis"] == "e2e_MISSING", "run_id"].tolist())[:10],
             )
 
-    # Filter to valid runs
     n_total = len(df)
     df_valid = df[df["status"].notna() & ~df["status"].isin(["failed", "timeout"])].copy()
     n_failed = n_total - len(df_valid)
@@ -284,15 +206,7 @@ def load_runs(input_dir: Path) -> pd.DataFrame:
 
 
 def load_timeseries(input_dir: Path) -> pd.DataFrame:
-    """Load all timeseries CSVs into a single DataFrame keyed by run_id.
-
-    Args:
-        input_dir: Root output directory
-
-    Returns:
-        DataFrame with columns: run_id, method, workload, replicate,
-        timestamp, p95_ms, p50_ms, rps, replicas, cpu_cores, violating
-    """
+    """Load all timeseries CSVs into a single DataFrame keyed by run_id."""
     runs = discover_runs(input_dir)
     frames = []
 
@@ -320,19 +234,13 @@ def load_timeseries(input_dir: Path) -> pd.DataFrame:
     return df
 
 
-# ── Validation ─────────────────────────────────────────────────────────────
-
 def validate_data(df: pd.DataFrame) -> dict:
-    """Validate the loaded DataFrame for common issues.
-
-    Returns a dict with warnings and suggestions.
-    """
+    """Validate the loaded DataFrame for common issues."""
     warnings = []
 
     if len(df) == 0:
         return {"error": "No data loaded", "warnings": warnings}
 
-    # Check for failed statuses
     failed_runs = df[df["status"].isin(["failed", "timeout"])]
     if len(failed_runs) > 0:
         pct = 100 * len(failed_runs) / len(df)
@@ -340,13 +248,11 @@ def validate_data(df: pd.DataFrame) -> dict:
         if pct > 5:
             warnings.append("⚠️ >5% of runs failed — experiment integrity may be compromised")
 
-    # Check metric coverage
     for col in ["slo_violation_rate", "p95_ms", "mean_replicas"]:
         missing = df[col].isna().sum()
         if missing > 0:
             warnings.append(f"{missing} runs missing {col}")
 
-    # Check replicate coverage
     method_wl = df.groupby(["method", "workload"]).size()
     min_reps = method_wl.min() if len(method_wl) > 0 else 0
     if min_reps < 3:
@@ -356,7 +262,6 @@ def validate_data(df: pd.DataFrame) -> dict:
             + ", ".join(f"{m}/{w}" for (m, w) in low_rep.index)
         )
 
-    # Check workload × method coverage
     methods = df["method"].unique()
     workloads = df["workload"].unique()
     expected = len(methods) * len(workloads)

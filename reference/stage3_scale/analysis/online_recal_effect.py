@@ -1,27 +1,5 @@
 #!/usr/bin/env python3
-"""Offline-SCP vs online-recal-SCP comparison.
-
-Quantifies how much of the offline-SCP coverage gap (target 90% − empirical
-22% on the 96-cell run) is closed by switching to online recalibration. Encodes
-the open-Q7 narrative test:
-
-    closure = (online_cov − offline_cov) / (target_cov − offline_cov)
-
-    closure ≥ 0.60  →  "propose AND validate" framing
-    closure <  0.60  →  "own the drift" framing
-
-Inputs are run output directories — typically:
-
-    --offline-input outputs/e1_96cell_merged_*   (one or more)
-    --online-input  outputs/p3_uq_baselines_*    (one or more)
-
-The script tolerates either side being empty. With only offline data present
-it reports baseline stats and a clear "online data missing" verdict; with only
-online data, it does the inverse. Both empty exits 0 with a logged warning.
-
-Per-workload outputs land in `data/` and `figures/`; the verdict is also
-echoed to stdout and written to a markdown summary in `tables/`.
-"""
+"""Offline-SCP vs online-recal-SCP comparison."""
 
 from __future__ import annotations
 
@@ -49,18 +27,10 @@ from analysis.loader import load_runs
 logger = logging.getLogger("online_recal_effect")
 
 CLOSURE_THRESHOLD = 0.60  # ≥ this fraction of the coverage gap closed
-                          # → recommend "propose AND validate"
 
-
-# ── Loading ─────────────────────────────────────────────────────────────────
 
 def _collect_scp_cells(inputs: list[Path], expected_method: str,
                        interval_s: int = 30) -> pd.DataFrame:
-    """Return per-cell calibration metrics filtered to `expected_method`.
-
-    `expected_method` is `confscale-scp` (offline) or `confscale-scp-online`.
-    Cells whose recal-detection resolves to a different variant are dropped.
-    """
     frames = []
     for inp in inputs:
         if not inp.exists():
@@ -78,9 +48,6 @@ def _collect_scp_cells(inputs: list[Path], expected_method: str,
 
 
 def _collect_run_metrics(inputs: list[Path]) -> pd.DataFrame:
-    """Pull mean_replicas / slo_violation_rate / p95_ms from metrics.json
-    for every run under the given dirs. Used to merge resource-side numbers
-    with calibration-side numbers."""
     frames = []
     for inp in inputs:
         if not inp.exists():
@@ -100,8 +67,6 @@ def _collect_run_metrics(inputs: list[Path]) -> pd.DataFrame:
 
 def _merge_with_metrics(per_cell: pd.DataFrame,
                         metrics_df: pd.DataFrame) -> pd.DataFrame:
-    """Attach mean_replicas / slo_violation_rate / p95_ms from load_runs onto
-    each cell row. Joins on `cell` ↔ `run_id`."""
     if per_cell.empty:
         return per_cell
     cols = ["run_id", "mean_replicas", "slo_violation_rate", "p95_ms",
@@ -115,8 +80,6 @@ def _merge_with_metrics(per_cell: pd.DataFrame,
     return per_cell.merge(keep, on="cell", how="left")
 
 
-# ── Aggregation ─────────────────────────────────────────────────────────────
-
 def _sem(s: pd.Series) -> float:
     s = s.dropna()
     if len(s) < 2:
@@ -125,7 +88,6 @@ def _sem(s: pd.Series) -> float:
 
 
 def _aggregate_workload(df: pd.DataFrame, method_label: str) -> pd.DataFrame:
-    """Per-workload mean ± stderr of the metrics used for comparison."""
     if df.empty:
         return pd.DataFrame()
     keep_metrics = [m for m in
@@ -140,12 +102,6 @@ def _aggregate_workload(df: pd.DataFrame, method_label: str) -> pd.DataFrame:
 
 
 def _coverage_closure(off: float, on: float, target: float = TARGET_COVERAGE) -> float:
-    """Fraction of the gap closed. Negative if online makes coverage worse;
-    1.0 if it reaches the target exactly; can exceed 1.0 if online overshoots.
-
-    Undefined (NaN) when the offline coverage already meets the target
-    (denominator ≤ 0) — there's no gap to close.
-    """
     gap = target - off
     if not np.isfinite(off) or not np.isfinite(on):
         return float("nan")
@@ -154,12 +110,9 @@ def _coverage_closure(off: float, on: float, target: float = TARGET_COVERAGE) ->
     return float((on - off) / gap)
 
 
-# ── Comparison ──────────────────────────────────────────────────────────────
-
 def build_comparison_table(off_cells: pd.DataFrame,
                            on_cells: pd.DataFrame) -> pd.DataFrame:
-    """Per-workload row: offline_cov, online_cov, closure %, replica delta,
-    p95 delta. Workloads with one side missing get NaN on the other side."""
+    """Per-workload row: offline_cov, online_cov, closure %, replica delta, p95 delta."""
     if off_cells.empty and on_cells.empty:
         return pd.DataFrame()
 
@@ -257,11 +210,8 @@ def narrative_verdict(closure: float) -> dict:
     }
 
 
-# ── Outputs ─────────────────────────────────────────────────────────────────
-
 def write_coverage_figure(comparison: pd.DataFrame, output_path: Path) -> None:
-    """Side-by-side bars: offline coverage vs online coverage per workload,
-    with the 90% target line and closure-percentage annotations."""
+    """Side-by-side bars: offline coverage vs online coverage per workload, with the 90% target line and closure-percentage annotations."""
     if comparison.empty:
         logger.warning("Coverage figure skipped: empty comparison table.")
         return
@@ -290,7 +240,6 @@ def write_coverage_figure(comparison: pd.DataFrame, output_path: Path) -> None:
     ax.set_title("Offline vs online-recal SCP coverage (per workload)")
     ax.grid(axis="y", alpha=0.3)
     ax.legend(fontsize=8, loc="upper right")
-    # Closure annotations
     for xi, (_, row) in zip(x, valid.iterrows()):
         c = row["coverage_gap_closure"]
         if np.isfinite(c):
@@ -343,8 +292,6 @@ def write_markdown_summary(comparison: pd.DataFrame, verdict: dict,
             )
     output_path.write_text("\n".join(lines) + "\n")
 
-
-# ── Driver ─────────────────────────────────────────────────────────────────
 
 def _default_online_globs(outputs_root: Path) -> list[Path]:
     return sorted(outputs_root.glob("p3_uq_baselines_*"))

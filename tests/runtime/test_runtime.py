@@ -1,4 +1,3 @@
-"""Failure injection; every subprocess/cluster operation is mocked."""
 import importlib
 import json
 import os

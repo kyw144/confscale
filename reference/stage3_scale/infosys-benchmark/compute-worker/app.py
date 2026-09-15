@@ -1,14 +1,9 @@
-"""
-InfoSys Benchmark — Compute Worker
-CPU-bound service (sieve of Eratosthenes). This is the AUTOSCALING TARGET.
-The HPA/confidence-aware controller scales this service.
-"""
+"""InfoSys Benchmark — Compute Worker CPU-bound service (sieve of Eratosthenes)."""
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if True:
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 from flask import Flask, request, jsonify

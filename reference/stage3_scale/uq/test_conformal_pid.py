@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the E1 Conformal PID recalibrator.
-
-Standalone unit test for the ``ConformalPID`` class in
-``uq/conformal_pid.py``. No cluster, Prometheus, or trained model
-required — we feed synthetic residual streams and check the α-tracking
-behavior, gain ablations, sign-convention edge cases, and clipping.
-
-Run:
-  python test_conformal_pid.py
-or:
-  pytest test_conformal_pid.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -48,11 +35,6 @@ def run_feedback(
     residuals: np.ndarray,
     warmup_size: int = 50,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Pre-fill buffer, then run residuals through the recalibration loop.
-
-    Returns ``(alphas, miscovered_flags)`` for each post-warmup cycle. The
-    cycle is: read ``quantile()`` → check ``|r| > Q`` → ``update(r, miss)``.
-    """
     for r in residuals[:warmup_size]:
         pid.residuals.append(abs(float(r)))
 
@@ -65,9 +47,6 @@ def run_feedback(
         alphas.append(pid.alpha)
         miscovered.append(miss)
     return np.array(alphas), np.array(miscovered)
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_defaults_and_init():
@@ -100,7 +79,6 @@ def test_invalid_args():
             check(f"residual_buffer_size={bad} raises", False, "no exception")
         except ValueError:
             check(f"residual_buffer_size={bad} raises ValueError", True)
-    # Inverted clip
     try:
         ConformalPID(alpha_clip=(0.5, 0.1))
         check("inverted alpha_clip raises", False, "no exception")
@@ -155,8 +133,6 @@ def test_pid_reduces_to_aci_when_ki_kd_zero():
     print("\n[6] PID(k_i=k_d=0) trajectory matches ACI(η=k_p)")
     rng = np.random.default_rng(7)
     residuals = rng.standard_normal(200)
-    # Generate miscovered flags from a fixed Bernoulli stream so both
-    # objects see identical inputs.
     flags = (rng.random(200) < 0.15)
 
     pid = ConformalPID(target_alpha=0.1, k_p=0.2, k_i=0.0, k_d=0.0)
@@ -244,9 +220,6 @@ def test_recovery_under_volatility_break():
 
     pid = ConformalPID(target_alpha=0.1)
     alphas, miscovered = run_feedback(pid, residuals, warmup_size=100)
-    # After warmup (idx 0) the break occurs at cycle 100 (post-warmup index).
-    # Pre-break miscoverage should hover near target; post-break+50 should
-    # have recovered.
     pre_break = float(miscovered[50:100].mean())
     immediate_post = float(miscovered[100:120].mean())
     recovered = float(miscovered[150:].mean())
@@ -293,12 +266,9 @@ def test_state_keys():
 
 def test_symmetric_input_no_drift():
     print("\n[14] Symmetric input stream — α stays near target")
-    # Alternating cover/miss/cover/miss... at exact target rate (10 misses
-    # per 100 cycles) should keep α near target. We do NOT use the feedback
-    # loop because that would defeat the symmetry — we pass flags directly.
+    # Supply miss flags directly; closed-loop feedback would change the target sequence.
     pid = ConformalPID(target_alpha=0.1)
     rng = np.random.default_rng(3)
-    # Build a stream of 90 covers + 10 misses, shuffled, repeated 5 times.
     pattern = np.array([False] * 90 + [True] * 10)
     rng.shuffle(pattern)
     stream = np.tile(pattern, 5)
@@ -309,9 +279,6 @@ def test_symmetric_input_no_drift():
     check("final α within ±0.05 of target on exact-rate stream",
           abs(pid.alpha - 0.1) < 0.05,
           f"final α={pid.alpha:.4f}")
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

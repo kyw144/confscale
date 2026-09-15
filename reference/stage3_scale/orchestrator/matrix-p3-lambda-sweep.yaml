@@ -1,21 +1,3 @@
-# P3 λ sweep — Action 4 of the 2026-05-13 publication plan.
-#
-# Replaces the 3-tier confidence policy formula with a continuous risk
-# weight λ ∈ {0, 0.2, 0.4, 0.6, 0.8, 1.0}:
-#     effective_rate = max(point + λ * max(ci_upper - point, 0))
-# λ=0 → pure point forecast (most aggressive)
-# λ=1 → pure ci_upper        (most conservative)
-#
-# Tier classification is still computed for hysteresis cooldowns.
-#
-# Scope: SCP only, workloads B (bursty) and D (signaling). A is saturated
-# (~93% SLO violation across methods); C is capped at ~19 replicas — neither
-# has signal for risk-weight sweeps. See coordination/2026-05-13_claude_p3-
-# publication-plan.md §"Action 4".
-#
-# Cells: 6 λ × 2 workloads × 3 reps = 36
-# Wall-time @ workers=3: ~12h.
-
 methods:
   - base: confscale-scp
     name: confscale-scp-lambda-0.0

@@ -1,23 +1,5 @@
 #!/usr/bin/env python3
-"""
-Train all UQ methods (BE, SCP, QR) on all workload patterns.
-
-Usage:
-    # Train all methods on a single pattern
-    python -m uq.train_all --pattern A
-
-    # Train all methods on all 4 patterns
-    python -m uq.train_all --all
-
-    # Train a specific method on all patterns
-    python -m uq.train_all --all --method be
-
-    # Quick test: diurnal pattern only, fewer ensemble members
-    python -m uq.train_all --pattern A --be-members 5 --epochs 50
-
-Output: models/uq/<pattern>/<method>/
-  Each contains model files + config.yaml + evaluation results.
-"""
+"""Train all UQ methods (BE, SCP, QR) on all workload patterns."""
 
 import argparse
 import logging
@@ -29,13 +11,11 @@ import numpy as np
 import pandas as pd
 import yaml
 
-# Ensure paper3_experiments is on path
 _self = Path(__file__).resolve()
 _paper3 = _self.parent.parent
 if str(_paper3) not in sys.path:
     sys.path.insert(0, str(_paper3))
 
-# Also add repo root for .venv resolution
 _repo_root = _paper3.parent
 if str(_repo_root) not in sys.path:
     sys.path.insert(0, str(_repo_root))
@@ -53,7 +33,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger('uq.train_all')
 
-# Pattern mapping
 PATTERN_MAP = {
     'A': ('diurnal', 'pattern_A_24h.csv'),
     'B': ('bursty', 'pattern_B_24h.csv'),
@@ -67,12 +46,7 @@ OUTPUTS_DIR = _paper3 / 'outputs' / 'uq_evaluation'
 
 
 def load_pattern_data(pattern: str) -> tuple:
-    """Load training data for a workload pattern.
-
-    Returns:
-        (X_train, y_train, X_test, y_test, norm_params)
-        All arrays are normalized numpy arrays.
-    """
+    """Load training data for a workload pattern."""
     pattern_name, _filename = PATTERN_MAP[pattern]
     # Auto-detect training data file: prefer larger files (more data = better)
     candidates = sorted(
@@ -85,12 +59,10 @@ def load_pattern_data(pattern: str) -> tuple:
 
     logger.info("Loading %s from %s", pattern_name, csv_path)
 
-    # Load using the predictor's data pipeline
     train_loader, val_loader, test_loader, norm = load_training_data(
         str(csv_path), h=60, k=2, batch_size=64, device='cpu'
     )
 
-    # Extract numpy arrays
     X_train_list, y_train_list = [], []
     for Xb, yb in train_loader:
         X_train_list.append(Xb.numpy())
@@ -116,7 +88,6 @@ def train_and_evaluate(pattern: str, methods: list[str], args) -> dict:
     logger.info("PATTERN %s (%s)", pattern, pattern_name)
     logger.info("=" * 60)
 
-    # Load data
     X_train, y_train, X_test, y_test, norm = load_pattern_data(pattern)
 
     fitted_methods = {}
@@ -163,18 +134,15 @@ def train_and_evaluate(pattern: str, methods: list[str], args) -> dict:
                 uq.norm_params = norm
                 uq.fit((X_train, y_train))
 
-            # Save model
             uq.save(str(output_dir))
             dt = time.time() - t_start
             logger.info("%s trained + saved in %.1fs", method_name.upper(), dt)
 
-            # Evaluate
             test_data = (X_test, y_test)
             eval_result = evaluate_uq_method(uq, test_data)
             fitted_methods[method_name] = uq
             results[method_name] = eval_result
 
-            # Per-method evaluation summary
             logger.info(
                 "  %s: coverage=%.1f%% (target %.0f%%), width=%.1f, "
                 "MAPE=%.1f%%, inference=%.2fms",
@@ -195,13 +163,11 @@ def train_and_evaluate(pattern: str, methods: list[str], args) -> dict:
             import traceback
             traceback.print_exc()
 
-    # Cross-method comparison
     if len(fitted_methods) > 1:
         comparison_path = eval_dir / 'comparison.yaml'
         comparison = compare_methods(fitted_methods, test_data, str(comparison_path))
         print_comparison_table(comparison['methods'])
 
-    # Save per-pattern results
     summary_path = eval_dir / 'summary.yaml'
     with open(summary_path, 'w') as f:
         yaml.dump(results, f, default_flow_style=False)
@@ -253,7 +219,6 @@ def main():
         all_results[pattern] = results
 
     if args.all and len(patterns) > 1:
-        # Cross-pattern summary
         logger.info("\n" + "=" * 60)
         logger.info("CROSS-PATTERN SUMMARY")
         logger.info("=" * 60)

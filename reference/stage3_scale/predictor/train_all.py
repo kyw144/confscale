@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""
-Train GRU predictor on all workload patterns + combined model.
-
-Usage:
-    .venv/bin/python src/stage3_scale/predictor/train_all.py [--sweep] [--cpu]
-
-Outputs go to src/stage3_scale/models/gru/
-"""
+"""Train GRU predictor on all workload patterns + combined model."""
 
 import sys
 from pathlib import Path
@@ -35,11 +28,7 @@ PATTERNS = {
 
 
 def train_per_pattern(prefer_mps: bool = False):
-    """Train one GRU per workload pattern.
-    
-    Note: CPU is faster than MPS for small models (~50K params) 
-    because MPS kernel launch overhead dominates.
-    """
+    """Train one GRU per workload pattern."""
     print("=" * 60)
     print("Training per-pattern models")
     print("=" * 60)
@@ -64,7 +53,6 @@ def train_per_pattern(prefer_mps: bool = False):
         )
         results[name] = result
 
-        # Evaluate
         device = 'mps' if (prefer_mps and torch.backends.mps.is_available()) else 'cpu'
         _, _, test_loader, norm = load_training_data(
             str(csv_path), h=60, k=2, batch_size=64, device=device
@@ -77,7 +65,6 @@ def train_per_pattern(prefer_mps: bool = False):
         metrics = evaluate_model(model, test_loader, norm, device)
         print(f"  Test: {metrics.summary()}")
 
-        # Update config with eval
         config_path = out_dir / 'gru_config.yaml'
         with open(config_path) as f:
             cfg = yaml.safe_load(f)
@@ -99,7 +86,6 @@ def train_combined(prefer_mps: bool = True):
     print("Training combined model (all patterns)")
     print("=" * 60)
 
-    # Concatenate all patterns
     out_dir = MODEL_DIR / 'gru_compute-worker_combined'
     print("(Combined training uses all 4 CSV files concatenated)")
 
@@ -109,7 +95,6 @@ def train_combined(prefer_mps: bool = True):
     csv_path = candidates[-1] if candidates else DATA_DIR / 'pattern_A_24h.csv'
     result = train_model(str(csv_path), str(out_dir), prefer_mps=prefer_mps)
     
-    # TODO: proper combined training with merged dataset
     return result
 
 
@@ -123,7 +108,6 @@ def run_sweep(prefer_mps: bool = True):
     csv_path = candidates[-1] if candidates else DATA_DIR / 'pattern_B_24h.csv'
     sweep_dir = MODEL_DIR / 'sweep'
 
-    # Slim grid (see plan §Hyperparameter Sweep)
     h_values = [30, 60, 90]
     k_values = [1, 2, 4]
     hidden_sizes = [32, 64, 128]
@@ -149,7 +133,6 @@ def run_sweep(prefer_mps: bool = True):
         except Exception as e:
             print(f"  FAILED: {e}")
 
-    # Save sweep results
     import pandas as pd
     df = pd.DataFrame(results)
     df.to_csv(sweep_dir / 'sweep_results.csv', index=False)
@@ -173,13 +156,11 @@ if __name__ == '__main__':
     prefer_mps = args.mps
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Train per-pattern
     results = train_per_pattern(prefer_mps)
 
     # Train combined
     # train_combined(prefer_mps)  # TODO after combined data loader
 
-    # Hyperparameter sweep
     if args.sweep:
         run_sweep(prefer_mps)
 

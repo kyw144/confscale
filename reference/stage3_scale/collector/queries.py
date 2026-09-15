@@ -1,19 +1,4 @@
-"""
-PromQL query definitions for the metrics collector.
-
-Each query is a dict with:
-  - name: short identifier
-  - promql: the PromQL query string (with {window} and {step} placeholders)
-  - kind: 'scalar', 'vector', or 'timeseries'
-  - description: human-readable
-  - output_key: key name in the output structure
-  - unit: measurement unit
-  - fallback: value to use when query returns no data
-
-Placeholders:
-  {window}  — replaced with the experiment duration string (e.g., "3600s")
-  {step}    — replaced with the step interval string (e.g., "15s")
-"""
+"""PromQL query definitions for the metrics collector."""
 
 import logging
 
@@ -21,7 +6,6 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# ── Scalar Queries (single values → summary) ──────────────────────────
 
 SCALAR_QUERIES = [
     {
@@ -126,7 +110,6 @@ SCALAR_QUERIES = [
     },
 ]
 
-# ── SLO Queries (latency percentiles) ─────────────────────────────────
 
 SLO_QUERIES = [
     {
@@ -206,8 +189,6 @@ SLO_QUERIES = [
 ]
 
 
-# ── Timeseries Queries (vector over time → timeseries.csv) ────────────
-
 TIMESERIES_QUERIES = [
     {
         "name": "p95_latency_ts",
@@ -279,7 +260,6 @@ TIMESERIES_QUERIES = [
     },
 ]
 
-# ── UQ-Specific Queries (for when prediction operator is running) ─────
 
 UQ_QUERIES = [
     {
@@ -325,30 +305,11 @@ UQ_QUERIES = [
 ]
 
 
-# ── End-to-End SLO (from workload generator trace CSV) ──────────────
-
 def compute_e2e_slo_metrics(trace_csv_path: Path, slo_target_ms: float = 200.0) -> dict:
-    """Read workload generator trace CSV, compute end-to-end SLO metrics.
+    """Aggregate per-tick latency summaries.
 
-    The workload generator saves per-second latency percentiles to
-    `workload_*_timeseries.csv` (columns: p50_ms, p95_ms, p99_ms).
-    This function extracts true end-to-end latency metrics, which is
-    more accurate than the Prometheus frontend-internal histogram
-    (which only measures time inside the Flask process, missing
-    processor/compute-worker wait time).
-
-    Args:
-        trace_csv_path: Path to the workload generator timeseries CSV.
-        slo_target_ms: SLO target in milliseconds (default: 200ms).
-
-    Returns:
-        dict with:
-            e2e_p50_ms: float
-            e2e_p95_ms: float
-            e2e_p99_ms: float
-            e2e_slo_violation_rate: float  # fraction of ticks where p95 > target
-            e2e_slo_violation_intervals: int
-            e2e_total_intervals: int
+    e2e_p95_ms is the 95th percentile of tick p95s, not a pooled request p95.
+    The violation rate counts ticks whose p95 exceeds slo_target_ms.
     """
     import csv
 

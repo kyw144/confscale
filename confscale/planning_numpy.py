@@ -1,4 +1,4 @@
-"""Original paper planner and hysteresis, extracted without I/O. Requires NumPy."""
+"""Replica targets and tier hysteresis."""
 import time
 from typing import Optional
 import numpy as np
@@ -18,7 +18,6 @@ SCALE_DOWN_COOLDOWN_T2_S = 90
 SCALE_DOWN_COOLDOWN_T3_S = 120
 
 def _tier_cooldown(tier: int) -> float:
-    """Return scale-down cooldown for a given tier."""
     if tier == 3:
         return SCALE_DOWN_COOLDOWN_T3_S
     elif tier == 2:
@@ -37,21 +36,9 @@ def compute_target_replicas(
     policy: str = "tier",
     lambda_risk: Optional[float] = None,
 ) -> tuple[int, int]:
-    """Compute target replicas. Three policies are supported.
+    """Return (tier, replicas) from the maximum horizon demand.
 
-    policy='tier' (default): 3-tier confidence-aware policy
-        Tier 1 (high confidence):  scale to predicted mean rate
-        Tier 2 (medium confidence): scale to mean + β·σ
-        Tier 3 (low confidence):   scale to CI upper bound
-
-    policy='ci-upper': MagicScaler-style risk-quantile baseline
-        Always scale to max(ci_upper); tier=0 sentinel means "no tier policy".
-        Cooldown logic still uses tier classification (1/2/3) for tracking.
-
-    lambda_risk in [0, 1] (overrides policy when set): continuous risk weight
-        effective_rate = max(point + λ * max(ci_upper - point, 0))
-        λ=0 → pure point forecast; λ=1 → pure ci_upper.
-        Tier classification still computed for hysteresis cooldowns.
+    lambda_risk overrides policy; ci-upper returns tier 0 while hysteresis tracks confidence tiers.
     """
     # Always classify tier so hysteresis cooldown selection works.
     if confidence_score < TIER_HIGH_CONF:
@@ -108,16 +95,10 @@ class HysteresisManager:
 
     def apply(self, proposed_tier: int, proposed_replicas: int,
               current_replicas: int) -> tuple[int, int]:
-        """Apply hysteresis to tier and replica decisions.
-
-        Returns:
-            (final_tier, final_replicas)
-        """
+        """Return (tier, replicas) after downgrade persistence and scale-down cooldowns."""
         now = time.time()
 
-        # ── Tier hysteresis ──────────────────────────────────────────
         if proposed_tier < self.current_tier:
-            # Downgrade requested — enforce delay
             self.proposed_downgrade_count += 1
             if self.proposed_downgrade_count < TIER_DOWNGRADE_DELAY:
                 proposed_tier = self.current_tier
@@ -125,7 +106,6 @@ class HysteresisManager:
                 # Allow downgrade after delay
                 self.proposed_downgrade_count = 0
         elif proposed_tier > self.current_tier:
-            # Upgrade — immediate
             self.proposed_downgrade_count = 0
         else:
             # Same tier
@@ -133,7 +113,6 @@ class HysteresisManager:
 
         self.current_tier = proposed_tier
 
-        # ── Replica hysteresis ───────────────────────────────────────
         final_replicas = proposed_replicas
 
         if proposed_replicas > current_replicas:

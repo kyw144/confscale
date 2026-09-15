@@ -1,44 +1,11 @@
 #!/usr/bin/env python3
-"""P3-C-T5d (RC5) — SLO-binding configuration existence-proof driver.
-
-Card: docs/papers/p3/reopen_2026-06/cards/P3-C-T5d_slo_binding_existence_proof.md
-Decision: P3-D018 (run). Authored P3-D017 (card), A3-pursue P3-D014/NK-017.
-
-WHAT (card §3):
-  Stage A — controller-free binding probe (GATE, run first): patch ONLY the live
-    compute-worker CPU limit 500m->80m on w0/w1/w2 (source manifests.yaml NOT
-    edited; restored in a finally block), then on w2 sweep static replica counts
-    {2,4,6,8,10,12,16,20} at constant offered load (workload_gen E --constant-rps)
-    and measure e2e p95 from the workload trace. responsive(load) =
-    p95@lowest_replicas / p95@highest_replicas; bound iff >= 1.30 at >=1 load
-    (the E-V1 DECISIVE rule, analyze.py:31,82-84). If flat at every load -> STOP,
-    do NOT run Stage B, verdict = FAIL (binding failed -> axis still inert), §5.
-  Stage B — main sub-study (only if Stage A passes): method in
-    {confscale-aci, confscale-pid, hpa-qr-monitored} x pattern in {F, G} = 6 cells,
-    R=3 reps = 18 cell-runs, 1800 s / 30 s control interval, 3-up wave scheduler on
-    w0/w1/w2. Primary metric e2e_p95_ms recovered from each run's
-    metrics.json["e2e"]["p95_ms"] (the post-E-V6 e2e block, run_matrix.py:263).
-
-PURELY ADDITIVE: writes a NEW run dir under data/p3_runs/outputs/; does
-NOT touch any locked codex-cut table (Table 1-6) or source JSON, and does NOT edit
-the source manifests.yaml — the 80m worker limit is applied to the LIVE deployment
-for the run window only and restored to 500m at teardown (card §5).
-
-Self-contained, resumable (--start-wave), SELF-RESTORING (worker limit restored to
-500m in a finally block even on crash). Verdict is computed here AND re-checked by
-the run-session agent against the verbatim §2 criterion before it is declared.
-
-This reuses ev7/T3's tested wave machinery (plan_waves / reset_cluster / preflight /
-run_cell) verbatim, with build_cells() swapped for the RC5 F/G x 3-method x R=3
-matrix and run_cell() extended to recover e2e_p95 alongside coverage_rate.
-"""
+"""Compare latency under a worker-binding CPU limit; restore the limit afterward."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -56,7 +23,6 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-# --- wire src/stage3_scale onto the path ---
 REPO = Path("<SOURCE_WORKSPACE>")
 STAGE3 = REPO / "src" / "stage3_scale"
 if str(STAGE3) not in sys.path:
@@ -101,8 +67,6 @@ WL = str(STAGE3 / "workload_gen.py")
 logger = logging.getLogger("rc5")
 
 
-# ── Worker-limit live patch / restore (additive; source manifest untouched) ──
-
 def kubectl_ctx(ctx: str, args: list[str], timeout: int = 200) -> subprocess.CompletedProcess:
     return subprocess.run(["kubectl", f"--context={ctx}", *args],
                           capture_output=True, text=True, timeout=timeout)
@@ -139,7 +103,7 @@ def patch_all_workers(cpu: str) -> dict:
 
 
 def restore_all_workers() -> dict:
-    """Restore 500m on every worker cluster; verify. Card §5 hard requirement."""
+    """Restore 500m on every worker cluster; verify."""
     out = {"target": WORKER_LIMIT_LOCKED, "per_ctx": {}, "ok": True}
     for ctx in WORKER_CONTEXTS:
         ok = set_worker_cpu_limit(ctx, WORKER_LIMIT_LOCKED)
@@ -150,8 +114,6 @@ def restore_all_workers() -> dict:
         logger.info("RESTORE worker limit %s -> %s (verified=%s)", ctx, post, verified)
     return out
 
-
-# ── Stage A: controller-free binding probe (reuses sweep_driver.py logic) ─────
 
 def _pct(vals, p):
     if not vals:
@@ -262,8 +224,6 @@ def stage_a_probe(out_dir: Path) -> dict:
     return res
 
 
-# ── Stage B cells + wave machinery (copied verbatim from t3_driver.py) ────────
-
 def build_cells() -> list[dict]:
     """6 cells: {confscale-aci, confscale-pid, hpa-qr-monitored} x {F, G}, R=3."""
     methods = [
@@ -369,7 +329,7 @@ def coverage_from_run_dir(run_dir: Path):
 
 
 def e2e_p95_from_run_dir(run_dir: Path):
-    """Primary metric: metrics.json["e2e"]["p95_ms"] (post-E-V6 block, run_matrix:263)."""
+    """Read the per-tick p95 aggregate from metrics.json."""
     f = run_dir / "metrics.json"
     if not f.exists():
         return None, None
@@ -448,10 +408,8 @@ def preflight(slots) -> bool:
     return ok
 
 
-# ── Verdict (card §2 operational decomposition) ───────────────────────────────
-
 def compute_verdict(stage_a: dict, cell_stats: dict) -> dict:
-    """cell_stats[(method,pattern)] = {mean, sd, n, vals}. Card §2."""
+    """cell_stats[(method,pattern)] = {mean, sd, n, vals}."""
     import math
     bound = stage_a.get("bound", False)
     recal = ["confscale-aci", "confscale-pid"]
@@ -515,8 +473,6 @@ def aggregate_cells(runlog_rows: list[dict]) -> dict:
     return stats
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
-
 def main():
     ap = argparse.ArgumentParser(description="P3-C-T5d RC5 SLO-binding existence-proof driver")
     ap.add_argument("--output-dir", type=Path, required=True)
@@ -578,7 +534,6 @@ def main():
             logger.error("Preflight FAILED — no repair (charter §2.8). Stopping.")
             return
 
-        # --- Apply the binding knob to the LIVE deployment (additive) ---
         logger.info("Patching worker CPU limit -> %s on %s (live deploy only)",
                     WORKER_LIMIT_BIND, WORKER_CONTEXTS)
         patched = patch_all_workers(WORKER_LIMIT_BIND)
@@ -606,7 +561,6 @@ def main():
                         rec["status"], rec["e2e_p95_ms"], rec["coverage_rate"])
             return
 
-        # --- Stage A: binding probe (gate) ---
         if args.skip_stage_a and (out_dir / "stage_a_probe" / "stage_a_verdict.json").exists():
             stage_a = json.loads((out_dir / "stage_a_probe" / "stage_a_verdict.json").read_text())
             logger.info("Stage A reused from disk: bound=%s", stage_a.get("bound"))
@@ -623,7 +577,6 @@ def main():
             logger.info("STAGE A flat -> STOP. Verdict=%s", verdict["verdict"])
             return
 
-        # --- Stage B: main sub-study (3-up waves) ---
         logger.info("=== STAGE B: %d cells in %d waves ===",
                     sum(len(w["units"]) for w in plan), len(plan))
         assign_path = out_dir / "wave_assignments.jsonl"

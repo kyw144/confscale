@@ -1,36 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b STEP 0 (integrity) — re-materialise the pre-registration lock `ev8b_LOCK_2026-06-01.md`
-from the inline window records (pass1_selected_candidates.csv + status files), LOAD-STATS ONLY.
+"""Reconstruct the fixed service selection and evaluation windows."""
 
-The named lock file is missing from disk; the windows exist inline as plateau CENTERS in the Pass-1
-selection CSV. This restores the pre-registration record BEFORE any Pass-2 coverage runs.
-
-FIREWALL: only means and first-difference-stds (the 0c severity metrics). NO coverage, residuals,
-interval widths, or anything forecast-error-adjacent.
-
-Windowing rule (locked; reproduces both anchors — validated below):
-  W = 120 bins (2 h) plateau window; gap = [1080,1140) must be avoided by every window + train.
-  LEVEL channel  (deploy IN-sample, matches anchor QR over-coverage):
-     cal    = [lvl_lo_center-60, lvl_lo_center+60)      (low plateau)
-     deploy = [lvl_hi_center-60, lvl_hi_center+60)      (high plateau)
-     train  = [max(0, HI-720), HI),  HI = max(cal_hi, deploy_hi)   (spans both; deploy ⊂ train)
-  VOLATILITY channel  (deploy OUT-of-sample, matches anchor F-design):
-     cal    = [vol_lo_center-60, vol_lo_center+60)      (low-σ_Δ window)
-     deploy = [vol_hi_center-60, vol_hi_center+60)      (high-σ_Δ window)
-     train  = [max(0, deploy_lo-720), deploy_lo)        (pre-deploy context; deploy ⊄ train)
-  Feasible iff both windows gap-free AND same side of the gap AND span ≤ 720 (train-spannable).
-  ANCHOR EXCEPTION (locked, hand-windowed): MS_7129 volatility auto-center (1370) is post-gap →
-     infeasible; the lock hand-placed it pre-gap at train[120,840)/cal[480,720)/deploy[840,960)
-     (8.8× σ_Δ). Recorded verbatim so the anchor sits in the same unified table.
-
-Severity bands (0c): level target 2–3× (synth G); volatility target 7–10× (synth F = 7.6×).
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json
@@ -111,7 +85,6 @@ blocked = []  # gap-blocked / infeasible records (labeled, reported)
 
 for _, r in within.iterrows():
     ms = r['msname']; s = load_series(ms)
-    # ---- LEVEL channel (always feasible for within-range) ----
     lf, lcal, ldep, lreason = feasible(r['lvl_lo_center'], r['lvl_hi_center'])
     if lf:
         ltr = level_train(lcal, ldep)
@@ -125,7 +98,6 @@ for _, r in within.iterrows():
                           n_deploy=ldep[1] - ldep[0] - 60 - 2 + 1, source='auto-center'))
     else:
         blocked.append(dict(service=ms, channel='level', reason=lreason))
-    # ---- VOLATILITY channel (feasible for only ~4) ----
     vf, vcal, vdep, vreason = feasible(r['vol_lo_center'], r['vol_hi_center'])
     if vf:
         vtr = vol_train(vdep)
@@ -141,7 +113,6 @@ for _, r in within.iterrows():
     else:
         blocked.append(dict(service=ms, channel='volatility', reason=vreason))
 
-# ---- ANCHOR exception: MS_7129 volatility hand-window (locked verbatim) ----
 s7129 = load_series('MS_7129')
 acal, adep, atr = (480, 720), (840, 960), (120, 840)
 cm, cs = severity(s7129, *acal); dm, ds = severity(s7129, *adep)
@@ -152,7 +123,6 @@ cells.append(dict(service='MS_7129', channel='volatility', sel_set='anchor', sha
                   severity_band=band_vol(ds / cs), deploy_in_sample=False,
                   n_deploy=adep[1] - adep[0] - 60 - 2 + 1, source='anchor-hand-window'))
 
-# ---- VALIDATION: rule must reproduce the anchor LEVEL windows verbatim ----
 anchor_level = next(c for c in cells if c['service'] == 'MS_7129' and c['channel'] == 'level')
 assert anchor_level['cal'] == [165, 285], f"anchor level cal {anchor_level['cal']} != [165,285]"
 assert anchor_level['deploy'] == [674, 794], f"anchor level deploy {anchor_level['deploy']} != [674,794]"
@@ -179,7 +149,6 @@ lock = dict(
 with open(f"{DIR}/pass2_full_windows.json", 'w') as f:
     json.dump(lock, f, indent=2)
 
-# ---- human-readable lock markdown ----
 def fmt_cells(ch):
     rows = [c for c in cells if c['channel'] == ch]
     out = []

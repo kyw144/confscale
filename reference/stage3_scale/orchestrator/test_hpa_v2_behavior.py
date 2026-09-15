@@ -1,16 +1,3 @@
-"""Unit tests for the HPAMethod autoscaling/v2 behavior extension (E-V7).
-
-Covers the manifest construction and the v1/v2 dispatch contract WITHOUT a live
-cluster. The point of these tests is to lock down that:
-  * the default HPAMethod is byte-for-byte the old v1 path (downscale=None);
-  * the per-cell setattr override path (the one _resolve_method_spec uses) plumbs
-    cpu_target / downscale_stabilization_s / name into a valid v2 manifest;
-  * the behavior block carries the exact windows we pre-registered, with
-    scaleUp=0 (immediate up) and scaleDown=the tuned window;
-  * the reproduction anchor (downscale=300) is well-formed.
-
-Run: <repo>/.venv/bin/python -m pytest orchestrator/test_hpa_v2_behavior.py -q
-"""
 from __future__ import annotations
 
 import sys
@@ -70,7 +57,6 @@ def test_v2_manifest_structure():
 
 
 def test_setattr_override_path_matches_resolve_method_spec():
-    """Mimic run_matrix._resolve_method_spec: get_method(base) then setattr fields."""
     m = get_method("hpa-reactive")
     for k, v in {"name": "hpa-tuned-u50-s120", "cpu_target": 50,
                  "downscale_stabilization_s": 120}.items():
@@ -83,7 +69,6 @@ def test_setattr_override_path_matches_resolve_method_spec():
 
 
 def test_reproduction_anchor_window_300():
-    """Anchor = v2 @ (50%, 300s); reproduces the v1 default downscale window."""
     m = HPAMethod(name="hpa-anchor-u50-s300", cpu_target=50,
                   downscale_stabilization_s=300)
     doc = yaml.safe_load(m._render_v2_hpa_manifest("infosys-benchmark"))
@@ -92,11 +77,6 @@ def test_reproduction_anchor_window_300():
 
 
 def test_get_method_returns_fresh_hpa_copies():
-    """Regression: concurrent HPA configs must not alias the registry singleton.
-
-    E-V7 derives 5 HPA configs from the same base and runs up to 3 at once;
-    setattr on one must not leak into another or into METHOD_REGISTRY.
-    """
     from orchestrator.methods import METHOD_REGISTRY
     a = get_method("hpa-reactive")
     b = get_method("hpa-reactive")
@@ -104,7 +84,6 @@ def test_get_method_returns_fresh_hpa_copies():
     a.cpu_target = 70
     a.downscale_stabilization_s = 60
     a.name = "hpa-tuned-u70-s60"
-    # b and the registry entry are untouched
     assert b.cpu_target == 50 and b.downscale_stabilization_s is None
     assert b.name == "hpa-reactive"
     assert METHOD_REGISTRY["hpa-reactive"].cpu_target == 50

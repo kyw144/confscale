@@ -1,35 +1,10 @@
 #!/usr/bin/env python3
-"""
-Service Profiler — automated P1–P4 profiling experiments.
+"""Profile service capacity and latency."""
 
-Characterizes the performance envelope of each InfoSys Benchmark service:
-  P1: Single-replica capacity curve (latency vs. RPS at multiple complexities)
-  P2: Multi-replica scaling linearity (does 2× replicas = 2× capacity?)
-  P3: Step response (cold start → steady state timing)
-  P4: Frontend/Processor bottleneck verification
-
-Uses the metrics collector (task 01) to extract Prometheus data after each run.
-Outputs follow the data format contracts defined in 02_service_profiler.md.
-
-Usage:
-  # Full profiling suite
-  python profile.py --all
-
-  # Individual experiments
-  python profile.py --p1
-  python profile.py --p2
-  python profile.py --p3
-  python profile.py --p4
-
-  # With custom params
-  python profile.py --p1 --complexities 50000,200000,500000 --rps-range 10,20,50,100,150
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -45,13 +20,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-# Add parent to path for collector imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from collector.collect import collect_metrics
 
 logger = logging.getLogger(__name__)
 
-# ── Constants ──────────────────────────────────────────────────────────
 KUBE_CONTEXT = "kind-p3-experiments"
 NAMESPACE = "infosys-benchmark"
 FRONTEND_NODEPORT = 30080
@@ -62,8 +35,6 @@ PYTHON = sys.executable  # artifact: active interpreter
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs" / "profiling"
 SLO_TARGET_MS = 200
 
-
-# ── Port-Forward Manager ───────────────────────────────────────────────
 
 class PortForward:
     """Manage kubectl port-forward as a subprocess."""
@@ -99,8 +70,6 @@ class PortForward:
             logger.info("Port-forward stopped: %s:%d", self.service, self.local_port)
 
 
-# ── Kubernetes Control ─────────────────────────────────────────────────
-
 def kubectl(args: list[str], timeout: int = 30) -> subprocess.CompletedProcess:
     """Run a kubectl command with context and return completed process."""
     cmd = ["kubectl", f"--context={KUBE_CONTEXT}"] + args
@@ -115,7 +84,6 @@ def scale_deployment(deployment: str, replicas: int) -> bool:
     if result.returncode != 0:
         logger.error("Scale failed: %s", result.stderr.strip())
         return False
-    # Wait for rollout
     result = kubectl(["rollout", "status", "deployment", deployment,
                        "-n", NAMESPACE, "--timeout=120s"], timeout=130)
     if result.returncode != 0:
@@ -124,11 +92,7 @@ def scale_deployment(deployment: str, replicas: int) -> bool:
 
 
 def delete_hpa(deployment: str) -> bool:
-    """Delete HPA for a deployment (disable autoscaling).
-    
-    Note: kubectl autoscale uses the deployment name as the HPA name,
-    so we delete by deployment name, not deployment-hpa.
-    """
+    """Delete HPA for a deployment (disable autoscaling)."""
     logger.info("Deleting HPA for %s", deployment)
     result = kubectl(["delete", "hpa", deployment,
                        "-n", NAMESPACE, "--ignore-not-found=true"])
@@ -158,11 +122,8 @@ def get_replica_count(deployment: str) -> int:
         return 0
 
 
-# ── Prometheus Access ──────────────────────────────────────────────────
-
 class PrometheusAccessor:
-    """Lightweight Prometheus query wrapper for profiling — direct HTTP,
-    no collector overhead for simple queries."""
+    """Lightweight Prometheus query wrapper for profiling — direct HTTP, no collector overhead for simple queries."""
 
     def __init__(self, url: str = "http://localhost:9090"):
         import urllib.request
@@ -207,8 +168,6 @@ class PrometheusAccessor:
         return 0.0
 
 
-# ── Profiler Core ──────────────────────────────────────────────────────
-
 class ServiceProfiler:
     """Orchestrates profiling experiments P1–P4."""
 
@@ -221,11 +180,8 @@ class ServiceProfiler:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.prom = PrometheusAccessor(prometheus_url)
 
-    # ── Load Generator Helpers ─────────────────────────────────────
-
     def _run_constant_load(self, rps: float, duration: int,
                            complexity: int = 100000) -> dict:
-        """Run constant-rate load and return the workload_gen output JSON path."""
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         label = f"prof_e_rps{rps:.0f}_c{complexity}_{ts}"
         cmd = [
@@ -239,24 +195,16 @@ class ServiceProfiler:
         ]
         logger.info("Running constant load: %d RPS for %ds at n=%d", rps, duration, complexity)
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=duration + 60)
-        # Find the output files
         summary_files = sorted(self.output_dir.glob(f"workload_E_{ts}*_summary.json"))
         if summary_files:
             return json.loads(summary_files[-1].read_text())
         logger.warning("No output file found for load run %s", label)
         return {}
 
-    # ── P1: Single-Replica Capacity Curve ──────────────────────────
-
     def run_capacity_profile(self, complexities: list[int] = None,
                              rps_range: list[int] = None,
                              duration_per_point: int = 120) -> list[dict]:
-        """
-        P1: Measure latency vs. RPS for a single compute-worker replica.
-
-        For each complexity level and each target RPS, runs constant load
-        and records p50/p95/p99 latency + CPU utilization.
-        """
+        """P1: Measure latency vs."""
         if complexities is None:
             complexities = [50000, 100000, 200000]
         if rps_range is None:
@@ -264,7 +212,6 @@ class ServiceProfiler:
 
         logger.info("=== P1: Capacity Curve ===")
 
-        # Ensure 1 replica, disable HPA
         delete_hpa("compute-worker")
         scale_deployment("compute-worker", 1)
 
@@ -278,7 +225,6 @@ class ServiceProfiler:
 
                 end_time = datetime.now(timezone.utc)
 
-                # Collect metrics via the collector
                 run_id = f"p1_c{complexity}_r{rps}_{start_time.strftime('%Y%m%d_%H%M%S')}"
                 out_dir = self.output_dir / run_id
                 summary = collect_metrics(
@@ -325,7 +271,6 @@ class ServiceProfiler:
                              p50_ms or 0, row["p95_ms"] or 0,
                              p99_ms or 0, row["cpu_util"] or 0)
 
-        # Write capacity_curve.csv
         csv_path = self.output_dir / "capacity_curve.csv"
         with open(csv_path, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else [])
@@ -334,17 +279,10 @@ class ServiceProfiler:
         logger.info("Wrote capacity_curve.csv (%d rows) to %s", len(rows), csv_path)
         return rows
 
-    # ── P2: Multi-Replica Scaling Linearity ────────────────────────
-
     def run_scaling_linearity(self, complexity: int = 100000,
                               base_rps: int = None,
                               replica_counts: list[int] = None) -> list[dict]:
-        """
-        P2: Verify that adding replicas divides load linearly.
-
-        Finds the saturation RPS from P1, then scales to n replicas
-        at n × saturation_rps to verify near-linear scaling.
-        """
+        """P2: Verify that adding replicas divides load linearly."""
         if replica_counts is None:
             replica_counts = [2, 4, 8]
         if base_rps is None:
@@ -395,7 +333,6 @@ class ServiceProfiler:
             logger.info("  %d replicas: p95=%.1fms cpu=%.2f",
                          replicas, row["p95_ms"] or 0, row["cpu_util"] or 0)
 
-        # Write scaling_linearity.csv
         csv_path = self.output_dir / "scaling_linearity.csv"
         if rows:
             with open(csv_path, "w", newline="") as f:
@@ -407,22 +344,11 @@ class ServiceProfiler:
         scale_deployment("compute-worker", 1)
         return rows
 
-    # ── P3: Step Response ─────────────────────────────────────────
-
     def run_step_response(self, complexity: int = 100000,
                           from_rps: int = 5, to_rps: int = 80) -> list[dict]:
-        """
-        P3: Measure cold-start and scale-up timeline.
-
-        Starts at idle, then instantaneously increases load. Tracks:
-        - Time until HPA triggers
-        - Time until new pod is Running
-        - Time until new pod receives traffic
-        - Time until p95 latency returns below SLO
-        """
+        """P3: Measure cold-start and scale-up timeline."""
         logger.info("=== P3: Step Response ===")
 
-        # Ensure 1 replica with HPA enabled (1→20)
         scale_deployment("compute-worker", 1)
         time.sleep(5)
         delete_hpa("compute-worker")
@@ -447,7 +373,6 @@ class ServiceProfiler:
 
         record("baseline", "1 replica at idle")
 
-        # Start background load at to_rps (uses E pattern)
         load_cmd = [
             str(PYTHON), str(WORKLOAD_GEN_SCRIPT),
             "E",
@@ -476,7 +401,6 @@ class ServiceProfiler:
             except ValueError:
                 pass
 
-        # Poll for new pod Running
         new_pod_running = False
         for _ in range(60):
             time.sleep(2)
@@ -489,7 +413,6 @@ class ServiceProfiler:
                 new_pod_running = True
                 break
 
-        # Check pod ready
         for _ in range(30):
             time.sleep(2)
             result = kubectl(["get", "pods", "-n", NAMESPACE,
@@ -517,11 +440,9 @@ class ServiceProfiler:
             except Exception:
                 pass
 
-        # Clean up
         load_proc.terminate()
         load_proc.wait(timeout=10)
 
-        # Write step_response.csv
         csv_path = self.output_dir / "step_response.csv"
         with open(csv_path, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=[
@@ -531,21 +452,14 @@ class ServiceProfiler:
             writer.writerows(events)
         logger.info("Wrote step_response.csv (%d events)", len(events))
 
-        # Reset
         scale_deployment("compute-worker", 1)
         return events
 
-    # ── P4: Bottleneck Verification ───────────────────────────────
-
     def run_bottleneck_check(self, compute_replicas: int = 20,
                              complexity: int = 100000) -> dict:
-        """
-        P4: Verify Frontend (2 replicas) and Processor (2 replicas) are NOT
-        bottlenecks at maximum compute-worker load.
-        """
+        """P4: Verify Frontend (2 replicas) and Processor (2 replicas) are NOT bottlenecks at maximum compute-worker load."""
         logger.info("=== P4: Bottleneck Verification ===")
 
-        # Scale compute-worker to max, disable HPA
         delete_hpa("compute-worker")
         scale_deployment("compute-worker", compute_replicas)
         time.sleep(15)  # Let all pods stabilize
@@ -581,8 +495,6 @@ class ServiceProfiler:
                 logger.warning("  SLO VIOLATED at %d RPS — saturation reached", test_rps)
                 break
 
-        # Check frontend/processor CPU at max load
-        # Use Prometheus to get CPU for frontend and processor
         frontend_cpu = self.prom.get_cpu_utilization()
         logger.info("Frontend CPU utilization: %.2f", frontend_cpu)
 
@@ -606,8 +518,6 @@ class ServiceProfiler:
         create_hpa("compute-worker", min_replicas=1, max_replicas=20)
         return result
 
-
-# ── CLI ─────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(
@@ -640,7 +550,6 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Start Prometheus port-forward
     prometheus_pf = PortForward(
         namespace=PROMETHEUS_NS, service="prometheus-kube-prometheus-prometheus",
         local_port=9090, remote_port=9090

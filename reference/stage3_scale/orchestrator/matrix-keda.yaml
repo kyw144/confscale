@@ -1,21 +1,3 @@
-# KEDA-only re-run config.
-#
-# The 96-cell run on 2026-05-11 had KEDA stuck at mean_replicas ≈ 1.0-1.5
-# because of two issues in keda-scaledobject.yaml that have since been fixed:
-#   1. Wrong Prometheus service name (prometheus-operated → prometheus-kube-…)
-#   2. Threshold/units mismatch (utilization ratio threshold='70' never fired)
-#
-# The fix in the worktree switches to metricType=AverageValue with a
-# threshold expressed in absolute CPU cores (0.035 cores = 70% of the
-# compute-worker's 50m CPU request) and a query that returns total CPU
-# usage. HPA AverageValue formula scales replicas so each pod averages 35m.
-#
-# Usage:
-#   python run_matrix.py --workers 3 --config matrix-keda.yaml \
-#     --output-dir paper3_experiments/outputs/keda_rerun_$(date +%Y%m%d_%H%M%S)
-#
-# Expected wall-time: 12 cells × 60 min / 3 workers ≈ 4 h.
-
 methods:
   - keda
 

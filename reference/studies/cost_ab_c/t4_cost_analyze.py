@@ -1,30 +1,11 @@
 #!/usr/bin/env python3
-"""T4 — Pattern A/B tuned-HPA cost analysis (card P3-C-T4).
-
-A faithful clone of the validated E-V7 cost analyzer
-(`data/p3_runs/results/ev7_tuned_baseline_20260601_203020/ev7_cost_analyze.py`,
-charter §2.6), with exactly three changes from the D version:
-
-  1. `--pattern {A,B}` selects the workload filter (was hardcoded "D" at
-     ev7_cost_analyze.py:116).
-  2. The D-specific reproduction anchor assertion (ORIG_HPA_OVERHEAD=67806 rs/h,
-     a Pattern-D quantity) is SOFTENED to report-only: it reports the anchor's
-     mean_replicas and whether it RAILS (mean_replicas ≥ 18 ≈ ceiling), which is
-     the card §2 anchor-sanity test. The 67 806 number is NOT expected on A/B.
-  3. The D read-band verdict (ROBUST/SHRINKS/VANISHES vs 71.9 %) is replaced by
-     the card §2 per-pattern LOCKED verdict logic (PASS-mirror / PASS-saving /
-     FAIL-INCONCLUSIVE), computed verbatim from the pre-registered criteria.
-
-The cost metric, the matched-SLO gate (meets_slo), the comparator selection
-(lowest overhead/h passing the gate), and Saving% are UNCHANGED (reused).
-"""
+"""Compare replica cost against tuned HPA for workloads A and B."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -159,15 +140,7 @@ def meets_slo(cfg: dict, scp: dict) -> dict:
 
 
 def verdict_card_s2(comparator, scp_mean, scp_vals, anchor_rails: bool | None) -> dict:
-    """Card P3-C-T4 §2 per-pattern LOCKED verdict.
-
-    PASS-mirror   : comparator overhead <= SCP within n=5 noise (Welch p>0.05 on cost
-                    OR comparator mean <= SCP mean) -> SCP shows NO positive saving.
-    PASS-saving   : Saving% >= 10% AND the cost-saving Welch CI excludes 0
-                    (SCP strictly cheaper than the cheapest gate-passing tuned HPA).
-    FAIL/INCONCL. : no tuned config passes the gate (comparator is None),
-                    OR the saving sign is CI-ambiguous at n=5.
-    """
+    """Card P3-C-T4 §2 per-pattern LOCKED verdict."""
     if comparator is None or scp_mean is None:
         return {"verdict": "FAIL-INCONCLUSIVE",
                 "detail": "no tuned config passed the matched-SLO gate (or SCP missing) — "
@@ -283,7 +256,6 @@ def main():
     (args.out / f"t4_cost_analysis_{args.pattern}.json").write_text(
         json.dumps(report, indent=2, default=str))
 
-    # Printed summary.
     print(f"\n========== T4 PATTERN {args.pattern} TUNED-HPA COST ANALYSIS ==========")
     if anchor_report:
         print(f"Anchor ({ANCHOR_NAME}): {anchor_report['mean_replicas']:.1f} mean repl "

@@ -1,34 +1,11 @@
 #!/usr/bin/env python3
-"""P3-C-T3 wave driver — raw (unladdered) rolling-origin coverage on F/G/H.
-
-Card: docs/papers/p3/reopen_2026-06/cards/P3-C-T3_rolling_origin_raw_fgh.md
-Decision: P3-D013 (run; experiments approved Kyw 2026-06-21). Authored P3-D007.
-
-WHAT: runs method `confscale-rolling-origin` (RAW — ladder=false) on the F/G/H
-drift suite, R=6 reps/cell, 1800 s/cell, at the SAME configuration as the locked
-laddered baseline (complexity 50000, coverage_monitor=true, online_recal,
-recalibrator=rolling-origin) EXCEPT ladder=false. Per-cell empirical_coverage is
-recovered OFFLINE from controller_scale_log.json + timeseries.csv (card §3); the
-live coverage monitor is logged as an independent cross-check only.
-
-PURELY ADDITIVE: writes a NEW run dir under data/p3_runs/outputs/; does
-NOT touch the locked laddered baseline or any codex-cut table. Verdict (PASS /
-PASS-ALT / FAIL / INCONCLUSIVE, card §2) is computed by a SEPARATE analysis step,
-not this driver.
-
-This is ev7_driver.py's tested wave machinery (reset_cluster / plan_waves /
-run_cell / preflight, reused verbatim) with build_cells() swapped for the 3 T3
-cells. 3 labels x 6 reps = 18 cell-runs -> round-based packing = 6 waves of 3 on
-the 3-worker scheduler (kind-p3-experiments-w0/w1/w2), ~3.2 h wall. Resumable via
---start-wave.
-"""
+"""Run rolling-origin recalibration on workloads F–H."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -45,7 +22,6 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-# --- wire src/stage3_scale onto the path ---
 REPO = Path("<SOURCE_WORKSPACE>")
 STAGE3 = REPO / "src" / "stage3_scale"
 if str(STAGE3) not in sys.path:
@@ -71,16 +47,8 @@ T3_REPS = 6                 # card §3 (R=6, the drift variance convention; esca
 logger = logging.getLogger("t3")
 
 
-# ── Cells ─────────────────────────────────────────────────────────────────
-
 def build_cells() -> list[dict]:
-    """3 cells: RAW confscale-rolling-origin x pattern in {F, G, H}, R=6 each.
-
-    method_spec is a dict so coverage_monitor is forced TRUE (registry default is
-    False for this method — card §4 A1 override, read-only cross-check; ladder
-    stays False = the raw arm). workload_pattern is set from the cell's pattern by
-    the run path (run_matrix), so F/G/H resolve model_dir -> models/uq/diurnal/scp.
-    """
+    """3 cells: RAW confscale-rolling-origin x pattern in {F, G, H}, R=6 each."""
     cells: list[dict] = []
     for pat in ("F", "G", "H"):
         cells.append({
@@ -95,8 +63,6 @@ def build_cells() -> list[dict]:
     return cells
 
 
-# ── Wave planning ───────────────────────────────────────────────────────────
-
 def _unit(cell: dict, replicate: int) -> dict:
     return {
         "label": cell["label"], "task": cell["task"],
@@ -107,12 +73,6 @@ def _unit(cell: dict, replicate: int) -> dict:
 
 def _pack_group(units_by_label: dict[str, list[dict]], n_workers: int,
                 rng: random.Random) -> list[list[dict]]:
-    """Pack one duration group into waves of <= n_workers.
-
-    Single label  -> chunk reps into waves of n_workers.
-    Equal counts  -> round-based: each round runs every label once (reshuffled),
-                     split into waves of n_workers. Distinct labels per wave.
-    """
     labels = list(units_by_label.keys())
     if len(labels) == 1:
         u = units_by_label[labels[0]][:]
@@ -170,8 +130,6 @@ def plan_waves(cells: list[dict], n_workers: int, seed: int) -> list[dict]:
     return plan
 
 
-# ── Cluster reset + cell execution (reused E-V3/E-V7 plumbing) ────────────────
-
 def kubectl_ctx(ctx: str, args: list[str], timeout: int = 200) -> subprocess.CompletedProcess:
     return subprocess.run(["kubectl", f"--context={ctx}", *args],
                           capture_output=True, text=True, timeout=timeout)
@@ -207,7 +165,7 @@ def coverage_from_run_dir(run_dir: Path):
 
 
 def run_cell(slot, unit: dict, output_dir: Path) -> dict:
-    """Run ONE cell on ONE worker slot, pinned to that slot's cluster. Never raises."""
+    """Run ONE cell on ONE worker slot, pinned to that slot's cluster."""
     set_thread_kube_context(slot.kube_context)
     pf = PortForward(namespace=PROMETHEUS_NS, service=PROMETHEUS_SVC,
                      local_port=slot.prometheus_port, remote_port=PROMETHEUS_PORT,
@@ -276,8 +234,6 @@ def preflight(slots) -> bool:
             ok = False
     return ok
 
-
-# ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
     ap = argparse.ArgumentParser(description="P3-C-T3 raw rolling-origin F/G/H wave driver")

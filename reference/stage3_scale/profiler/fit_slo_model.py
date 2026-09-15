@@ -1,24 +1,5 @@
 #!/usr/bin/env python3
-"""
-SLO Model Fitting — fit the quadratic SLO model to profiling data.
-
-Model:
-    L(r, p) = L_base + a * (r/p) + b * (r/p)²
-
-Where:
-    L = p95 latency (ms)
-    r = request rate (RPS)
-    p = number of replicas
-    L_base, a, b = coefficients to fit
-
-Input:  profiling/capacity_curve.csv (from P1)
-Output: profiling/service_model.json
-
-Also computes derived parameters:
-    - Single-replica capacity (RPS at which p95 > 200ms)
-    - Scaling linearity (from P2 data)
-    - Cold start delay (from P3 data)
-"""
+"""SLO Model Fitting — fit the quadratic SLO model to profiling data."""
 
 import argparse
 import json
@@ -42,21 +23,7 @@ def slo_model(r_over_p: np.ndarray, L_base: float, a: float, b: float) -> np.nda
 def fit_slo_model(rps_values: list[float], p95_values: list[float],
                   replicas: int = 1,
                   min_rps_for_fit: float = 5.0) -> dict:
-    """
-    Fit the quadratic SLO model to (rps, p95_latency) data.
-
-    Args:
-        rps_values: Request rates (actual RPS from profiling)
-        p95_values: Corresponding p95 latencies in ms
-        replicas: Number of replicas used (r_over_p = rps / replicas)
-        min_rps_for_fit: Minimum RPS threshold — points below this
-                         may be dominated by base latency noise.
-
-    Returns:
-        dict with L_base, a, b, r_squared, r_single_replica_capacity,
-        and fit diagnostics.
-    """
-    # Filter out None values and very low RPS points
+    """Fit the quadratic SLO model to (rps, p95_latency) data."""
     valid = [
         (r, l) for r, l in zip(rps_values, p95_values)
         if r is not None and l is not None and r >= min_rps_for_fit
@@ -88,7 +55,6 @@ def fit_slo_model(rps_values: list[float], p95_values: list[float],
         )
         L_base, a, b = params
 
-        # Compute R²
         predicted = slo_model(r_over_p, L_base, a, b)
         ss_res = np.sum((np.array(p95) - predicted) ** 2)
         ss_tot = np.sum((np.array(p95) - np.mean(p95)) ** 2)
@@ -119,9 +85,6 @@ def fit_slo_model(rps_values: list[float], p95_values: list[float],
         logger.info("Negative quadratic term (b=%.6f) — clamping to 0 (linear model)", b)
         b = 0.0
 
-    # Compute single-replica capacity: RPS where L(r, 1) = SLO_TARGET_MS
-    # Solve: L_base + a*r + b*r² = SLO_TARGET
-    # => b*r² + a*r + (L_base - SLO_TARGET) = 0
     try:
         c = L_base - SLO_TARGET_MS
         if abs(b) < 1e-10:
@@ -155,14 +118,7 @@ def fit_slo_model(rps_values: list[float], p95_values: list[float],
 
 
 def compute_scaling_linearity(scaling_csv: Path) -> Optional[float]:
-    """
-    Compute scaling linearity from P2 data.
-
-    Linearity = actual_capacity / ideal_capacity
-      where ideal_capacity(n) = n * capacity(1)
-
-    Returns efficiency ratio (1.0 = perfectly linear).
-    """
+    """Compute scaling linearity from P2 data."""
     if not scaling_csv.exists():
         logger.warning("Scaling CSV not found: %s", scaling_csv)
         return None
@@ -177,11 +133,9 @@ def compute_scaling_linearity(scaling_csv: Path) -> Optional[float]:
     if len(rows) < 2:
         return None
 
-    # Compute capacity per replica: total_rps / replicas
     efficiencies = []
     for r in rows:
         replicas = int(r["replicas"])
-        # Estimate actual RPS from total_requests
         total_req = float(r.get("total_requests", 0))
         # Each test is 120s
         actual_rps = total_req / 120.0 if total_req > 0 else float(r.get("target_rps", 0))
@@ -195,7 +149,7 @@ def compute_scaling_linearity(scaling_csv: Path) -> Optional[float]:
 
 
 def extract_step_response_timing(step_csv: Path) -> Optional[dict]:
-    """Extract timing summary from P3 step response data."""
+    """Extract step-response timing."""
     if not step_csv.exists():
         logger.warning("Step response CSV not found: %s", step_csv)
         return None
@@ -229,22 +183,9 @@ def build_service_model(capacity_csv: Path,
                         step_csv: Optional[Path] = None,
                         bottleneck_result: Optional[dict] = None,
                         complexity: int = 100000) -> dict:
-    """
-    Build the complete service_model.json from all profiling outputs.
-
-    Args:
-        capacity_csv: Path to capacity_curve.csv (from P1)
-        scaling_csv: Path to scaling_linearity.csv (from P2)
-        step_csv: Path to step_response.csv (from P3)
-        bottleneck_result: P4 result dict
-        complexity: Target complexity level for the model
-
-    Returns:
-        Complete service_model.json dict
-    """
+    """Build the complete service_model.json from all profiling outputs."""
     import csv
 
-    # Parse capacity curve
     rps_list = []
     p95_list = []
     with open(capacity_csv) as f:
@@ -269,12 +210,10 @@ def build_service_model(capacity_csv: Path,
         logger.error("No valid points found for complexity=%d in %s", complexity, capacity_csv)
         return {"error": "no_data"}
 
-    # Fit model
     fit = fit_slo_model(rps_list, p95_list)
     if "error" in fit:
         return fit
 
-    # Build output
     compute_worker = {
         "L_base_ms": fit["L_base_ms"],
         "a": fit["a"],
@@ -287,19 +226,16 @@ def build_service_model(capacity_csv: Path,
         "model_type": fit["model_type"],
     }
 
-    # Add scaling linearity
     if scaling_csv and scaling_csv.exists():
         linearity = compute_scaling_linearity(scaling_csv)
         if linearity is not None:
             compute_worker["scaling_linearity"] = linearity
 
-    # Add step response timing
     if step_csv and step_csv.exists():
         timing = extract_step_response_timing(step_csv)
         if timing:
             compute_worker.update(timing)
 
-    # Build frontend/processor sections
     model = {
         "compute-worker": compute_worker,
         "frontend": {
@@ -326,8 +262,6 @@ def build_service_model(capacity_csv: Path,
 
     return model
 
-
-# ── CLI ─────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(
@@ -366,7 +300,6 @@ def main():
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    # Convert st_mtime to ISO date string
     if "compute-worker" in model and model["compute-worker"].get("fitted_on"):
         from datetime import datetime
         model["compute-worker"]["fitted_on"] = datetime.fromtimestamp(
@@ -376,7 +309,6 @@ def main():
     output_path.write_text(json.dumps(model, indent=2, default=str))
     logger.info("Wrote service_model.json to %s", output_path)
 
-    # Print summary
     cw = model.get("compute-worker", {})
     print(f"\nSLO Model Summary (complexity={cw.get('complexity', '?')})")
     print(f"  L_base = {cw.get('L_base_ms', '?')}ms")

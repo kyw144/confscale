@@ -1,15 +1,9 @@
-"""
-InfoSys Benchmark — Processor
-Moderate-CPU service: calls compute-worker (CPU-bound) and cache (I/O-bound),
-then aggregates results. Represents a realistic microservice that orchestrates
-downstream calls.
-"""
+"""Process requests through the compute worker and Redis."""
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if True:
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 from flask import Flask, request, jsonify
@@ -31,10 +25,6 @@ COMPUTE_URL = os.environ.get("COMPUTE_URL", "http://compute-worker.infosys-bench
 CACHE_URL = os.environ.get("CACHE_URL", "http://cache.infosys-benchmark.svc.cluster.local:6379")
 DOWNSTREAM_TIMEOUT = float(os.environ.get("DOWNSTREAM_TIMEOUT", 5.0))
 
-# Note: cache is Redis, so we use a TCP check pattern (the cache service
-# doesn't speak HTTP). We'll access it through a simple sidecar or use
-# the Redis protocol directly. For this benchmark, we'll use a lightweight
-# Python Redis client if available, or fall back to a simple HTTP proxy.
 try:
     import redis
     _redis_client = redis.Redis(host="cache.infosys-benchmark.svc.cluster.local", port=6379,
@@ -70,7 +60,6 @@ def process():
         except requests.exceptions.RequestException as e:
             results["compute_results"].append({"item": i, "error": str(e)})
 
-    # Cache lookups (simulates I/O-bound operation)
     for i in range(items):
         key = f"item:{i}:{n}"
         try:

@@ -1,4 +1,4 @@
-"""Restore author-supplied models locally; never download or publish inputs."""
+"""Restore local models matching the input manifest."""
 import argparse
 import hashlib
 import json
@@ -22,8 +22,7 @@ def restore(source, destination):
         source_hash = hashlib.sha256(data).hexdigest()
         conversion = 'none'
         if source_hash != row['sha256'] and original.suffix in ('.yaml', '.yml', '.json', '.csv'):
-            # The artifact manifest was made from a Windows checkout. Accept
-            # a line-ending conversion ONLY when the resulting full hash matches.
+            # Accept line-ending conversion only when the complete expected hash matches.
             lf = data.replace(b'\r\n', b'\n')
             for label, candidate in [('LF', lf), ('CRLF', lf.replace(b'\n', b'\r\n'))]:
                 if hashlib.sha256(candidate).hexdigest() == row['sha256']:
@@ -47,7 +46,7 @@ def restore(source, destination):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source', required=True, type=Path, help='Original dissertation checkout')
+    parser.add_argument('--source', required=True, type=Path, help='Input bundle containing data/p3_runs/models')
     parser.add_argument('--destination', type=Path, default=ROOT / 'inputs/models')
     args = parser.parse_args()
     print(json.dumps(restore(args.source, args.destination), indent=2))

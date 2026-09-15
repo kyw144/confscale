@@ -1,48 +1,10 @@
 #!/usr/bin/env python3
-"""
-Baseline Controllers — subprocess-driven scaling for non-UQ methods.
+"""GRU, safety-margin, error-monitored and quantile autoscaling baselines."""
 
-Provides five modes:
-  predictive          — GRU point forecast → direct replica override
-  predictive-safety   — Same + 20% safety margin on forecast
-  base-inspired       — Binary burst detection with two-mode policy
-  error-monitored     — Trailing residual-MAE trigger; conservative scale when elevated
-  hpa-qr-monitored    — Quantile-regression upper-quantile target (HPA-style),
-                        no recalibration, with optional CoverageMonitor
-
-For all GRU-backed modes, ``--model-dir`` points at the per-pattern GRU
-checkpoint. For ``hpa-qr-monitored`` it points at the per-pattern QR
-checkpoint instead (``models/uq/<pattern>/qr/``) — same loader the
-orchestrator's confscale-qr path uses.
-
-When ``--coverage-monitor`` is set, the controller validates the prior
-iteration's h=0 prediction interval against the realised RPS and
-emits an ``operator_metrics_summary.json`` with the same
-``coverage_monitor`` schema the orchestrator writes. The monitor is
-forced on for ``hpa-qr-monitored`` (it is the whole point of the
-method) and stays opt-in for the other modes.
-
-Launched by the experiment orchestrator's method.configure().
-Follows the same interface as orchestrator/controller.py so the
-orchestrator can treat them uniformly.
-
-Usage (predictive baselines):
-    python baselines/controller.py --mode predictive \
-        --model-dir models/gru/gru_compute-worker_diurnal/ \
-        ...
-
-Usage (hpa-qr-monitored):
-    python baselines/controller.py --mode hpa-qr-monitored \
-        --model-dir models/uq/diurnal/qr/ \
-        --coverage-monitor --coverage-target 0.9 --coverage-window 30 \
-        ...
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -79,8 +41,6 @@ logging.basicConfig(
 logger = logging.getLogger('baseline-controller')
 
 
-# ── Prometheus Client (identical to orchestrator/controller.py) ───────
-
 def query_prometheus(url: str, query: str) -> Optional[float]:
     """Query Prometheus for a single scalar value."""
     try:
@@ -115,8 +75,6 @@ def query_prometheus_range(url: str, query: str, lookback_s: int) -> list[float]
     return []
 
 
-# ── kubectl Helpers ───────────────────────────────────────────────────
-
 def kubectl_scale(context: str, namespace: str, deployment: str, replicas: int):
     """Scale a deployment via kubectl."""
     cmd = [
@@ -135,8 +93,6 @@ def kubectl_scale(context: str, namespace: str, deployment: str, replicas: int):
         logger.error("kubectl scale error: %s", e)
 
 
-# ── Replica Calculation ───────────────────────────────────────────────
-
 def compute_replicas_predicted(
     r_hat: float,
     slo_capacity: float,
@@ -152,15 +108,8 @@ def compute_replicas_predicted(
     return max(min_replicas, min(replicas, max_replicas))
 
 
-# ── BASE-Inspired Burst Detection ─────────────────────────────────────
-
 class BurstDetector:
-    """Binary burst detector with hysteresis.
-
-    Compares current RPS against recent rolling average. If the ratio exceeds
-    the threshold, we enter burst mode for at least `hysteresis_intervals`
-    cycles before allowing exit.
-    """
+    """Binary burst detector with hysteresis."""
 
     def __init__(
         self,
@@ -184,7 +133,6 @@ class BurstDetector:
 
         was_in_burst = self.in_burst
 
-        # Detect burst onset
         if recent_avg > 0 and current > self.burst_threshold * recent_avg:
             self.in_burst = True
             self.burst_counter = self.hysteresis_intervals
@@ -192,7 +140,6 @@ class BurstDetector:
             # Still in hysteresis window — stay in burst mode
             self.burst_counter -= 1
         else:
-            # Hysteresis expired — allow exit
             self.in_burst = False
 
         if self.in_burst and not was_in_burst:
@@ -202,22 +149,8 @@ class BurstDetector:
         return self.in_burst
 
 
-# ── Error Monitor (residual-MAE trigger) ──────────────────────────────
-
 class ErrorMonitor:
-    """Trailing residual-MAE monitor for the error-monitored baseline.
-
-    Each call to ``record(forecast, observed)`` appends one absolute
-    residual ``|forecast - observed|`` to a fixed-size sliding window.
-    ``mae()`` returns the mean over whatever residuals are present;
-    ``is_elevated(threshold)`` returns True iff that mean exceeds the
-    threshold.
-
-    MAE is the mean of *absolute* residuals, so it tracks dispersion as
-    well as bias — a zero-mean but high-variance residual stream (e.g.,
-    pattern-F volatility drift) still elevates the trigger because the
-    absolute values average above zero.
-    """
+    """Trailing residual-MAE monitor for the error-monitored baseline."""
 
     def __init__(self, window: int = 20):
         if window <= 0:
@@ -238,12 +171,7 @@ class ErrorMonitor:
         return float(np.mean(self.residuals))
 
     def is_elevated(self, threshold: float) -> bool:
-        """True when current MAE exceeds the threshold.
-
-        Returns False on an empty window — the controller's pre-record
-        state is treated as in-band so the first iteration uses the
-        precise policy by default.
-        """
+        """True when current MAE exceeds the threshold."""
         if not self.residuals:
             return False
         return self.mae() > threshold
@@ -252,24 +180,13 @@ class ErrorMonitor:
         return len(self.residuals)
 
 
-# ── Operator-Metrics Summary ──────────────────────────────────────────
-
 def build_operator_metrics_summary(
     coverage_monitor: Optional['CoverageMonitor'],
     scale_log: list,
     mode: str,
     final_replicas: int,
 ) -> Optional[dict]:
-    """Build the operator_metrics_summary.json payload.
-
-    Returns ``None`` when the CoverageMonitor is disabled or the scale
-    log is empty (callers don't write a file in that case — matching the
-    behavior of the legacy baseline modes that never emitted this file).
-
-    Schema mirrors ``orchestrator/controller.py`` so Stream C's loader
-    (``analysis/post_reframe.py``) reads both controller paths
-    identically.
-    """
+    """Build the operator_metrics_summary.json payload."""
     if coverage_monitor is None or not scale_log:
         return None
 
@@ -301,8 +218,6 @@ def build_operator_metrics_summary(
         },
     }
 
-
-# ── Main Control Loop ─────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(description='Baseline scaling controller')
@@ -367,14 +282,12 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Log config
     config = vars(args)
     config['start_time'] = datetime.now(timezone.utc).isoformat()
     config['controller_type'] = f'baseline-{args.mode}'
     with open(output_dir / 'controller_config.yaml', 'w') as f:
         yaml.dump(config, f)
 
-    # Set up logging with mode prefix
     log_extra = {'mode': args.mode}
     logger.info("Starting baseline controller: %s", args.mode,
                 extra=log_extra)
@@ -384,10 +297,6 @@ def main():
     logger.info("  Duration: %ds, Interval: %ds", args.duration, args.interval,
                 extra=log_extra)
 
-    # Load predictor. GRU for legacy modes; QR for hpa-qr-monitored.
-    # `predictor_h` is the unified history length the main loop reads from,
-    # so the same Prometheus-history / cold-start padding code path works
-    # regardless of which model is loaded.
     qr_predictor: Optional[QuantileRegressor] = None
     predictor: Optional[GRUPredictor] = None
     if args.mode == 'hpa-qr-monitored':
@@ -412,17 +321,13 @@ def main():
             logger.error("Failed to load GRU predictor: %s", e, extra=log_extra)
             sys.exit(1)
 
-    # Burst detector for base-inspired mode
     burst_detector = None
     if args.mode == 'base-inspired':
         burst_detector = BurstDetector(
             burst_threshold=args.burst_threshold,
         )
 
-    # Error monitor for error-monitored mode. Tracks residuals between
-    # the *previous* iteration's point forecast and *this* iteration's
-    # observed RPS — so the first iteration's forecast is held in
-    # prev_forecast and scored against rps next time round.
+    # Score the previous forecast against the current observation.
     error_monitor = None
     prev_forecast: Optional[float] = None
     if args.mode == 'error-monitored':
@@ -431,10 +336,6 @@ def main():
                     args.error_window, args.error_threshold,
                     args.error_safety_multiplier, extra=log_extra)
 
-    # CoverageMonitor — forced on for hpa-qr-monitored, opt-in otherwise.
-    # Validates the prior iteration's h=0 prediction interval against the
-    # current iteration's RPS and produces operator_metrics_summary.json
-    # with the same coverage_monitor schema the orchestrator emits.
     coverage_monitor: Optional[CoverageMonitor] = None
     coverage_enabled = args.coverage_monitor or args.mode == 'hpa-qr-monitored'
     if coverage_enabled:
@@ -445,15 +346,12 @@ def main():
         logger.info("CoverageMonitor enabled: target=%.2f, window=%d",
                     args.coverage_target, args.coverage_window, extra=log_extra)
 
-    # Control loop state
     current_replicas = args.min_replicas
     scale_log = []
 
-    # Set initial replicas
     kubectl_scale(args.context, args.namespace, args.deployment, current_replicas)
     time.sleep(5)
 
-    # Graceful shutdown
     shutdown = False
 
     def handle_signal(sig, frame):
@@ -473,21 +371,14 @@ def main():
     while time.time() < end_time and not shutdown:
         loop_start = time.time()
 
-        # 1. Collect current RPS
         rps = query_prometheus(args.prometheus_url, args.rps_query)
 
-        # 2. Get history from Prometheus
         history = query_prometheus_range(
             args.prometheus_url, args.rps_query,
             lookback_s=args.history_length * 30,
         )
 
-        # 2b. Cold-start: pad insufficient history with the latest observation.
-        # Each kind cluster's Prometheus starts empty per cell, so for the first
-        # ~30 min the controller would otherwise hold at min_replicas (=1) under
-        # full workload. Seeding lets the predictor produce a forecast from any
-        # point where rps is non-zero; quality improves as real history
-        # accumulates.
+        # Pad short history with the latest observation so cold starts can produce forecasts.
         seeded = False
         if 0 < len(history) < predictor_h:
             pad_value = history[-1]
@@ -521,11 +412,7 @@ def main():
                 logger.warning("Prediction failed: %s", e, extra=log_extra)
                 pred = None
 
-        # 3b. CoverageMonitor (when enabled). Validate the prior iteration's
-        # h=0 interval against this iteration's RPS, then record this
-        # iteration's h=0 interval for next-step validation. Pure
-        # measurement — no Plan-side action. Mirrors the orchestrator's
-        # step 3b in orchestrator/controller.py.
+        # Validate the previous interval before recording the next one.
         coverage_state = None
         if coverage_monitor is not None:
             if rps is not None:
@@ -543,17 +430,14 @@ def main():
 
         if prediction_made:
             if args.mode == 'predictive':
-                # Direct point forecast → replicas
                 r_target = r_hat
                 policy = 'predictive'
 
             elif args.mode == 'predictive-safety':
-                # Point forecast + safety margin
                 r_target = r_hat * (1.0 + args.safety_margin)
                 policy = 'predictive+safety'
 
             elif args.mode == 'base-inspired':
-                # Burst detection → choose policy
                 burst_detector.update(history)
                 in_burst = burst_detector.in_burst
                 if in_burst:
@@ -578,14 +462,7 @@ def main():
                     policy = 'error-precise'
 
             elif args.mode == 'hpa-qr-monitored':
-                # HPA-style controller fed by the QR upper quantile.
-                # The QR ci_upper IS the safety bound — no additional
-                # multiplier, no recalibration. Coverage is whatever the
-                # uncalibrated QR delivers; that is exactly the question
-                # the §6.8 H-divergence anchor is asking.
-                # Falls back to r_hat (q_med) if ci_upper is missing for
-                # some reason (defensive — predict_with_uncertainty
-                # always returns ci_upper today).
+                # Use the QR upper quantile directly, with the point forecast as fallback.
                 r_target = ci_upper_h0 if ci_upper_h0 is not None else r_hat
                 policy = 'qr-upper-quantile'
 
@@ -597,9 +474,7 @@ def main():
                 max_replicas=args.max_replicas,
             )
 
-            # Stash this iteration's forecast for next-step residual.
-            # Done after target computation so a mid-loop exception
-            # doesn't poison the next iteration with a stale value.
+            # Save the forecast after planning so a failed decision cannot affect the next residual.
             if args.mode == 'error-monitored':
                 prev_forecast = r_hat
         else:
@@ -617,7 +492,6 @@ def main():
             kubectl_scale(args.context, args.namespace, args.deployment,
                          current_replicas)
 
-        # 5. Log
         log_entry = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'elapsed_s': round(time.time() - start_time, 1),
@@ -676,11 +550,7 @@ def main():
                          log_entry['elapsed_s'], len(history),
                          extra=log_extra)
 
-        # Wait for next interval — chunked sleep so a SIGTERM-set
-        # shutdown flag breaks us out within ~1s instead of waiting up
-        # to args.interval (typically 30s). Without this, reset() hits
-        # its wait timeout and falls back to SIGKILL before the post-loop
-        # JSON write runs.
+        # Sleep in short chunks so SIGTERM can flush logs before reset escalates to SIGKILL.
         elapsed = time.time() - loop_start
         sleep_end = time.time() + max(0, args.interval - elapsed)
         while time.time() < sleep_end and not shutdown:
@@ -698,10 +568,6 @@ def main():
         logger.error("Failed to save scale log to %s: %s", log_path, e,
                      extra=log_extra)
 
-    # Save operator_metrics_summary.json when CoverageMonitor is enabled.
-    # Legacy baseline modes that leave the monitor off don't emit this file
-    # — keeps hpa-reactive / hpa-error-monitored / hpa-predictive et al.
-    # byte-identical with their pre-change outputs.
     metrics_summary = build_operator_metrics_summary(
         coverage_monitor=coverage_monitor,
         scale_log=scale_log,
@@ -719,7 +585,6 @@ def main():
             logger.error("Failed to save metrics summary to %s: %s",
                          summary_path, e, extra=log_extra)
 
-    # Final state
     logger.info("Controller finished. Final replicas: %d, policy: %s",
                  current_replicas, policy, extra=log_extra)
 

@@ -1,25 +1,5 @@
 #!/usr/bin/env python3
-"""
-Training Data Generator — produce 24h of synthetic request rate timeseries
-for each workload pattern (A/B/C/D) to train the GRU predictor (task 04).
-
-Computes RPS traces directly using the pattern functions from workload_gen.py
-(no subprocess — much faster than trace-only mode which creates TickResult objects
-for each of 86,400 iterations).
-
-Usage:
-  # Generate all 4 patterns (24h each)
-  python generate_training_data.py --all
-
-  # Generate a single pattern
-  python generate_training_data.py --pattern A
-
-  # Downsample to custom interval
-  python generate_training_data.py --all --step 60
-
-Output: training_data/pattern_<A|B|C|D>_24h.csv
-  Columns: timestamp, rps
-"""
+"""Generate 24-hour synthetic workload series for training."""
 
 import argparse
 import csv
@@ -30,7 +10,6 @@ import time
 from pathlib import Path
 from typing import Optional
 
-# Import pattern functions directly
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from workload_gen import (
     pattern_diurnal,
@@ -55,31 +34,17 @@ def generate_trace(pattern: str, duration_s: int = 86400,
                    output_dir: Path = OUTPUT_DIR,
                    step_s: int = 30,
                    seed: int = 42) -> Path:
-    """
-    Generate a synthetic RPS trace for one pattern.
-
-    Args:
-        pattern: Workload pattern (A/B/C/D)
-        duration_s: Duration in seconds (default: 86400 = 24h)
-        output_dir: Directory for output CSV
-        step_s: Downsample interval in seconds
-        seed: Random seed for reproducibility
-
-    Returns:
-        Path to the generated CSV file.
-    """
+    """Generate a synthetic RPS trace for one pattern."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     random.seed(seed)
 
-    # Determine label for filename suffix
     hours = duration_s // 3600
     suffix = f"{hours}h" if hours >= 24 else f"{int(duration_s / 60)}m"
 
     logger.info("Generating %s trace for Pattern %s (%s)...",
                  suffix, pattern, PATTERN_LABELS[pattern])
 
-    # Build the RPS function
     if pattern == "A":
         rps_fn = lambda t: pattern_diurnal(t, rps_base=50)
     elif pattern == "B":
@@ -98,13 +63,11 @@ def generate_trace(pattern: str, duration_s: int = 86400,
     else:
         raise ValueError(f"Unknown pattern: {pattern}")
 
-    # Generate per-second RPS values
     rps_values = []
     for t in range(duration_s):
         rps = max(0, int(round(rps_fn(float(t)))))
         rps_values.append(rps)
 
-    # Downsample to step_s intervals
     output_csv = output_dir / f"pattern_{pattern}_{suffix}.csv"
     with open(output_csv, "w", newline="") as f:
         writer = csv.writer(f)
@@ -122,14 +85,7 @@ def generate_trace(pattern: str, duration_s: int = 86400,
 
 
 def generate_all_patterns(output_dir: Path = OUTPUT_DIR, duration_s: int = 86400) -> dict[str, Path]:
-    """Generate traces for all four patterns.
-
-    For multi-day traces (duration_s > 86400), generates N independent
-    24h realizations with different seeds, concatenated. This ensures
-    burst events and signaling periods are distributed across the full
-    trace rather than concentrated in one segment — critical for honest
-    chronological train/val/test splits.
-    """
+    """Generate traces for all four patterns."""
     results = {}
     for pattern in ["A", "B", "C", "D"]:
         if duration_s <= 86400:
@@ -142,24 +98,20 @@ def generate_all_patterns(output_dir: Path = OUTPUT_DIR, duration_s: int = 86400
             all_rows = []
             for day in range(days):
                 day_seed = 42 + day * 100  # Deterministic but different per day
-                # Temporarily generate to a temp dir
                 import tempfile
                 with tempfile.TemporaryDirectory() as tmpdir:
                     tmp_dir = Path(tmpdir)
                     path = generate_trace(pattern, duration_s=86400,
                                           output_dir=tmp_dir, seed=day_seed)
-                    # Read back the rows
                     import csv as _csv
                     with open(path) as f:
                         reader = _csv.DictReader(f)
                         rows = list(reader)
-                    # Offset timestamps
                     day_offset = day * 86400
                     for row in rows:
                         row["timestamp"] = str(int(row["timestamp"]) + day_offset)
                         all_rows.append(row)
 
-            # Write concatenated output
             hours = duration_s // 3600
             suffix = f"{hours}h"
             output_csv = output_dir / f"pattern_{pattern}_{suffix}.csv"
@@ -176,8 +128,6 @@ def generate_all_patterns(output_dir: Path = OUTPUT_DIR, duration_s: int = 86400
 
     return results
 
-
-# ── CLI ─────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(
@@ -205,7 +155,6 @@ def main():
     output_dir = Path(args.output_dir)
     t0 = time.time()
 
-    # Resolve duration: --days overrides --duration if > 1
     if args.days > 1:
         duration_s = args.days * 86400
     else:
