@@ -1,33 +1,10 @@
 #!/usr/bin/env python3
-"""
-Experiment Matrix Orchestrator — runs the full P3 experimental matrix.
+"""Run method/workload/replicate matrices on configured clusters."""
 
-For each (method × workload × replicate) cell:
-    1. Configure the scaling method
-    2. Run the workload generator
-    3. Collect metrics from Prometheus
-    4. Save run_config.yaml + outputs
-    5. Reset to baseline
-
-Usage:
-    # Run full matrix from config
-    python run_matrix.py --config matrix.yaml
-
-    # Run a single cell for testing
-    python run_matrix.py --method hpa-reactive --workload A --replicate 1 --duration 120
-
-    # Dry-run: validate config without executing
-    python run_matrix.py --config matrix.yaml --dry-run
-
-Contract:
-    run_matrix(config_path, output_dir) -> dict
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -50,7 +27,6 @@ from typing import Any, Optional
 
 import yaml
 
-# Add parent to path so imports work in both package mode and script mode
 _parent = str(Path(__file__).resolve().parent.parent)
 if _parent not in sys.path:
     sys.path.insert(0, _parent)
@@ -79,16 +55,6 @@ logger = logging.getLogger(__name__)
 
 
 def _resolve_method_spec(spec) -> "MethodConfig":
-    """Resolve a yaml method entry into a fresh MethodConfig instance.
-
-    Forms accepted:
-      - "confscale-scp"                                         # bare name
-      - {name: confscale-scp, max_replicas: 30}                 # name + overrides
-      - {base: confscale-scp, name: confscale-scp-lambda-0.0,   # rename + overrides
-         lambda_risk: 0.0}                                       # for sweeps where
-                                                                 # multiple cells share
-                                                                 # a registry base.
-    """
     if isinstance(spec, str):
         return get_method(spec)
     if isinstance(spec, dict):
@@ -105,8 +71,6 @@ def _resolve_method_spec(spec) -> "MethodConfig":
     raise TypeError(f"unsupported method spec type: {type(spec).__name__}")
 
 
-# ── Constants ───────────────────────────────────────────────────────────
-
 WORKLOAD_GEN_SCRIPT = Path(__file__).resolve().parent.parent / "workload_gen.py"
 PYTHON = sys.executable
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs"
@@ -117,8 +81,6 @@ PROMETHEUS_SVC = "prometheus-kube-prometheus-prometheus"
 PROMETHEUS_PORT = 9090
 FRONTEND_NODEPORT = 30080
 
-
-# ── Port-Forward Manager ────────────────────────────────────────────────
 
 class PortForward:
     """Manage a kubectl port-forward as a subprocess."""
@@ -157,8 +119,6 @@ class PortForward:
             logger.info("Port-forward stopped: %s:%d", self.service, self.local_port)
 
 
-# ── Health Checks ────────────────────────────────────────────────────────
-
 def check_cluster_ready() -> bool:
     """Verify the kind cluster and namespace are accessible."""
     result = kubectl(["get", "ns", NAMESPACE, "-o", "name"])
@@ -166,7 +126,6 @@ def check_cluster_ready() -> bool:
         logger.error("Cannot access namespace '%s'. Is the cluster running?", NAMESPACE)
         return False
 
-    # Check compute-worker deployment exists
     result = kubectl(["get", "deployment", "compute-worker", "-n", NAMESPACE])
     if result.returncode != 0:
         logger.error("compute-worker deployment not found in %s", NAMESPACE)
@@ -206,13 +165,8 @@ def check_disk_space(output_dir: Path, min_free_gb: float = 5.0) -> bool:
         return True  # Don't block on disk check failure
 
 
-# ── Run Log CSV ─────────────────────────────────────────────────────────
-
 class RunLog:
-    """Append-only CSV log of all runs executed by this orchestrator session.
-
-    Thread-safe: callers may invoke log() concurrently from multiple workers.
-    """
+    """Append-only CSV log of all runs executed by this orchestrator session."""
 
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -242,8 +196,6 @@ class RunLog:
             self._file.close()
 
 
-# ── Single Run Executor ──────────────────────────────────────────────────
-
 def execute_single_run(
     method: MethodConfig,
     workload_pattern: str,
@@ -255,21 +207,10 @@ def execute_single_run(
     output_dir: Path,
     workload_extra_args: Optional[list[str]] = None,
 ) -> dict[str, Any]:
-    """
-    Execute ONE cell of the experiment matrix.
-
-    Returns:
-        dict with status, run_id, and summary metrics.
-    """
+    """Execute ONE cell of the experiment matrix."""
     run_start = datetime.now(timezone.utc)
     run_id = f"{method.name}_{workload_pattern.lower()}_rep{replicate}_{run_start.strftime('%Y%m%d_%H%M%S_%f')}"
-    # E-V6 fix (Anomaly A4): resolve to an absolute path so the workload
-    # generator subprocess (launched with cwd=run_dir) cannot re-resolve a
-    # relative --output-dir against its own cwd and double the path
-    # (<run_dir>/data/p3_runs/outputs/<batch>/<run_id>/workload_*.csv).
-    # A relative --output-dir was the trigger; the doubled trace was then
-    # invisible to the flat run_dir.glob() below, so collect.py never saw a
-    # trace_csv_path and metrics.json got no e2e.* block.
+    # Use an absolute output path: the workload subprocess changes cwd to run_dir.
     run_dir = (output_dir / run_id).resolve()
     run_dir.mkdir(parents=True, exist_ok=False)
 
@@ -295,27 +236,18 @@ def execute_single_run(
         if hasattr(method, 'workload_pattern'):
             method.workload_pattern = workload_pattern
 
-        # 0b. Per-cell controller output directory. Each cell has a fresh
-        # method instance (get_method returns copies for stateful methods),
-        # so this is thread-safe under parallel workers.
         method.run_dir = run_dir
 
-        # 0c. Tell the method how long the workload will run, so the
-        # controller's --duration ceiling tracks cell length + grace
-        # rather than a hardcoded magic number.
         method.cell_duration_s = duration_s
 
-        # 1. Configure method
         logger.info("Step 1/5: Configuring %s...", method.name)
         if not method.configure(NAMESPACE):
             raise RuntimeError(f"Method {method.name} configure() failed")
         time.sleep(5)  # Let HPA stabilize
 
-        # 2. Record start time
         start_time = datetime.now(timezone.utc)
         logger.info("Step 2/5: Starting workload at %s", start_time.isoformat())
 
-        # 3. Run workload generator
         logger.info("Step 3/5: Running workload pattern %s for %ds...", workload_pattern, duration_s)
         workload_cmd = [
             str(PYTHON), str(WORKLOAD_GEN_SCRIPT),
@@ -327,15 +259,11 @@ def execute_single_run(
             "--seed", str(replicate),
         ]
 
-        # Add pattern-specific args
         if workload_pattern == "B":
             workload_cmd.extend(["--rps-base", "30"])
         elif workload_pattern == "C":
             workload_cmd.extend(["--rps-base", "20", "--rps-peak", "150"])
 
-        # Caller-supplied extra workload args (e.g. F/G drift-timing pilot-freeze:
-        # --drift-start/--drift-window/--noise-start/--noise-end). Additive; when
-        # absent the workload generator uses its own defaults (300/600/3/25).
         if workload_extra_args:
             workload_cmd.extend([str(a) for a in workload_extra_args])
 
@@ -365,7 +293,6 @@ def execute_single_run(
         actual_duration = int((end_time - start_time).total_seconds())
         logger.info("Workload complete: %ds actual", actual_duration)
 
-        # 3b. Find workload trace CSV for E2E SLO metrics
         trace_csv_files = list(run_dir.glob("workload_*_timeseries.csv"))
         trace_csv_path = trace_csv_files[0] if trace_csv_files else None
         if trace_csv_path:
@@ -373,7 +300,6 @@ def execute_single_run(
         else:
             raise RuntimeError(f"No workload trace CSV found in {run_dir}")
 
-        # 4. Collect metrics
         logger.info("Step 4/5: Collecting metrics from Prometheus...")
         try:
             summary = collect_metrics(
@@ -404,7 +330,6 @@ def execute_single_run(
         if summary.get("status") != "ok":
             raise RuntimeError(f"Metrics collection status: {summary.get('status')}")
 
-        # 5. Write run_config.yaml
         logger.info("Step 5/5: Saving run configuration...")
         run_config = {
             "run_id": run_id,
@@ -444,7 +369,6 @@ def execute_single_run(
         logger.error("Run failed: %s", e)
         traceback.print_exc()
     finally:
-        # 6. Reset method
         try:
             logger.info("Resetting %s to baseline...", method.name)
             reset_ok = method.reset(NAMESPACE) is True
@@ -486,8 +410,6 @@ def execute_single_run(
     return result
 
 
-# ── Matrix Runner ────────────────────────────────────────────────────────
-
 def run_matrix(
     config_path: Path,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
@@ -498,24 +420,7 @@ def run_matrix(
     base_prometheus_port: int = DEFAULT_BASE_PROMETHEUS_PORT,
     stagger_seconds: int = 30,
 ) -> dict[str, Any]:
-    """
-    Execute the full experimental matrix from a YAML config.
-
-    Args:
-        config_path: Path to matrix.yaml
-        output_dir: Root output directory for per-run subdirectories
-        dry_run: If True, print the matrix plan without executing
-        workers: Parallel workers (default 1 = serial path, unchanged).
-                 When > 1, expects N kind clusters from setup_parallel_clusters.py.
-        cluster_prefix: Cluster name prefix.
-        base_frontend_port: Worker i uses base_frontend_port + i.
-        base_prometheus_port: Worker i uses base_prometheus_port + i.
-        stagger_seconds: Per-worker startup delay to decorrelate workload spikes.
-
-    Returns:
-        dict with status, runs_completed, runs_failed, run_summaries
-    """
-    # Load config
+    """Execute the full experimental matrix from a YAML config."""
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
@@ -530,7 +435,6 @@ def run_matrix(
     cooldown_s = config.get("cooldown_s", 60)
     frontend_url = config.get("frontend_url", f"http://localhost:{FRONTEND_NODEPORT}")
 
-    # Resolve methods
     methods: list[MethodConfig] = []
     for m in methods_names:
         methods.append(_resolve_method_spec(m))
@@ -584,7 +488,6 @@ def run_matrix(
             stagger_seconds=stagger_seconds,
         )
 
-    # Health checks
     if not check_cluster_ready():
         return {"status": "cluster_not_ready", "runs_completed": 0, "runs_failed": 0, "runs": []}
     if not check_frontend_reachable(frontend_url):
@@ -592,7 +495,6 @@ def run_matrix(
     if not check_disk_space(output_dir):
         return {"status": "low_disk_space", "runs_completed": 0, "runs_failed": 0, "runs": []}
 
-    # Start Prometheus port-forward
     prometheus_pf = PortForward(
         namespace=PROMETHEUS_NS,
         service=PROMETHEUS_SVC,
@@ -602,7 +504,6 @@ def run_matrix(
     prometheus_pf.start()
     prometheus_url = f"http://localhost:{PROMETHEUS_PORT}"
 
-    # Run log
     output_dir = Path(output_dir)
     run_log = RunLog(output_dir / "run_log.csv")
 
@@ -637,7 +538,6 @@ def run_matrix(
                         output_dir=output_dir,
                     )
 
-                    # Log to run_log.csv
                     summary = result.get("summary", {})
                     run_log.log(
                         run_id=result["run_id"],
@@ -691,15 +591,7 @@ def run_matrix(
     }
 
 
-# ── Parallel Matrix Runner ──────────────────────────────────────────────
-
 def _apply_slot_to_method(method: MethodConfig, slot: WorkerSlot) -> None:
-    """Stamp slot-specific values onto a method instance.
-
-    ConfScale/Predictive/PredictiveSafety/BASEInspired all carry an instance
-    `prometheus_port` field (default 9090). For parallel mode each worker
-    talks to its own port-forward.
-    """
     if hasattr(method, "prometheus_port"):
         method.prometheus_port = slot.prometheus_port
 
@@ -719,18 +611,6 @@ def _run_matrix_parallel(
     stagger_seconds: int,
     start_replicate: int = 1,
 ) -> dict[str, Any]:
-    """
-    Parallel branch — N workers, each owning one kind cluster.
-
-    Per-worker isolation:
-      - Own kind context (set via methods.set_thread_kube_context — every
-        kubectl/controller-spawn call in this thread targets that cluster).
-      - Own frontend host port (workload generator targets only this slot).
-      - Own Prometheus port-forward (metrics collection scoped to this slot).
-
-    Required setup BEFORE this runs:
-      python setup_parallel_clusters.py <N>
-    """
     slots = make_slots(
         workers,
         cluster_prefix=cluster_prefix,
@@ -745,7 +625,6 @@ def _run_matrix_parallel(
 
     # Pre-flight every slot — fail fast if a cluster wasn't provisioned
     for slot in slots:
-        # Probe the cluster on its own context
         result = subprocess.run(
             ["kubectl", f"--context={slot.kube_context}",
              "get", "ns", NAMESPACE, "-o", "name"],
@@ -770,7 +649,6 @@ def _run_matrix_parallel(
         logger.info("Slot %s pre-flight OK (frontend=%s, prom=%s)",
                     slot.label(), slot.frontend_url, slot.prometheus_url)
 
-    # Build the cell queue
     cells: queue.Queue = queue.Queue()
     total_cells = 0
     for m_spec in methods_names:
@@ -808,7 +686,6 @@ def _run_matrix_parallel(
                     return
                 time.sleep(1)
 
-        # Per-slot Prometheus port-forward
         pf = PortForward(
             namespace=PROMETHEUS_NS,
             service=PROMETHEUS_SVC,
@@ -825,8 +702,6 @@ def _run_matrix_parallel(
                 except queue.Empty:
                     return
 
-                # Build a fresh method instance per cell — main's get_method
-                # already returns fresh ConfScale/Predictive/etc. instances.
                 try:
                     method = _resolve_method_spec(m_spec)
                 except (KeyError, TypeError) as e:
@@ -918,8 +793,6 @@ def _run_matrix_parallel(
     }
 
 
-# ── CLI ──────────────────────────────────────────────────────────────────
-
 def main():
     parser = argparse.ArgumentParser(
         description="P3 Experiment Matrix Orchestrator"
@@ -958,7 +831,6 @@ def main():
         help="Per-worker startup delay to decorrelate spikes (default: 30)",
     )
 
-    # Single-cell mode
     parser.add_argument("--method", help="Single method name (bypass config)")
     parser.add_argument("--workload", help="Single workload pattern (bypass config)")
     parser.add_argument("--replicate", type=int, default=1)
@@ -976,7 +848,6 @@ def main():
     output_dir = Path(args.output_dir)
 
     if args.method and args.workload:
-        # Single-cell mode
         method = get_method(args.method)
         logger.info("Single-cell mode: %s × %s × rep %d", args.method, args.workload, args.replicate)
 
@@ -1005,7 +876,6 @@ def main():
         finally:
             prometheus_pf.stop()
     else:
-        # Matrix mode
         result = run_matrix(
             config_path=args.config,
             output_dir=output_dir,

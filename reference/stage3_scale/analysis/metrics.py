@@ -1,22 +1,4 @@
-"""Metrics: compute primary and secondary experimental metrics.
-
-Primary metrics (per run):
-    slo_violation_rate  — fraction of intervals where p95 > SLO threshold
-    overhead_replica_seconds — excess replica-seconds above the ideal
-    mean_replicas       — average replica count during run
-    p95_latency_ms      — 95th percentile E2E latency
-
-Secondary metrics (per method × workload):
-    mean_slo_rate        — mean of slo_violation_rate across replicates
-    std_slo_rate         — standard deviation across replicates
-    ci_slo_rate          — 95% confidence interval half-width
-    mean_overhead        — mean overhead_replica_seconds
-    mean_replicas_mw     — mean of mean_replicas
-
-Efficiency score (UQ methods):
-    efficiency_score = (1 - slo_violation_rate) / (overhead_replica_seconds / 3600 + 1)
-    Higher is better — penalizes both violations and resource waste.
-"""
+"""Metrics: compute primary and secondary experimental metrics."""
 
 import json
 import logging
@@ -31,37 +13,23 @@ from .loader import load_runs
 
 logger = logging.getLogger(__name__)
 
-# ── SLO Constants ──────────────────────────────────────────────────────────
 
 SLO_TARGET_P95_MS = 200.0  # p95 < 200ms E2E latency (matches profiler + collector defaults)
 DEFAULT_CAPACITY_RPS = 10.0  # RPS per replica at complexity=50000
 
 
-# ── Primary Metrics ────────────────────────────────────────────────────────
-
 def compute_slo_violation_rate(
     df: pd.DataFrame,
     slo_threshold_ms: float = SLO_TARGET_P95_MS,
 ) -> pd.DataFrame:
-    """Ensure slo_violation_rate column exists, computing from p95 if needed.
-
-    Args:
-        df: Runs DataFrame (one row per run)
-        slo_threshold_ms: Latency threshold for SLO violation
-
-    Returns:
-        DataFrame with slo_violation_rate column guaranteed present.
-    """
+    """Ensure slo_violation_rate column exists, computing from p95 if needed."""
     df = df.copy()
 
     if "slo_violation_rate" in df.columns:
-        # Already computed — just fill any NaN
         mask = df["slo_violation_rate"].isna()
         if mask.any():
-            # Compute from violation_intervals if available
             logger.info("Computing SLO violation rate for %d runs with NaN values", mask.sum())
             if "slo_violation_intervals" in df.columns and "total_intervals" not in df.columns:
-                # Estimate total intervals from duration
                 df.loc[mask, "slo_violation_rate"] = (
                     df.loc[mask, "slo_violation_intervals"]
                     / (df.loc[mask, "actual_duration_s"] / 15)
@@ -74,38 +42,22 @@ def compute_slo_violation_rate(
 
 
 def compute_efficiency_score(df: pd.DataFrame) -> pd.Series:
-    """Compute efficiency score: (1 - violation_rate) / (overhead_hours + 1).
-
-    Higher is better. Penalizes both SLO violations and resource waste.
-    Range: 0 (worst) to ~1 (perfect).
-    """
+    """Compute efficiency score: (1 - violation_rate) / (overhead_hours + 1)."""
     violation = df["slo_violation_rate"].clip(0, 1)
     overhead_hours = df["overhead_replica_seconds"].fillna(0) / 3600.0
     return (1 - violation) / (overhead_hours + 1)
 
 
-# ── Aggregate Metrics (per method × workload) ──────────────────────────────
-
 def aggregate_by_method_workload(
     df: pd.DataFrame,
     alpha: float = 0.05,
 ) -> pd.DataFrame:
-    """Compute mean, std, and CI for key metrics grouped by method × workload.
-
-    Args:
-        df: Runs DataFrame (one row per run)
-        alpha: Significance level for confidence intervals
-
-    Returns:
-        DataFrame with columns: method, workload, and for each metric:
-        {metric}_mean, {metric}_std, {metric}_n, {metric}_ci_lower, {metric}_ci_upper
-    """
+    """Compute mean, std, and CI for key metrics grouped by method × workload."""
     if len(df) == 0:
         return pd.DataFrame()
 
     group_cols = ["method", "workload"]
 
-    # Metrics to aggregate
     metric_cols = [
         "slo_violation_rate",
         "mean_replicas",
@@ -121,7 +73,6 @@ def aggregate_by_method_workload(
     if not available:
         return pd.DataFrame()
 
-    # Compute group-level statistics
     grouped = df.groupby(group_cols)
 
     # Build result manually to avoid pandas agg complexity
@@ -148,12 +99,6 @@ def aggregate_by_method_workload(
 
 
 def _inference_latency_per_method(input_dir: Path) -> dict[str, float]:
-    """Mean controller decision latency (ms) per UQ method.
-
-    Reads `decision_latency_s` from every `controller_scale_log.json` under
-    `input_dir`, groups by method (parsed from cell directory name), and
-    returns mean latency in milliseconds.
-    """
     out: dict[str, list[float]] = {}
     input_dir = Path(input_dir)
     if not input_dir.is_dir():
@@ -186,19 +131,7 @@ def compute_uq_comparison(
     df: pd.DataFrame,
     input_dir: Optional[Path] = None,
 ) -> pd.DataFrame:
-    """Extract UQ-specific metrics for Table 3 (UQ method comparison).
-
-    Filters to confscale-* methods. When `input_dir` is provided, joins in
-    post-hoc calibration stats (coverage, median width) computed by
-    `calibration.analyze_all_cells`, plus mean decision latency from the
-    per-cell controller scale logs. Falls back to the (typically NaN)
-    `coverage` / `mean_ci_width` / `inference_ms` columns on the run
-    DataFrame when no `input_dir` is given.
-
-    Returns DataFrame indexed by method with columns: coverage,
-    coverage_std, median_ci_width, mean_ci_width, efficiency_score,
-    inference_ms, n_cells.
-    """
+    """Extract UQ-specific metrics for Table 3 (UQ method comparison)."""
     uq_df = df[df["method"].str.startswith("confscale-")].copy()
 
     if len(uq_df) == 0:
@@ -258,20 +191,10 @@ def compute_uq_comparison(
 
 
 def compute_lambda_sweep(df: pd.DataFrame) -> Optional[pd.DataFrame]:
-    """Extract lambda sweep data if any exists (E3 experiments).
-
-    Lambda sensitivity experiments are identified by having a 'lambda' column
-    or being in a separate experiment group.
-
-    Returns:
-        DataFrame with columns: lambda, slo_violation_rate, overhead_replica_seconds,
-        mean_replicas, or None if no sweep data found.
-    """
-    # Check if lambda column exists directly
+    """Extract lambda sweep data if any exists (E3 experiments)."""
     if "lambda" in df.columns:
         sweep = df.copy()
     else:
-        # Look for lambda in config
         logger.info("No lambda column found — skipping lambda sweep")
         return None
 
@@ -284,21 +207,11 @@ def compute_lambda_sweep(df: pd.DataFrame) -> Optional[pd.DataFrame]:
     ).sort_index().reset_index()
 
 
-# ── Summary ─────────────────────────────────────────────────────────────────
-
 def compute_summary(df: pd.DataFrame) -> dict:
-    """Compute a comprehensive summary of all experiment results.
-
-    Args:
-        df: Runs DataFrame (one row per run)
-
-    Returns:
-        dict with overall statistics, per-method rankings, etc.
-    """
+    """Compute a comprehensive summary of all experiment results."""
     if len(df) == 0:
         return {"error": "No data"}
 
-    # Ensure SLO violation rate exists
     df = compute_slo_violation_rate(df)
 
     return {
@@ -317,8 +230,6 @@ def compute_summary(df: pd.DataFrame) -> dict:
         ),
     }
 
-
-# ── CLI (for testing) ──────────────────────────────────────────────────────
 
 SUPPORTED_COMMANDS = ("load_runs", "aggregate_by_method_workload", "compute_uq_comparison", "compute_summary")
 

@@ -1,25 +1,5 @@
 #!/usr/bin/env python3
-"""
-Cluster Slot Management — assign per-worker kind clusters and host ports.
-
-Each parallel worker owns a `WorkerSlot` containing:
-  - a kind cluster name + kubectl context
-  - a host port for the frontend NodePort
-  - a host port for the Prometheus port-forward
-
-The benchmark manifest's NodePort (30080) is the SAME inside every kind cluster;
-kind's extraPortMappings publishes it to a different host port per cluster.
-
-Default port allocation (worker_id i, i ∈ [0, workers)):
-  cluster_name      = f"{prefix}-w{i}"      e.g. "p3-experiments-w0"
-  kube_context      = f"kind-{cluster_name}"
-  frontend_port     = base_frontend_port + i        e.g. 31080, 31081, ...
-  prometheus_port   = base_prometheus_port + i      e.g. 9190, 9191, ...
-
-Defaults intentionally avoid the existing single-cluster ports
-(30080/9090) so a parallel run can coexist with a hand-managed cluster
-during validation without colliding.
-"""
+"""Cluster Slot Management — assign per-worker kind clusters and host ports."""
 from __future__ import annotations
 
 import logging
@@ -33,15 +13,11 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-# ── Defaults ────────────────────────────────────────────────────────────
-
 DEFAULT_CLUSTER_PREFIX = "p3-experiments"
 DEFAULT_BASE_FRONTEND_PORT = 31080      # NOT 30080 — leaves the existing single cluster usable
 DEFAULT_BASE_PROMETHEUS_PORT = 9190     # NOT 9090 — same reason
 DEFAULT_BASE_INGRESS_HTTPS_PORT = 31443
 
-
-# ── Worker Slot ─────────────────────────────────────────────────────────
 
 @dataclass
 class WorkerSlot:
@@ -89,13 +65,8 @@ def make_slots(
     ]
 
 
-# ── Kind Config Rendering ───────────────────────────────────────────────
-
 def render_kind_config(slot: WorkerSlot, output_path: Path) -> Path:
-    """
-    Render kind-config-w{i}.yaml for one slot, mirroring the existing
-    kind-config.yaml but with offset host port mappings.
-    """
+    """Render kind-config-w{i}.yaml for one slot, mirroring the existing kind-config.yaml but with offset host port mappings."""
     config: dict[str, Any] = {
         "kind": "Cluster",
         "apiVersion": "kind.x-k8s.io/v1alpha4",
@@ -128,8 +99,6 @@ def render_kind_config(slot: WorkerSlot, output_path: Path) -> Path:
     return output_path
 
 
-# ── kind CLI Wrappers ───────────────────────────────────────────────────
-
 def kind_cluster_exists(cluster_name: str) -> bool:
     """Return True if `kind get clusters` lists this cluster."""
     result = subprocess.run(
@@ -142,10 +111,10 @@ def kind_cluster_exists(cluster_name: str) -> bool:
 
 
 def kind_create_cluster(slot: WorkerSlot, kind_config_path: Path, timeout: int = 600) -> bool:
-    """Create a kind cluster from a rendered config. Idempotent."""
+    """Create a kind cluster from a rendered config."""
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise RuntimeError("Reference cluster mutation disabled; read docs/MAC_VERIFICATION.md")
+        raise RuntimeError("Reference cluster mutation disabled; read README.md#cluster-runs")
     if kind_cluster_exists(slot.cluster_name):
         logger.info("Cluster %s already exists — skipping create", slot.cluster_name)
         return True
@@ -164,10 +133,10 @@ def kind_create_cluster(slot: WorkerSlot, kind_config_path: Path, timeout: int =
 
 
 def kind_delete_cluster(slot: WorkerSlot, timeout: int = 120) -> bool:
-    """Delete a kind cluster. Idempotent — succeeds if the cluster is already gone."""
+    """Delete a kind cluster."""
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise RuntimeError("Reference cluster mutation disabled; read docs/MAC_VERIFICATION.md")
+        raise RuntimeError("Reference cluster mutation disabled; read README.md#cluster-runs")
     if not kind_cluster_exists(slot.cluster_name):
         logger.info("Cluster %s does not exist — nothing to delete", slot.cluster_name)
         return True

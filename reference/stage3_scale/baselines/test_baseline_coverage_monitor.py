@@ -1,23 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the baseline-controller CoverageMonitor wiring.
-
-Drives ``build_operator_metrics_summary(...)`` directly with synthetic
-``CoverageMonitor`` state and a fixture ``scale_log``. No cluster,
-Prometheus, or kube context required. Covers the three contracts in
-the brief:
-
-  1. Monitor disabled → no summary block (function returns None).
-  2. Monitor enabled with empty scale_log → no summary (defensive).
-  3. Monitor enabled with a known (interval, realised) sequence →
-     ``coverage_rate`` matches the expected value, and all fields the
-     post-reframe loader reads are present with the right types.
-
-Run:
-  python test_baseline_coverage_monitor.py
-or:
-  pytest test_baseline_coverage_monitor.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -45,7 +26,6 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 
 
 def _make_scale_log(n: int, target_replicas_seq: list[int] | None = None) -> list[dict]:
-    """Return n scale-log entries with target_replicas defaulting to 1."""
     if target_replicas_seq is None:
         target_replicas_seq = [1] * n
     assert len(target_replicas_seq) == n
@@ -53,13 +33,9 @@ def _make_scale_log(n: int, target_replicas_seq: list[int] | None = None) -> lis
 
 
 def _feed(monitor: CoverageMonitor, samples: list[tuple[float, float, float]]) -> None:
-    """Apply (lo, hi, observed) tuples through record + validate."""
     for lo, hi, obs in samples:
         monitor.record_prediction(lo, hi)
         monitor.validate_pending(obs)
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_monitor_disabled_returns_none():
@@ -91,9 +67,6 @@ def test_empty_scale_log_returns_none():
 
 def test_coverage_rate_matches_fixture():
     print("\n[3] coverage_rate matches expected value on fixture sequence")
-    # 7 covers + 3 misses → lifetime_covered=7, lifetime_validated=10,
-    # coverage_rate=0.7. Window=30, so all 10 land in-window and
-    # trailing_coverage == 0.7 too.
     monitor = CoverageMonitor(window_size=30, target_coverage=0.9)
     samples = [(10.0, 20.0, 15.0)] * 7 + [(10.0, 20.0, 50.0)] * 3
     _feed(monitor, samples)
@@ -185,9 +158,6 @@ def test_schema_keys_match_orchestrator_contract():
     check("coverage_monitor key set matches orchestrator schema",
           set(cov.keys()) == expected_keys,
           f"diff: {set(cov.keys()) ^ expected_keys}")
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

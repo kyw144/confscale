@@ -1,21 +1,5 @@
 #!/usr/bin/env python3
-"""λ-sweep analysis for confidence-aware scaling.
-
-Loads every `confscale-scp-lambda-{X}_<wl>_rep<r>_*` cell from a sweep output
-directory (default: paper3_experiments/outputs/p3_lambda_sweep_*), pulls
-replica/SLO/latency metrics from metrics.json, computes empirical coverage
-from controller_scale_log.json + timeseries.csv, and emits:
-
-    data/lambda_vs_replicas.csv      — workload × λ → mean_replicas ± stderr
-    data/lambda_vs_slo.csv           — workload × λ → slo_violation_rate ± stderr
-    data/lambda_vs_coverage.csv      — workload × λ → empirical_coverage ± stderr
-    data/lambda_per_cell.csv         — flat per-cell metrics
-    figures/fig_lambda_pareto.pdf    — replica savings vs SLO violation rate
-
-The script tolerates partial sweep data — if only a subset of λ values has
-landed it still runs and reports what is available. If no sweep dirs exist
-yet, it exits 0 with a logged warning.
-"""
+"""λ-sweep analysis for confidence-aware scaling."""
 
 from __future__ import annotations
 
@@ -49,7 +33,6 @@ DEFAULT_SWEEP_GLOB = "p3_lambda_sweep_*"
 
 
 def _parse_lambda_cell(cell_dir: Path) -> dict | None:
-    """Return method/λ/workload/replicate dict if cell name is a λ-sweep cell."""
     parts = cell_dir.name.split("_")
     if len(parts) < 3:
         return None
@@ -73,7 +56,6 @@ def _parse_lambda_cell(cell_dir: Path) -> dict | None:
 
 
 def _discover_sweep_cells(sweep_roots: list[Path]) -> list[Path]:
-    """Walk every sweep root and return all λ-sweep cell directories."""
     cells: list[Path] = []
     for root in sweep_roots:
         if not root.exists():
@@ -98,9 +80,6 @@ def _load_metrics_json(cell_dir: Path) -> dict:
 
 
 def _compute_calibration(cell_dir: Path, interval_s: int = 30) -> dict:
-    """Empirical coverage + median width for a λ-sweep cell (mirrors
-    calibration.analyze_cell, but driven from the cell directly so the cell
-    does not need to be in the UQ_METHODS tuple)."""
     scale_df = _load_scale_log(cell_dir)
     ts = _load_timeseries(cell_dir)
     if scale_df.empty or ts.empty:
@@ -173,10 +152,7 @@ def analyze_all(sweep_roots: list[Path], interval_s: int = 30) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ── Aggregation ─────────────────────────────────────────────────────────────
-
 def _sem(s: pd.Series) -> float:
-    """Standard error of the mean. NaN if fewer than two valid samples."""
     s = s.dropna()
     if len(s) < 2:
         return float("nan")
@@ -205,17 +181,13 @@ def aggregate(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     return out.sort_values(["workload", "lambda"]).reset_index(drop=True)
 
 
-# ── Figure ─────────────────────────────────────────────────────────────────
-
 def _pareto_color_for(lam: float) -> tuple:
-    """Sequential colormap entry for λ ∈ [0, 1]; clamp outside range."""
     cmap = plt.get_cmap("viridis")
     return cmap(float(np.clip(lam, 0.0, 1.0)))
 
 
 def write_pareto_figure(per_cell: pd.DataFrame, output_path: Path) -> None:
-    """Replica savings vs SLO violation rate, one point per (λ, workload, rep)
-    annotated by λ. One subplot per workload; markers colored by λ."""
+    """Replica savings vs SLO violation rate, one point per (λ, workload, rep) annotated by λ."""
     if per_cell.empty:
         logger.warning("Pareto figure skipped: no λ-sweep cells")
         return
@@ -249,8 +221,6 @@ def write_pareto_figure(per_cell: pd.DataFrame, output_path: Path) -> None:
     fig.savefig(output_path)
     plt.close(fig)
 
-
-# ── Driver ─────────────────────────────────────────────────────────────────
 
 def write_markdown_summary(per_cell: pd.DataFrame, output_path: Path) -> None:
     """Compact human-readable summary: per-λ averages collapsed across workloads."""

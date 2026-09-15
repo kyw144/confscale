@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the parallel orchestrator additions.
-
-Does NOT touch any real kind cluster — only verifies:
-  - Modules import cleanly
-  - WorkerSlot allocation produces non-conflicting ports
-  - Kind config rendering produces valid YAML
-  - get_method() returns FRESH copies (parallel-safe)
-  - Method instances pick up the per-slot kube_context
-  - --dry-run works for both serial and parallel modes
-
-Run:
-  python test_parallel_orchestrator.py
-or:
-  pytest test_parallel_orchestrator.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -59,8 +43,6 @@ def check(label: str, condition: bool, detail: str = "") -> None:
     glyph = PASS if condition else FAIL
     print(f"  {glyph} {label}" + (f"  — {detail}" if detail else ""))
 
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 def test_slot_allocation():
     print("\n[1] WorkerSlot port allocation")
@@ -167,8 +149,6 @@ def test_dry_run_parallel():
     check("4 slot lines", output.count("kind-p3-experiments-w") >= 4)
     check("frontend port 31080 mentioned", "31080" in output)
 
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 def main():
     logging.basicConfig(level=logging.WARNING)  # quiet — keep our prints clean

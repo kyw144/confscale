@@ -1,31 +1,10 @@
 #!/usr/bin/env python3
-"""
-Predictive Controller — background subprocess for confidence-aware scaling.
+"""Predictive Controller — background subprocess for confidence-aware scaling."""
 
-This runs alongside the workload generator, polling Prometheus for RPS
-history, running UQ predictions, and scaling the deployment.
-
-Exposes a Prometheus /metrics endpoint (port 9090) with operator-internal
-state: predictions, CI bounds, tier, replica counts, and decision latency.
-
-Launched by the experiment orchestrator's method.configure().
-
-Usage (called by orchestrator):
-    python controller.py --method be --model-dir models/uq/diurnal/be/ \\
-        --namespace infosys-benchmark --deployment compute-worker \\
-        --prometheus-url http://localhost:9090 \\
-        --rps-query 'rate(http_requests_total{service="frontend"}[30s])' \\
-        --slo-capacity 8.0 --target-util 0.7 \\
-        --min-replicas 1 --max-replicas 20 \\
-        --interval 30 --duration 3600 \\
-        --output-dir /path/to/run/dir
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -47,10 +26,8 @@ import numpy as np
 import urllib.request
 import yaml
 
-# ── Prometheus client (metrics export) ──────────────────────────────────
 from prometheus_client import Gauge, Histogram, start_http_server, REGISTRY
 
-# Resolve imports
 _parent = str(Path(__file__).resolve().parent.parent)
 if _parent not in sys.path:
     sys.path.insert(0, _parent)
@@ -72,13 +49,8 @@ logging.basicConfig(
 logger = logging.getLogger('controller')
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-# Prometheus Metrics
-# ═══════════════════════════════════════════════════════════════════════════
-
 METRICS_PREFIX = "confidence_scaler"
 
-# Gauges — current operator state
 g_predicted_rps = Gauge(
     f'{METRICS_PREFIX}_predicted_rps',
     'Point forecast RPS (max over forecast horizon)',
@@ -108,8 +80,6 @@ g_actual_replicas = Gauge(
     'Current deployment replicas',
 )
 
-# Online coverage-monitor gauges (Paper 3 reframe C2-Analyze).
-# Only populated when --coverage-monitor is on; otherwise they stay at 0.
 g_trailing_coverage = Gauge(
     f'{METRICS_PREFIX}_trailing_coverage',
     'Trailing empirical CI coverage at h=0 over the validation window',
@@ -123,9 +93,6 @@ g_coverage_alert = Gauge(
     'Coverage alert band: 0 nominal, 1 warning, 2 critical',
 )
 
-# E1 Conformal PID recalibrator gauges. Populated whenever a non-rolling
-# recalibrator (pid|aci) is active; ACI is a K_I=K_D=0 subclass of
-# ConformalPID so the same state() shape applies. Stay at 0 otherwise.
 g_conformal_pid_alpha = Gauge(
     f'{METRICS_PREFIX}_conformal_pid_alpha',
     'Current PID/ACI working miscoverage level α',
@@ -147,7 +114,6 @@ g_escalation_ladder_level = Gauge(
     'Coverage-conditional escalation ladder level (0 nominal, 1 widening, 2 conservative)',
 )
 
-# Histogram — decision latency
 h_decision_latency = Histogram(
     f'{METRICS_PREFIX}_decision_latency_seconds',
     'Time to compute scaling decision',
@@ -155,19 +121,10 @@ h_decision_latency = Histogram(
 )
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-# Confidence-Aware Scaling Policy
-# ═══════════════════════════════════════════════════════════════════════════
-
-# Tier thresholds from UQ module contract (uq/__init__.py)
-# confidence_score: higher = more uncertain
-# Tier 1: high confidence  (score < 0.15)
-# Tier 2: medium confidence (score < 0.4)
-# Tier 3: low confidence    (score ≥ 0.4)
+# Higher confidence_score means greater uncertainty.
 TIER_HIGH_CONF = 0.15
 TIER_MED_CONF = 0.4
 
-# Hysteresis parameters
 TIER_DOWNGRADE_DELAY = 5      # Intervals before allowing tier downgrade
 SCALE_UP_COOLDOWN_S = 30       # Minimum interval between scale-ups
 SCALE_DOWN_COOLDOWN_T1_S = 60  # Tier 1 scale-down cooldown
@@ -176,7 +133,6 @@ SCALE_DOWN_COOLDOWN_T3_S = 120 # Tier 3 scale-down cooldown
 
 
 def _tier_cooldown(tier: int) -> float:
-    """Return scale-down cooldown for a given tier."""
     if tier == 3:
         return SCALE_DOWN_COOLDOWN_T3_S
     elif tier == 2:
@@ -196,21 +152,9 @@ def compute_target_replicas(
     policy: str = "tier",
     lambda_risk: Optional[float] = None,
 ) -> tuple[int, int]:
-    """Compute target replicas. Three policies are supported.
+    """Return (tier, replicas) from the maximum horizon demand.
 
-    policy='tier' (default): 3-tier confidence-aware policy
-        Tier 1 (high confidence):  scale to predicted mean rate
-        Tier 2 (medium confidence): scale to mean + β·σ
-        Tier 3 (low confidence):   scale to CI upper bound
-
-    policy='ci-upper': MagicScaler-style risk-quantile baseline
-        Always scale to max(ci_upper); tier=0 sentinel means "no tier policy".
-        Cooldown logic still uses tier classification (1/2/3) for tracking.
-
-    lambda_risk in [0, 1] (overrides policy when set): continuous risk weight
-        effective_rate = max(point + λ * max(ci_upper - point, 0))
-        λ=0 → pure point forecast; λ=1 → pure ci_upper.
-        Tier classification still computed for hysteresis cooldowns.
+    lambda_risk overrides policy; ci-upper returns tier 0 while hysteresis tracks confidence tiers.
     """
     # Always classify tier so hysteresis cooldown selection works.
     if confidence_score < TIER_HIGH_CONF:
@@ -255,10 +199,6 @@ def compute_target_replicas(
     return tier, replicas
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-# Hysteresis Manager
-# ═══════════════════════════════════════════════════════════════════════════
-
 class HysteresisManager:
     """Prevent oscillation with tier-downgrade delays and tier-specific cooldowns."""
 
@@ -272,16 +212,10 @@ class HysteresisManager:
 
     def apply(self, proposed_tier: int, proposed_replicas: int,
               current_replicas: int) -> tuple[int, int]:
-        """Apply hysteresis to tier and replica decisions.
-
-        Returns:
-            (final_tier, final_replicas)
-        """
+        """Return (tier, replicas) after downgrade persistence and scale-down cooldowns."""
         now = time.time()
 
-        # ── Tier hysteresis ──────────────────────────────────────────
         if proposed_tier < self.current_tier:
-            # Downgrade requested — enforce delay
             self.proposed_downgrade_count += 1
             if self.proposed_downgrade_count < TIER_DOWNGRADE_DELAY:
                 proposed_tier = self.current_tier
@@ -289,7 +223,6 @@ class HysteresisManager:
                 # Allow downgrade after delay
                 self.proposed_downgrade_count = 0
         elif proposed_tier > self.current_tier:
-            # Upgrade — immediate
             self.proposed_downgrade_count = 0
         else:
             # Same tier
@@ -297,7 +230,6 @@ class HysteresisManager:
 
         self.current_tier = proposed_tier
 
-        # ── Replica hysteresis ───────────────────────────────────────
         final_replicas = proposed_replicas
 
         if proposed_replicas > current_replicas:
@@ -316,10 +248,6 @@ class HysteresisManager:
 
         return self.current_tier, final_replicas
 
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Prometheus Client
-# ═══════════════════════════════════════════════════════════════════════════
 
 def query_prometheus(url: str, query: str) -> Optional[float]:
     """Query Prometheus for a single scalar value."""
@@ -356,10 +284,6 @@ def query_prometheus_range(url: str, query: str, lookback_s: int) -> list[float]
         logger.warning("Prometheus range query failed: %s", e)
     return []
 
-
-# ═══════════════════════════════════════════════════════════════════════════
-# kubectl Helpers
-# ═══════════════════════════════════════════════════════════════════════════
 
 def kubectl_scale(context: str, namespace: str, deployment: str, replicas: int):
     """Scale a deployment via kubectl."""
@@ -400,7 +324,6 @@ def kubectl_get_replicas(context: str, namespace: str, deployment: str) -> Optio
 def _update_prometheus_metrics(prediction_made: bool, pred: dict,
                                 tier: int, target_replicas: int,
                                 current_replicas: int, latency_s: float):
-    """Update all Prometheus gauges from current state."""
     if prediction_made and pred:
         g_predicted_rps.set(float(np.max(pred.get('point_forecast', [0.0]))))
         g_ci_lower.set(float(np.max(pred.get('ci_lower', [0.0]))))
@@ -417,10 +340,6 @@ def _update_prometheus_metrics(prediction_made: bool, pred: dict,
     g_actual_replicas.set(current_replicas)
     h_decision_latency.observe(latency_s)
 
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Main Control Loop
-# ═══════════════════════════════════════════════════════════════════════════
 
 def main():
     parser = argparse.ArgumentParser(description='Confidence-aware scaling controller')
@@ -489,10 +408,6 @@ def main():
                             'trailing < 0.85·T.')
     parser.add_argument('--coverage-window', type=int, default=30,
                        help='Sliding-window size (validations) for trailing coverage.')
-    # E1: recalibrator selection. SCP-only. "rolling-origin" is the existing
-    # per-horizon q_hat refresh (was --online-recal); "aci" / "pid" are the
-    # E1 brief recalibrators wired to the coverage monitor's h=0 signal.
-    # "none" leaves q_hat at the offline-trained value.
     parser.add_argument('--recalibrator',
                        choices=['none', 'rolling-origin', 'aci', 'pid'],
                        default='none',
@@ -504,9 +419,6 @@ def main():
     parser.add_argument('--aci-eta', type=float, default=0.1)
     parser.add_argument('--recal-alpha-clip-low', type=float, default=1e-4)
     parser.add_argument('--recal-alpha-clip-high', type=float, default=0.5)
-    # E1: coverage-conditional escalation ladder. Requires --coverage-monitor
-    # (auto-enabled if absent). Fires Level 1 widening only after coverage
-    # stays below band for escalation_persistence cycles.
     parser.add_argument('--ladder', action='store_true',
                        help='Enable the E1 escalation ladder above the recalibrator.')
     parser.add_argument('--ladder-target-coverage', type=float, default=0.9)
@@ -532,7 +444,6 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Log config
     config = vars(args)
     config['start_time'] = datetime.now(timezone.utc).isoformat()
     with open(output_dir / 'controller_config.yaml', 'w') as f:
@@ -545,14 +456,12 @@ def main():
     logger.info("  Hysteresis: %d, Replicas: %d-%d", args.hysteresis,
                  args.min_replicas, args.max_replicas)
 
-    # ── Start Prometheus metrics server ─────────────────────────────
     try:
         start_http_server(args.metrics_port)
         logger.info("Prometheus metrics endpoint: :%d/metrics", args.metrics_port)
     except Exception as e:
         logger.warning("Failed to start metrics server: %s (continuing without)", e)
 
-    # ── Load UQ model ───────────────────────────────────────────────
     try:
         if args.method == 'be':
             uq = BootstrapEnsemble.load(args.model_dir, device='cpu')
@@ -567,7 +476,6 @@ def main():
         logger.error("Failed to load UQ model: %s", e)
         sys.exit(1)
 
-    # Online recalibration is SCP-only.
     if args.online_recal and args.method != 'scp':
         logger.warning("--online-recal set with method=%s; only SCP is supported. "
                        "Disabling online recalibration.", args.method)
@@ -575,28 +483,18 @@ def main():
         if args.recalibrator == 'rolling-origin':
             args.recalibrator = 'none'
 
-    # E1 ACI/PID recalibrators are also SCP-only — they mutate uq.q_hat[0]
-    # which only the SCP path keeps as a tunable per-horizon array. BE/QR
-    # generate per-prediction intervals from ensemble/quantile spread and
-    # don't expose a single calibrated quantile to override.
+    # Only SCP exposes q_hat as a mutable calibrated quantile; BE/QR derive each interval.
     if args.recalibrator in ('aci', 'pid') and args.method != 'scp':
         logger.warning("--recalibrator=%s set with method=%s; only SCP is supported. "
                        "Disabling.", args.recalibrator, args.method)
         args.recalibrator = 'none'
 
-    # --ladder needs a coverage signal. Auto-enable the monitor at brief
-    # defaults if the user passed --ladder without --coverage-monitor.
     if args.ladder and not args.coverage_monitor:
         logger.info("--ladder requires --coverage-monitor; enabling implicitly "
                     "(target=%.3f, window=%d).",
                     args.coverage_target, args.coverage_window)
         args.coverage_monitor = True
 
-    # ACI/PID are wired to the CoverageMonitor's h=0 miscoverage signal. The
-    # update rule doesn't strictly require the monitor — we can derive
-    # miscoverage directly from prior ci bounds — but the brief frames the
-    # recalibrator as Plan-side action to the monitor's Analyze, so we surface
-    # the implicit dependency the same way.
     if args.recalibrator in ('aci', 'pid') and not args.coverage_monitor:
         logger.info("--recalibrator=%s benefits from --coverage-monitor; "
                     "enabling implicitly (target=%.3f, window=%d).",
@@ -609,12 +507,10 @@ def main():
     elif args.policy == 'ci-upper':
         logger.info("Policy=ci-upper: scaling to max(ci_upper); no tier policy.")
 
-    # ── Initialize state ────────────────────────────────────────────
     current_replicas = args.min_replicas
     scale_log = []
     hysteresis_mgr = HysteresisManager()
 
-    # Online coverage monitor (C2-Analyze; Plan side E1-blocked).
     coverage_monitor: Optional[CoverageMonitor] = None
     if args.coverage_monitor:
         coverage_monitor = CoverageMonitor(
@@ -626,9 +522,7 @@ def main():
             args.coverage_window, args.coverage_target,
         )
 
-    # Online recalibration state (SCP only). Per-horizon residual buffers
-    # filled by matching past predictions to current observations. q_hat
-    # updates start once every horizon has at least --recal-warmup samples.
+    # Each horizon needs recal_warmup matched observations before refreshing q_hat.
     recal_buffer: list[list[float]] = [[] for _ in range(uq.k)] if args.online_recal else []
     recal_updates = 0
     initial_q_hat = (
@@ -637,14 +531,8 @@ def main():
         else None
     )
 
-    # T7b warm-start: pre-seed the per-horizon residual buffers from the offline
-    # q_hat so the warmup gate (line ~827) is satisfied at decision 0 and online
-    # recalibration begins immediately — removing the cold-start under-coverage that
-    # T3 (P3-D015) localized to the first --recal-warmup decisions. Each buffer gets
-    # --recal-warmstart-n half-normal samples (residuals are |error| ≥ 0), scaled so
-    # the SAME (1-alpha) order statistic the update uses (line ~832) equals the offline
-    # q_hat[h] exactly — i.e. the first update reproduces the offline interval, then
-    # adapts as drift residuals stream in. Additive: no effect unless --recal-warmstart.
+    # Seed each horizon so its conformal order statistic matches the offline q_hat;
+    # this enables recalibration immediately without changing the initial interval.
     warmstart_n = 0
     if args.online_recal and args.recal_warmstart and initial_q_hat is not None:
         warmstart_n = args.recal_warmstart_n or args.recal_warmup
@@ -655,16 +543,13 @@ def main():
             q_index = min(int(np.ceil((1 - uq.alpha) * (n_s + 1))) - 1, n_s - 1)
             ref = float(np.sort(shape)[max(q_index, 0)])
             scale = float(uq.q_hat[h]) / ref if ref > 1e-9 else 0.0
-            recal_buffer[h] = list(shape * scale)  # sort(buf)[q_index] == q_hat[h]
+            recal_buffer[h] = list(shape * scale)
         logger.info(
             "--recal-warmstart: seeded %d horizons x %d residuals; buffer (1-a) order "
             "statistic pinned to offline q_hat %s (online recal active from decision 0)",
             uq.k, warmstart_n, np.array2string(np.asarray(uq.q_hat), precision=3))
 
-    # E1 recalibrator (ACI / Conformal PID). Single-horizon (h=0) for v1 —
-    # mutates uq.q_hat[0] only, leaving h>0 quantiles at their offline values.
-    # Both classes track normalized residuals; the controller converts back via
-    # uq.norm_params.sigma at predict time (denormalization is linear).
+    # ACI/PID update only h0, using normalized residuals; prediction converts widths back to RPS.
     recalibrator: Optional[ConformalPID] = None
     if args.recalibrator == 'pid':
         recalibrator = ConformalPID(
@@ -695,9 +580,6 @@ def main():
             args.recal_alpha_clip_low, args.recal_alpha_clip_high,
         )
 
-    # E1 coverage-conditional escalation ladder. Outer safety net above the
-    # recalibrator — fires only when trailing coverage stays below band for
-    # escalation_persistence cycles despite the recalibrator being active.
     ladder: Optional[EscalationLadder] = None
     if args.ladder:
         ladder = EscalationLadder(
@@ -716,11 +598,9 @@ def main():
             args.ladder_widening_factor, args.ladder_conservative_factor,
         )
 
-    # Set initial replicas
     kubectl_scale(args.context, args.namespace, args.deployment, current_replicas)
     time.sleep(5)
 
-    # Graceful shutdown
     shutdown = False
 
     def handle_signal(sig, frame):
@@ -739,13 +619,9 @@ def main():
     while time.time() < end_time and not shutdown:
         loop_start = time.time()
 
-        # 1. Collect current RPS
         rps = query_prometheus(args.prometheus_url, args.rps_query)
 
-        # 1b. Online recalibration (SCP only). The observation rps validates
-        # past prediction P_{N-h-1}'s horizon h, for h in [0, k-1]. Walk back
-        # k entries in scale_log to match residuals to horizons, then refresh
-        # q_hat once each horizon has --recal-warmup samples.
+        # Observation t scores forecast t-h-1 at horizon h.
         recal_updated_this_iter = False
         if args.online_recal and rps is not None and uq.norm_params is not None:
             sigma = max(float(uq.norm_params.sigma), 1e-6)
@@ -774,11 +650,7 @@ def main():
                 recal_updates += 1
                 recal_updated_this_iter = True
 
-        # 1c. E1 ACI/PID recalibrator (SCP only). Single-horizon path: scores
-        # the prior iteration's h=0 interval against the current rps, advances
-        # the working α, and overrides uq.q_hat[0] with the new conformal
-        # quantile. Falls back to the offline / rolling q_hat[0] while the
-        # residual buffer is still empty (warmup).
+        # Score the previous h0 interval; retain the offline quantile until a residual is available.
         recalibrator_updated_this_iter = False
         if (recalibrator is not None and rps is not None
                 and uq.norm_params is not None and scale_log
@@ -800,31 +672,19 @@ def main():
                 except EmptyResidualBufferError:
                     pass  # warmup; keep prior q_hat[0]
 
-        # 1d. Coverage-conditional escalation ladder. Steps once per cycle
-        # using the trailing coverage from the PREVIOUS iteration (validated
-        # below). Applies its widening factor to q_hat[0] only — the modified
-        # quantile flows into this iteration's prediction interval via the
-        # standard predict_with_uncertainty path.
+        # Use prior coverage to widen h0 before issuing this interval.
         ladder_level = 0
         if ladder is not None and coverage_monitor is not None:
             ladder_level = ladder.step(coverage_monitor.trailing_coverage)
             if ladder_level > 0 and hasattr(uq, 'q_hat') and uq.q_hat is not None:
                 uq.q_hat[0] = float(ladder.apply(float(uq.q_hat[0])))
 
-        # 2. Get history from Prometheus
         history = query_prometheus_range(
             args.prometheus_url, args.rps_query,
             lookback_s=args.history_length * 30
         )
 
-        # 2b. Cold-start: pad insufficient history with the latest observation.
-        # Each kind cluster's Prometheus starts empty per cell, so for the first
-        # ~30 min the controller would otherwise hold at min_replicas (=1) under
-        # full workload. Seeding lets the UQ predictor produce a forecast from
-        # any point where rps is non-zero; quality improves as real history
-        # accumulates. Note: confidence_score from UQ will reflect the elevated
-        # uncertainty of seeded predictions, which is the right signal for the
-        # tiered policy.
+        # Pad short history with the latest observation so cold starts can produce forecasts.
         seeded = False
         if 0 < len(history) < uq.h:
             pad_value = history[-1]
@@ -844,11 +704,7 @@ def main():
             except Exception as e:
                 logger.warning("Prediction failed: %s", e)
 
-        # 3b. Online coverage monitor (C2-Analyze). Validate the prior
-        # iteration's h=0 CI against this iteration's RPS, then record
-        # this iteration's h=0 CI for next-iteration validation. Pure
-        # measurement — no Plan-side action; that wiring is C2-Plan /
-        # C4 (E1-blocked).
+        # Validate the previous interval before recording the next one.
         coverage_state = None
         if coverage_monitor is not None:
             if rps is not None:
@@ -867,7 +723,6 @@ def main():
             g_coverage_alert.set(int(coverage_monitor.alert_state))
             coverage_state = coverage_monitor.get_state()
 
-        # 3c. E1 recalibrator + ladder Prometheus gauges.
         recalibrator_state = None
         if recalibrator is not None:
             recalibrator_state = recalibrator.state()
@@ -881,7 +736,6 @@ def main():
             ladder_state = ladder.state()
             g_escalation_ladder_level.set(int(ladder_state['level']))
 
-        # 4. Compute target replicas (pre-hysteresis)
         if prediction_made and pred:
             raw_tier, raw_target = compute_target_replicas(
                 point_forecast=pred['point_forecast'],
@@ -900,7 +754,6 @@ def main():
             raw_target = current_replicas
             raw_tier = 0
 
-        # 5. Apply hysteresis
         tier, target = hysteresis_mgr.apply(
             proposed_tier=raw_tier,
             proposed_replicas=raw_target,
@@ -920,7 +773,6 @@ def main():
 
         observed_replicas = kubectl_get_replicas(args.context, args.namespace, args.deployment)
 
-        # 7. Update Prometheus metrics
         try:
             _update_prometheus_metrics(
                 prediction_made=prediction_made,
@@ -933,7 +785,6 @@ def main():
         except Exception as e:
             logger.debug("Metrics update failed: %s", e)
 
-        # 8. Log
         log_entry = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'elapsed_s': round(time.time() - start_time, 1),
@@ -990,19 +841,11 @@ def main():
             logger.info("t=%4ds | no prediction yet (history=%d)",
                          log_entry['elapsed_s'], len(history))
 
-        # Wait for next interval — chunked sleep so a SIGTERM-set
-        # shutdown flag breaks us out within ~1s instead of waiting up
-        # to args.interval (typically 30s). Without this, reset() hits
-        # its wait timeout and falls back to SIGKILL before the post-loop
-        # JSON write runs.
+        # Sleep in short chunks so SIGTERM can flush logs before reset escalates to SIGKILL.
         elapsed = time.time() - loop_start
         sleep_end = time.time() + max(0, args.interval - elapsed)
         while time.time() < sleep_end and not shutdown:
             time.sleep(min(1.0, sleep_end - time.time()))
-
-    # ═════════════════════════════════════════════════════════════════
-    # Shutdown
-    # ═════════════════════════════════════════════════════════════════
 
     # Save scale log. Wrapped in try/except so a flake here still lets
     # the process exit cleanly — better partial data than no data.
@@ -1014,7 +857,6 @@ def main():
     except Exception as e:
         logger.error("Failed to save scale log to %s: %s", log_path, e)
 
-    # Save operator metrics summary
     if scale_log:
         tiers_seen = set(e['tier'] for e in scale_log if e.get('tier', 0) > 0)
         total_scale_ops = sum(
@@ -1079,7 +921,6 @@ def main():
             json.dump(metrics_summary, f, indent=2)
         logger.info("Metrics summary: %s", json.dumps(metrics_summary))
 
-    # Final state
     logger.info("Controller finished. Final replicas: %d, tier: %d",
                  current_replicas, hysteresis_mgr.current_tier)
 

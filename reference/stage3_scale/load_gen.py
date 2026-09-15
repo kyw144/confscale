@@ -1,10 +1,9 @@
 """Simple load generator to test HPA — runs concurrent requests to compute service."""
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if True:
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import requests

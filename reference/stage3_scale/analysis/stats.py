@@ -1,19 +1,4 @@
-"""Statistics: hypothesis tests, effect sizes, multiple comparison correction.
-
-Tests implemented:
-    H1: ConfScale reduces SLO violations vs. point-forecast (paired t-test / Wilcoxon)
-    H2: QR has best efficiency score among UQ methods (Friedman test)
-    H3: λ produces monotonic Pareto curve (Spearman rank correlation)
-    H4: Benefit concentrated in Tier 2/3 (two-way ANOVA on tier × method)
-
-Also provides:
-    - Paired comparisons of each method vs. baseline
-    - Bonferroni-Holm correction for multiple comparisons
-    - Cohen's d effect sizes
-    - Normality diagnostics (Shapiro-Wilk)
-    - Variance homogeneity (Levene's test)
-    - Formatted results JSON for tables/paper
-"""
+"""Statistics: hypothesis tests, effect sizes, multiple comparison correction."""
 
 import json
 import logging
@@ -35,19 +20,8 @@ PRIMARY_BASELINE = "hpa-reactive"
 PREDICTIVE_BASELINE = "hpa-predictive"
 
 
-# ── Effect Size ─────────────────────────────────────────────────────────────
-
 def cohens_d(x: np.ndarray, y: np.ndarray) -> float:
-    """Cohen's d for paired samples.
-
-    d = mean(x - y) / std(x - y)
-
-    Interpretation:
-        < 0.2  Negligible
-        0.2-0.5  Small
-        0.5-0.8  Medium
-        > 0.8  Large
-    """
+    """Cohen's d for paired samples."""
     diff = x - y
     if len(diff) < 2:
         return np.nan
@@ -72,13 +46,7 @@ def interpret_effect_size(d: float) -> str:
 
 
 def cohens_d_independent(x: np.ndarray, y: np.ndarray) -> float:
-    """Cohen's d for two independent samples (pooled SD).
-
-    Used by the post-reframe pipeline (post_reframe.py) for raw-vs-laddered
-    comparisons where replicates are not naturally paired across the two
-    controllers. The existing `cohens_d` above assumes paired samples and
-    must not be replaced — the 124-cell baseline pipeline depends on it.
-    """
+    """Cohen's d for two independent samples (pooled SD)."""
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     x = x[~np.isnan(x)]
@@ -95,14 +63,7 @@ def cohens_d_independent(x: np.ndarray, y: np.ndarray) -> float:
 
 
 def welch_t_test(x: np.ndarray, y: np.ndarray, alternative: str = "two-sided") -> dict:
-    """Welch's t-test (independent samples, unequal variance).
-
-    Added per agenda §3.3 (post-reframe pairwise tests). Distinct from the
-    `paired_comparison` function below, which uses scipy.stats.ttest_rel
-    (paired t-test) — that's still the right tool for the 124-cell baseline
-    where reps share a controller-config seed contract. For raw-vs-laddered
-    the controllers differ, so reps are not paired.
-    """
+    """Welch's t-test (independent samples, unequal variance)."""
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     x = x[~np.isnan(x)]
@@ -127,8 +88,6 @@ def welch_t_test(x: np.ndarray, y: np.ndarray, alternative: str = "two-sided") -
     }
 
 
-# ── Paired Comparison ───────────────────────────────────────────────────────
-
 def paired_comparison(
     df: pd.DataFrame,
     method_a: str,
@@ -137,20 +96,7 @@ def paired_comparison(
     metric: str = "slo_violation_rate",
     alternative: str = "two-sided",
 ) -> dict:
-    """Compare two methods on a metric, paired by replicate within workload.
-
-    Args:
-        df: Runs DataFrame
-        method_a: Test method
-        method_b: Reference/baseline method
-        workload: If provided, filter to this workload only
-        metric: Column name for the metric to compare
-        alternative: 'two-sided', 'less', or 'greater'
-
-    Returns:
-        dict with t_statistic, p_value, cohens_d, interpretation, n_pairs, etc.
-    """
-    # Filter
+    """Compare two methods on a metric, paired by replicate within workload."""
     filt = df["method"].isin([method_a, method_b])
     if workload:
         filt &= df["workload"] == workload
@@ -176,13 +122,10 @@ def paired_comparison(
     x = pivot[method_a].values
     y = pivot[method_b].values
 
-    # Check normality
     diff = x - y
     shapiro_stat, shapiro_p = stats.shapiro(diff) if len(diff) >= 3 else (np.nan, np.nan)
 
-    # Use t-test or Wilcoxon based on normality
     if shapiro_p < 0.05 and len(diff) >= 5:
-        # Non-normal: Wilcoxon signed-rank
         try:
             if alternative == "two-sided":
                 w_stat, raw_p = stats.wilcoxon(x, y, alternative="two-sided")
@@ -226,19 +169,12 @@ def paired_comparison(
     }
 
 
-# ── Multiple Comparison Correction ──────────────────────────────────────────
-
 def bonferroni_holm_correction(p_values: list[float]) -> list[float]:
-    """Apply Bonferroni-Holm correction.
-
-    Sorts p-values, applies sequential correction.
-    Returns corrected p-values in the same order as input.
-    """
+    """Apply Bonferroni-Holm correction."""
     n = len(p_values)
     if n == 0:
         return []
 
-    # Track original positions
     indexed = list(enumerate(p_values))
     sorted_idx = sorted(indexed, key=lambda x: x[1])
 
@@ -247,7 +183,6 @@ def bonferroni_holm_correction(p_values: list[float]) -> list[float]:
         multiplier = n - rank
         corrected_p = min(p_val * multiplier, 1.0)
 
-        # Ensure monotonicity: later corrections can't be smaller than earlier ones
         if rank > 0:
             prev = corrected[sorted_idx[rank - 1][0]]
             corrected_p = max(corrected_p, prev)
@@ -257,18 +192,12 @@ def bonferroni_holm_correction(p_values: list[float]) -> list[float]:
     return corrected
 
 
-# ── Hypothesis H1: ConfScale reduces SLO violations ─────────────────────────
-
 def test_h1_slo_reduction(
     df: pd.DataFrame,
     baseline: str = PRIMARY_BASELINE,
     alpha: float = 0.05,
 ) -> dict:
-    """H1: ConfScale reduces SLO violations vs. point-forecast baseline.
-
-    Tests each confscale-* method against the baseline, per workload,
-    using paired tests with Bonferroni-Holm correction.
-    """
+    """H1: ConfScale reduces SLO violations vs. point-forecast baseline."""
     df = compute_slo_violation_rate(df)
 
     confscale_methods = [m for m in df["method"].unique() if m.startswith("confscale-")]
@@ -288,7 +217,6 @@ def test_h1_slo_reduction(
             if "error" not in comp:
                 all_comparisons.append(comp)
 
-    # Bonferroni-Holm correction
     p_values = [c["p_value_raw"] for c in all_comparisons]
     corrected = bonferroni_holm_correction(p_values)
 
@@ -296,7 +224,6 @@ def test_h1_slo_reduction(
         comp["p_value_corrected"] = corr_p
         comp["significant_corrected"] = corr_p < alpha
 
-    # Overall summary
     n_sig = sum(c["significant_corrected"] for c in all_comparisons)
     n_total = len(all_comparisons)
 
@@ -317,14 +244,8 @@ def test_h1_slo_reduction(
     }
 
 
-# ── Hypothesis H2: QR has best efficiency score ─────────────────────────────
-
 def test_h2_uq_efficiency(df: pd.DataFrame) -> dict:
-    """H2: Which UQ method has the best efficiency score?
-
-    Uses Friedman test (non-parametric repeated measures) across UQ methods.
-    Efficiency score = (1 - violation_rate) / (overhead + 1)
-    """
+    """H2: Which UQ method has the best efficiency score?"""
     from .metrics import compute_efficiency_score
 
     df = df.copy()
@@ -346,18 +267,15 @@ def test_h2_uq_efficiency(df: pd.DataFrame) -> dict:
     if len(pivot) < 3:
         return {"status": "skipped", "reason": f"Insufficient data ({len(pivot)} complete cases)"}
 
-    # Friedman test
     groups = [pivot[m].values for m in uq_methods]
     try:
         friedman_stat, friedman_p = stats.friedmanchisquare(*groups)
     except Exception as e:
         return {"status": "error", "reason": str(e)}
 
-    # Per-method mean efficiency
     means = {m: float(pivot[m].mean()) for m in uq_methods}
     best = max(means, key=means.get)
 
-    # Post-hoc pairwise if Friedman is significant
     pairwise = []
     if friedman_p < 0.05:
         for m1, m2 in combinations(uq_methods, 2):
@@ -382,16 +300,9 @@ def test_h2_uq_efficiency(df: pd.DataFrame) -> dict:
     }
 
 
-# ── Hypothesis H3: λ produces monotonic Pareto curve ────────────────────────
-
 def test_h3_lambda_monotonicity(df: pd.DataFrame) -> dict:
-    """H3: λ (safety factor) produces monotonic Pareto curve.
-
-    Tests Spearman rank correlation between λ and SLO violation rate.
-    Expects negative correlation: higher λ → lower violations.
-    """
+    """H3: λ (safety factor) produces monotonic Pareto curve."""
     if "lambda" not in df.columns:
-        # Try to extract from config or skip
         logger.info("No lambda column — checking if any config has it")
         return {"status": "skipped", "reason": "No lambda sweep data available"}
 
@@ -399,12 +310,10 @@ def test_h3_lambda_monotonicity(df: pd.DataFrame) -> dict:
     if len(lambdas) < 3:
         return {"status": "skipped", "reason": f"Need ≥3 λ values, found {len(lambdas)}"}
 
-    # Aggregate per lambda
     agg = df.groupby("lambda")["slo_violation_rate"].mean().sort_index()
 
     rho, p_val = stats.spearmanr(agg.index, agg.values)
 
-    # Also compute Pearson for the report
     r, r_p = stats.pearsonr(agg.index, agg.values)
 
     return {
@@ -426,15 +335,8 @@ def test_h3_lambda_monotonicity(df: pd.DataFrame) -> dict:
     }
 
 
-# ── Hypothesis H4: Benefit concentrated in Tier 2/3 ─────────────────────────
-
 def test_h4_tier_concentration(df: pd.DataFrame) -> dict:
-    """H4: Benefit of confidence-aware scaling concentrated in Tier 2/3.
-
-    Tests via two-way ANOVA: method × tier on SLO violation rate.
-    Falls back to per-tier per-method comparison if ANOVA data unavailable.
-    """
-    # Check if tier data exists
+    """H4: Benefit of confidence-aware scaling concentrated in Tier 2/3."""
     if "tier" not in df.columns:
         logger.info("No tier data in run metrics — H4 test limited")
         # Fall back to per-workload analysis (bursty/signaling = Tier 2/3 proxies)
@@ -477,7 +379,6 @@ def test_h4_tier_concentration(df: pd.DataFrame) -> dict:
             "verdict": "partial — tier data not directly available, using workload proxy",
         }
 
-    # Full two-way ANOVA if tier data exists
     from scipy.stats import f_oneway
 
     df = df.dropna(subset=["slo_violation_rate", "tier"])
@@ -513,18 +414,13 @@ def test_h4_tier_concentration(df: pd.DataFrame) -> dict:
     }
 
 
-# ── Comprehensive Comparison Matrix ─────────────────────────────────────────
-
 def compare_all_methods(
     df: pd.DataFrame,
     baseline: str = PRIMARY_BASELINE,
     metric: str = "slo_violation_rate",
     workloads: Optional[list[str]] = None,
 ) -> dict:
-    """Compare all methods against the baseline, per workload.
-
-    Returns a comprehensive comparison matrix with corrected p-values.
-    """
+    """Compare all methods against the baseline, per workload."""
     df = compute_slo_violation_rate(df)
 
     methods = sorted(df["method"].unique())
@@ -543,7 +439,6 @@ def compare_all_methods(
             if "error" not in comp:
                 all_comparisons.append(comp)
 
-    # Bonferroni-Holm correction over all comparisons
     p_values = [c["p_value_raw"] for c in all_comparisons]
     corrected = bonferroni_holm_correction(p_values)
 
@@ -551,7 +446,6 @@ def compare_all_methods(
         comp["p_value_corrected"] = corr_p
         comp["significant_corrected"] = corr_p < 0.05
 
-    # Overall summary by method (averaged across workloads)
     by_method = defaultdict(list)
     for c in all_comparisons:
         by_method[c["method_a"]].append({
@@ -572,8 +466,6 @@ def compare_all_methods(
         "all_comparisons": all_comparisons,
     }
 
-
-# ── Diagnostics ─────────────────────────────────────────────────────────────
 
 def normality_tests(df: pd.DataFrame, metric: str = "slo_violation_rate") -> pd.DataFrame:
     """Run Shapiro-Wilk normality test on each method × workload group."""
@@ -631,8 +523,6 @@ def heterogeneity_tests(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ── Full Hypothesis Suite ───────────────────────────────────────────────────
-
 def run_all_tests(df: pd.DataFrame) -> dict:
     """Run all 4 hypothesis tests and return combined results."""
     results = {
@@ -645,30 +535,22 @@ def run_all_tests(df: pd.DataFrame) -> dict:
     return results
 
 
-# ── Save Results ────────────────────────────────────────────────────────────
-
 def save_results(results: dict, output_dir: Path) -> dict[str, Path]:
-    """Save statistical results to output directory.
-
-    Returns dict mapping filename to path.
-    """
+    """Save statistical results to output directory."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     files = {}
 
-    # Hypothesis tests → JSON
     hypo_path = output_dir / "hypothesis_tests.json"
     hypo_path.write_text(json.dumps(results, indent=2, default=str))
     files["hypothesis_tests"] = hypo_path
 
-    # Normality tests → CSV
     norm_df = normality_tests(pd.DataFrame())  # Will be run from report.py with real data
     norm_path = output_dir / "normality_tests.csv"
     norm_path.write_text("# Placeholder — run from report.py\n")
     files["normality_tests"] = norm_path
 
-    # Effect sizes → CSV
     eff_path = output_dir / "effect_sizes.csv"
     comps = results.get("comparison_matrix", {}).get("all_comparisons", [])
     if comps:

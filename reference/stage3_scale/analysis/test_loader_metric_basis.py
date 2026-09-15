@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""E-V6b — loader must not silently backfill a missing e2e block with the proxy.
-
-Asserts `analysis.loader._slo_metric_columns`:
-  - WITH e2e: bare p95_ms / slo_violation_rate == the e2e value; metric_basis=='e2e'.
-  - WITHOUT e2e (only the controller `slo` block present): the e2e column and the
-    bare p95_ms / slo_violation_rate are NaN (NOT the proxy); the proxy is still
-    available, explicitly, in *_controller; metric_basis=='e2e_MISSING'.
-
-Run:
-  python test_loader_metric_basis.py
-or:
-  pytest test_loader_metric_basis.py -v
-"""
 from __future__ import annotations
 
 import math

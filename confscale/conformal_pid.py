@@ -1,29 +1,6 @@
-"""
-Conformal PID recalibrator — online α-tracking for streaming SCP.
+"""Online conformal PID recalibration.
 
-Implements the controller in Angelopoulos, Candès & Tibshirani (NeurIPS 2023),
-"Conformal PID Control for Time-Series Prediction" (arXiv:2307.16895). For each
-prediction cycle we observe whether the realized value fell inside the current
-prediction interval, then nudge the working miscoverage level α via a
-proportional-integral-derivative law. The next half-width is the
-(1 − α)-quantile of the trailing residual buffer.
-
-Sign convention. The proportional, integral and derivative terms move α *down*
-on a miss (so the next interval *widens*) and *up* on a cover, matching the
-Gibbs-Candès ACI update `α_{t+1} = α_t + γ(α_target − err_t)`. The signed error
-``e_t`` is therefore ``α_target − 1{miss}`` — positive when we are over-covering
-relative to target. With positive K-gains this drives empirical coverage
-towards the target; a positive e_t (over-cover) raises α (tightens the interval)
-and a negative e_t (miss) lowers α (widens the interval).
-
-The class is unit-agnostic: residuals are stored in whatever space the caller
-chose, and ``quantile()`` returns a half-width in that same space. The
-controller passes normalized residuals (matching the existing
-``confscale-scp-online`` rolling-origin path) and converts back to raw RPS via
-the predictor's normalization σ before feeding the scaler.
-
-Single-stream (h=0) for v1, matching the ``CoverageMonitor`` Analyze surface.
-Multi-horizon extension is future work.
+Angelopoulos, Candès & Tibshirani (2023), arXiv:2307.16895.
 """
 
 from __future__ import annotations
@@ -39,20 +16,7 @@ class EmptyResidualBufferError(RuntimeError):
 
 
 class ConformalPID:
-    """Online miscoverage-tracking conformal recalibrator.
-
-    Args:
-        target_alpha: Target miscoverage level (e.g. 0.1 for 90% intervals).
-        k_p: Proportional gain.
-        k_i: Integral gain.
-        k_d: Derivative gain.
-        alpha_init: Initial working α. Falls back to ``target_alpha`` when None.
-        residual_buffer_size: Trailing residual buffer length (FIFO).
-        alpha_clip: ``(low, high)`` clamp on α; updates outside the range are
-            clipped to the boundary.
-
-    Defaults follow the E1 brief (NeurIPS 2023 §4 forecasting magnitudes).
-    """
+    """Track miscoverage using absolute residuals in caller-supplied units."""
 
     def __init__(
         self,
@@ -93,14 +57,8 @@ class ConformalPID:
         self.last_derivative: float = 0.0
         self.steps: int = 0
 
-    # ── Update ──────────────────────────────────────────────────────────
-
     def update(self, residual: float, miscovered: bool) -> None:
-        """Run one PID cycle.
-
-        Appends ``|residual|`` to the trailing buffer, then advances α using
-        the signed coverage error ``e_t = α_target − 1{miscovered}``.
-        """
+        """The signed error is target_alpha - miss; proportional feedback widens on a miss."""
         self.residuals.append(abs(float(residual)))
 
         miss = 1.0 if miscovered else 0.0
@@ -119,16 +77,10 @@ class ConformalPID:
         self.last_derivative = derivative
         self.steps += 1
 
-    # ── Output ──────────────────────────────────────────────────────────
-
     def quantile(self) -> float:
-        """Conformal half-width at the current adjusted α.
+        """Return the residual at the clipped ceil((1-alpha)*(n+1)) rank.
 
-        Returns the ``ceil((1 − α)·(n + 1))``-th smallest absolute residual
-        from the buffer (standard split-conformal finite-sample correction).
-        Raises :class:`EmptyResidualBufferError` if the buffer is empty —
-        the caller is expected to fall back to the offline-trained SCP
-        quantile in that case (see E1 brief §1 edge cases).
+        Raises EmptyResidualBufferError before the first residual; callers may use the offline quantile.
         """
         n = len(self.residuals)
         if n == 0:
@@ -141,10 +93,7 @@ class ConformalPID:
         q_index = max(0, min(q_index, n - 1))
         return sorted_residuals[q_index]
 
-    # ── Introspection ───────────────────────────────────────────────────
-
     def state(self) -> dict:
-        """Snapshot of internal state for Prometheus + tests."""
         return {
             "alpha": float(self.alpha),
             "target_alpha": float(self.target_alpha),
@@ -157,8 +106,6 @@ class ConformalPID:
             "k_i": float(self.k_i),
             "k_d": float(self.k_d),
         }
-
-    # ── Helpers ─────────────────────────────────────────────────────────
 
     def _clip(self, value: float) -> float:
         low, high = self.alpha_clip

@@ -1,13 +1,6 @@
-"""
-Quantile Regression (QR) — Direct quantile prediction via pinball loss.
+"""Quantile regression with pinball loss.
 
-Trains a modified GRU that outputs three quantiles (q0.05, q0.50, q0.95)
-per forecast horizon simultaneously. Intervals are input-adaptive —
-wider for unusual patterns, narrower for familiar ones.
-
-Reference:
-  Wen et al. (2017). Multi-Horizon Quantile Recurrent Forecaster.
-  Gasthaus et al. (2019). DeepAR: Probabilistic Forecasting.
+References: Wen et al. (2017); Gasthaus et al. (2019).
 """
 
 from pathlib import Path
@@ -24,7 +17,6 @@ import torch.nn as nn
 from torch import Tensor
 import yaml
 
-# Resolve sibling imports
 _parent = str(Path(__file__).resolve().parent.parent)
 if _parent not in sys.path:
     sys.path.insert(0, _parent)
@@ -35,19 +27,8 @@ from predictor.data import NormalizationParams
 logger = logging.getLogger(__name__)
 
 
-# ── Quantile GRU Architecture ─────────────────────────────────────────
-
 class QuantileGRU(nn.Module):
-    """GRU with 3× output head for multi-quantile prediction.
-
-    Outputs (batch, horizon, n_quantiles) where n_quantiles=3:
-      [:, :, 0] = q_low   (α/2, e.g. 0.05)
-      [:, :, 1] = q_med   (0.50)
-      [:, :, 2] = q_high  (1-α/2, e.g. 0.95)
-
-    Architecture:
-      GRU(hidden=64, 2 layers) → Dropout(0.2) → GRU → Linear(64, k×3)
-    """
+    """GRU with 3× output head for multi-quantile prediction."""
 
     def __init__(self, input_size: int = 1, hidden_size: int = 64,
                  num_layers: int = 2, output_horizon: int = 2,
@@ -69,15 +50,7 @@ class QuantileGRU(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x: Tensor) -> Tensor:
-        """Forward pass.
-
-        Args:
-            x: (batch, seq_len, 1) — normalized RPS window
-
-        Returns:
-            (batch, output_horizon, n_quantiles) — raw quantile predictions
-            No activation on output — ReLU breaks normalized data.
-        """
+        """Forward pass."""
         out, _ = self.gru(x)
         out = out[:, -1, :]         # (batch, hidden_size)
         out = self.dropout(out)
@@ -89,24 +62,9 @@ class QuantileGRU(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
 
-# ── Pinball Loss ──────────────────────────────────────────────────────
-
 def pinball_loss(y_true: Tensor, y_pred: Tensor,
                  quantiles: list[float]) -> Tensor:
-    """Pinball (quantile) loss for multi-output quantile regression.
-
-    For quantile τ, the loss is:
-        L_τ(y, q̂) = { τ · (y - q̂)       if y ≥ q̂
-                     { (1-τ) · (q̂ - y)   if y < q̂
-
-    Args:
-        y_true: (batch, horizon) — ground truth values
-        y_pred: (batch, horizon, n_quantiles) — predicted quantiles
-        quantiles: list of quantile levels (e.g. [0.05, 0.50, 0.95])
-
-    Returns:
-        scalar loss
-    """
+    """Pinball (quantile) loss for multi-output quantile regression."""
     loss = torch.tensor(0.0, device=y_pred.device)
     for i, q in enumerate(quantiles):
         errors = y_true - y_pred[:, :, i]  # (batch, horizon)
@@ -116,14 +74,7 @@ def pinball_loss(y_true: Tensor, y_pred: Tensor,
 
 
 def monotonicity_penalty(y_pred: Tensor) -> Tensor:
-    """Penalty for crossing quantiles: 0.01 * max(0, q_low - q_med).
-
-    Args:
-        y_pred: (batch, horizon, n_quantiles) where order is [low, med, high]
-
-    Returns:
-        scalar penalty (0 if non-crossing)
-    """
+    """Penalty for crossing quantiles: 0.01 * max(0, q_low - q_med)."""
     # Low must be ≤ med, med must be ≤ high
     q_low = y_pred[:, :, 0]
     q_med = y_pred[:, :, 1]
@@ -134,21 +85,8 @@ def monotonicity_penalty(y_pred: Tensor) -> Tensor:
     return 0.01 * (pen_low.mean() + pen_high.mean())
 
 
-# ── Quantile Regressor Wrapper ────────────────────────────────────────
-
 class QuantileRegressor(UncertaintyQuantifier):
-    """Direct quantile prediction via pinball loss training.
-
-    Strengths:
-      - Input-adaptive intervals (the only method with this property)
-      - Single model, single forward pass
-      - Captures both aleatoric and epistemic uncertainty
-
-    Weaknesses:
-      - Crossing quantiles possible (monitored + post-hoc fixed)
-      - No formal coverage guarantee
-      - Requires architecture modification (pinball loss)
-    """
+    """Direct quantile prediction via pinball loss training."""
 
     method = 'qr'
 
@@ -165,7 +103,6 @@ class QuantileRegressor(UncertaintyQuantifier):
         self.model: QuantileGRU = None
         self.norm_params: NormalizationParams = None
 
-        # Training config
         self.hidden_size = 64
         self.num_layers = 2
         self.dropout = 0.2
@@ -175,17 +112,10 @@ class QuantileRegressor(UncertaintyQuantifier):
         self.patience = 20
         self.monotonicity_weight = 0.005  # Weight for crossing penalty
 
-    # ── Training ────────────────────────────────────────────────────────
-
     def fit(self,
             train_data: tuple,
             calibration_data: tuple = None) -> 'QuantileRegressor':
-        """Train QuantileGRU with pinball loss.
-
-        Args:
-            train_data: (X_train, y_train) — normalized numpy arrays
-            calibration_data: Unused for QR (training split used for validation)
-        """
+        """Train QuantileGRU with pinball loss."""
         X_train, y_train = train_data
         X_train = np.asarray(X_train, dtype=np.float32)
         y_train = np.asarray(y_train, dtype=np.float32)
@@ -232,7 +162,6 @@ class QuantileRegressor(UncertaintyQuantifier):
         patience_counter = 0
 
         for epoch in range(self.epochs):
-            # Training
             self.model.train()
             perm = torch.randperm(n_train)
             total_loss = 0.0
@@ -255,12 +184,10 @@ class QuantileRegressor(UncertaintyQuantifier):
                 total_loss += loss.item()
                 n_batches += 1
 
-            # Validation
             self.model.eval()
             with torch.inference_mode():
                 val_pred = self.model(X_val_t)
                 val_loss = pinball_loss(y_val_t, val_pred, self.quantiles).item()
-                # Check crossing quantiles on validation
                 crossing_rate = _crossing_rate(val_pred.cpu().numpy())
 
             scheduler.step(val_loss)
@@ -286,7 +213,6 @@ class QuantileRegressor(UncertaintyQuantifier):
 
         self.model.eval()
 
-        # Final crossing check
         with torch.inference_mode():
             final_pred = self.model(X_val_t).cpu().numpy()
         final_crossing = _crossing_rate(final_pred)
@@ -295,14 +221,8 @@ class QuantileRegressor(UncertaintyQuantifier):
 
         return self
 
-    # ── Inference ───────────────────────────────────────────────────────
-
     def predict_with_uncertainty(self, history: np.ndarray) -> dict:
-        """Predict with quantile-based intervals.
-
-        Args:
-            history: shape (h,) — raw RPS values
-        """
+        """Predict with quantile-based intervals."""
         if self.model is None:
             raise RuntimeError("QR not fitted. Call fit() first.")
         if self.norm_params is None:
@@ -317,7 +237,6 @@ class QuantileRegressor(UncertaintyQuantifier):
         with torch.inference_mode():
             pred_norm = self.model(x_tensor).cpu().numpy().squeeze(0)  # (k, 3)
 
-        # Denormalize quantiles
         q_low_norm = pred_norm[:, 0]
         q_med_norm = pred_norm[:, 1]
         q_high_norm = pred_norm[:, 2]
@@ -326,7 +245,6 @@ class QuantileRegressor(UncertaintyQuantifier):
         ci_lower = self.norm_params.denormalize(q_low_norm)
         ci_upper = self.norm_params.denormalize(q_high_norm)
 
-        # Enforce monotonicity (fix crossing quantiles post-hoc)
         has_crossing = False
         for step in range(self.k):
             if ci_lower[step] > point_forecast[step]:
@@ -336,7 +254,6 @@ class QuantileRegressor(UncertaintyQuantifier):
                 point_forecast[step], ci_upper[step] = ci_upper[step], point_forecast[step]
                 has_crossing = True
 
-        # Non-negative
         np.maximum(ci_lower, 0.0, out=ci_lower)
         np.maximum(point_forecast, 0.0, out=point_forecast)
         np.maximum(ci_upper, 0.0, out=ci_upper)
@@ -365,8 +282,6 @@ class QuantileRegressor(UncertaintyQuantifier):
                 'has_crossing': has_crossing,
             }
         }
-
-    # ── Evaluation ──────────────────────────────────────────────────────
 
     def evaluate_coverage(self, test_data: tuple) -> dict:
         """Evaluate empirical coverage on test data."""
@@ -423,8 +338,6 @@ class QuantileRegressor(UncertaintyQuantifier):
             'quantiles': self.quantiles,
         }
 
-    # ── Persistence ─────────────────────────────────────────────────────
-
     def save(self, output_dir: str) -> None:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -477,7 +390,6 @@ class QuantileRegressor(UncertaintyQuantifier):
                 sigma=config['normalization']['sigma'],
             )
 
-        # Load model
         qr.model = QuantileGRU(
             input_size=1,
             hidden_size=qr.hidden_size,
@@ -496,17 +408,7 @@ class QuantileRegressor(UncertaintyQuantifier):
         return qr
 
 
-# ── Helpers ────────────────────────────────────────────────────────────
-
 def _crossing_rate(preds: np.ndarray) -> float:
-    """Fraction of predictions where q_low > q_med or q_med > q_high.
-
-    Args:
-        preds: (N, k, 3) — batch of quantile predictions
-
-    Returns:
-        Fraction of (sample, step) pairs with crossing quantiles
-    """
     q_low = preds[:, :, 0]
     q_med = preds[:, :, 1]
     q_high = preds[:, :, 2]

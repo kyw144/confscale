@@ -1,58 +1,11 @@
 #!/usr/bin/env python3
-"""E-V7 + E-V3-ACIH unified wave driver (Track B, cluster).
-
-Runs TWO interleaved validation tasks in ONE wave-scheduled driver, reusing the
-E-V3 independence protocol (per-rep deployment + TSDB reset, randomized worker
-assignment, wall-clock Locust seed):
-
-  TASK E-V7 (tuned-HPA cost baseline), Pattern D, duration 3600 s, n=5 each:
-    - hpa-anchor-u50-s300   reproduction anchor (v2 @ 50% / 300 s ≈ v1 default;
-                            MUST reproduce ≈67,806 overhead_replica_seconds/h)
-    - hpa-tuned-u50-s60     2×2 competently-tuned grid:
-    - hpa-tuned-u50-s120      cpu_target ∈ {50,70} × downscale_stab ∈ {60,120},
-    - hpa-tuned-u70-s60       scaleUp stabilization = 0 (react immediately up)
-    - hpa-tuned-u70-s120
-    - confscale-scp         in-batch re-run of the comparator (matched current
-                            cluster), 3600 s
-
-  TASK E-V3-ACIH (close the last n=3 cell in §6.5), Pattern H, 1800 s, K=8:
-    - confscale-aci         raw arm at K=8 (vs existing ACI-laddered/H n=5)
-
-WHY the tuning grid (pre-registered, see _EV7_TUNED_BASELINE_STATUS.md): the
-original HPA-Reactive/D baseline ran `hpa-reactive` at its defaults (50% CPU,
-max 20, cluster-default 300 s downscale) and sat at mean_replicas 19.87/20 — it
-was railed at its ceiling ~99 % of the hour because Pattern D's 300 s pulse
-period coincides with the 300 s downscale-stabilization window, so the HPA never
-scales down between pulses. The dominant competent-tuning lever is therefore the
-downscale window (not utilization). The current harness could only set the CPU
-target via `kubectl autoscale` (v1 HPA, no behavior block), so HPAMethod was
-extended with an autoscaling/v2 behavior path (downscale_stabilization_s).
-
-Wave scheduling
----------------
-  * Each cell has its own duration. Waves are DURATION-HOMOGENEOUS to avoid a
-    fast cell idling a worker while a slow cell finishes the wave.
-  * E-V7 group (6 labels × n=5, equal counts): round-based packing → 10 clean
-    waves of 3 distinct configs; label co-occurrence reshuffled per round.
-  * ACI-H group (1 label × 8): chunked 3+3+2; the three waves are spread across
-    the timeline (interleaved among the E-V7 waves) so the K=8 between-run SD
-    samples three independent time points on freshly-reset clusters.
-  * Per-wave: reset ALL clusters in parallel (rollout restart compute-worker +
-    prometheus → fresh pods + wiped emptyDir TSDB), settle, then run the wave's
-    cells concurrently, one per assigned worker. Worker assignment randomized
-    (seeded) per wave so no config is pinned to a cluster.
-
-Scope: does NOT modify src beyond the (separately tested) HPAMethod v2 extension
-and the get_method fresh-copy fix. Imports and CALLS the tested execute_single_run /
-_resolve_method_spec / PortForward / make_slots. Resumable via --start-wave.
-"""
+"""Run tuned-HPA and recalibration comparisons with per-replicate redeployment."""
 from __future__ import annotations
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -69,7 +22,6 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-# --- wire src/stage3_scale onto the path ---
 REPO = Path("<SOURCE_WORKSPACE>")
 STAGE3 = REPO / "src" / "stage3_scale"
 if str(STAGE3) not in sys.path:
@@ -95,8 +47,6 @@ ACIH_DURATION = 1800        # matches the ACI-laddered/H drift batch (6 × 300 s
 
 logger = logging.getLogger("ev7")
 
-
-# ── Cells ─────────────────────────────────────────────────────────────────
 
 def build_cells() -> list[dict]:
     cells: list[dict] = []
@@ -130,8 +80,6 @@ def build_cells() -> list[dict]:
     return cells
 
 
-# ── Wave planning ───────────────────────────────────────────────────────────
-
 def _unit(cell: dict, replicate: int) -> dict:
     return {
         "label": cell["label"], "task": cell["task"],
@@ -142,13 +90,6 @@ def _unit(cell: dict, replicate: int) -> dict:
 
 def _pack_group(units_by_label: dict[str, list[dict]], n_workers: int,
                 rng: random.Random) -> list[list[dict]]:
-    """Pack one duration group into waves of ≤ n_workers.
-
-    Single label  -> chunk reps into waves of n_workers (3+3+2 for K=8).
-    Equal counts  -> round-based: each round runs every label once (reshuffled),
-                     split into waves of n_workers. Clean, balanced, distinct
-                     labels per wave.
-    """
     labels = list(units_by_label.keys())
     if len(labels) == 1:
         u = units_by_label[labels[0]][:]
@@ -174,7 +115,6 @@ def _pack_group(units_by_label: dict[str, list[dict]], n_workers: int,
 
 
 def _interleave(group_waves: dict[str, list[list[dict]]]) -> list[list[dict]]:
-    """Spread each task group's waves evenly across the timeline, then merge."""
     tagged = []
     for gi, gkey in enumerate(sorted(group_waves)):
         waves = group_waves[gkey]
@@ -188,11 +128,7 @@ def _interleave(group_waves: dict[str, list[list[dict]]]) -> list[list[dict]]:
 
 def plan_waves(cells: list[dict], n_workers: int, seed: int) -> list[dict]:
     rng = random.Random(seed)
-    # Group by TASK (not duration): each task has a single duration, so waves
-    # stay duration-homogeneous, but grouping by task keeps E-V7 (6 labels × n=5,
-    # round-based) and ACI-H (1 label × 8, chunked) packed separately even when
-    # both run at the same duration (1800 s) — a shared-duration key would merge
-    # them into one unequal-count group and break the round-based packer.
+    # Group by task: equal durations can still have incompatible replicate counts.
     groups: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
     for c in cells:
         for rep in range(1, c["n_reps"] + 1):
@@ -211,8 +147,6 @@ def plan_waves(cells: list[dict], n_workers: int, seed: int) -> list[dict]:
                      "units": wave_units, "worker_perm": perm})
     return plan
 
-
-# ── Cluster reset + cell execution (reused E-V3 plumbing) ────────────────────
 
 def kubectl_ctx(ctx: str, args: list[str], timeout: int = 200) -> subprocess.CompletedProcess:
     return subprocess.run(["kubectl", f"--context={ctx}", *args],
@@ -249,7 +183,7 @@ def coverage_from_run_dir(run_dir: Path):
 
 
 def run_cell(slot, unit: dict, output_dir: Path) -> dict:
-    """Run ONE cell on ONE worker slot, pinned to that slot's cluster. Never raises."""
+    """Run ONE cell on ONE worker slot, pinned to that slot's cluster."""
     set_thread_kube_context(slot.kube_context)
     pf = PortForward(namespace=PROMETHEUS_NS, service=PROMETHEUS_SVC,
                      local_port=slot.prometheus_port, remote_port=PROMETHEUS_PORT,
@@ -319,8 +253,6 @@ def preflight(slots) -> bool:
     return ok
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
-
 def main():
     ap = argparse.ArgumentParser(description="E-V7 + E-V3-ACIH unified wave driver")
     ap.add_argument("--output-dir", type=Path, required=True)
@@ -387,7 +319,6 @@ def main():
         if wave < args.start_wave:
             continue
         units, perm = w["units"], w["worker_perm"]
-        # unit i runs on slots[perm[i]]
         assignment = {
             "wave": wave, "duration_s": w["duration_s"],
             "time": datetime.now(timezone.utc).isoformat(),
@@ -415,7 +346,6 @@ def main():
         logger.info("WAVE %d: settle %ds...", wave, args.settle)
         time.sleep(args.settle)
 
-        # 3. Run the wave's cells concurrently, one per assigned worker.
         wave_t0 = time.time()
         results: list[dict] = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(slots)) as ex:
@@ -424,7 +354,6 @@ def main():
             for f in concurrent.futures.as_completed(futs):
                 results.append(f.result())
 
-        # 4. Log wave results.
         for rec in sorted(results, key=lambda r: r["label"]):
             rec["wave"] = wave
             writer.writerow(rec)

@@ -1,32 +1,10 @@
 #!/usr/bin/env python
-"""T1b — per-horizon h1 recalibration GENERALIZED to the 16 disjoint volatility candidates (OFFLINE).
+"""Replay per-horizon recalibration across the fixed volatility candidates."""
 
-ADDITIVE: drives T1's validated per-horizon machinery over a NEW, larger, out-of-sample
-candidate set. Reuses (does NOT reimplement) the T1 script:
-    data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.py
-imported verbatim via importlib — its `if __name__ == '__main__'` guard makes the import
-side-effect-free, so `run_cell`/`walk`/`forecasts`/`make_recal`/`warm_start`/`p2` and the constants
-R, NOMINAL, H, K, ALPHA are reused exactly as in T1 (same SplitConformal fit, same R=6 seeds
-`torch.manual_seed(1000+rep)`, same warm-start, same 2-lag h1, same ladder-per-horizon logic).
-
-CELLS = the 16 candidates with set==vol_band_disjoint AND sanity_pass==true (T2 enumeration,
-t2_sanity_gate.json; P3-D003/D004) — disjoint from the selected-25, so this is a genuine
-out-of-sample generalization test, not a re-fit. Per-service windows are read from t2_candidates.csv
-(train_lo/hi -> train, cal_lo/hi -> ref, dep_lo/hi -> deploy), exactly as T2's harness uses them.
-
-Edits no locked code, no locked codex-cut table, no prose. Creates only files under T1b/.
-
-Usage (run from repo root):
-  .venv/bin/python data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.py <start> <end>   # run cells [start,end)
-  .venv/bin/python data/p3_runs/reopen_2026-06/T1b/recal_pool_h1.py aggregate       # compute verdict metrics
-Per-cell checkpoint after each cell (crash/resume-safe; re-runs skip done cells).
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util, os
@@ -38,7 +16,6 @@ OUTDIR = "data/p3_runs/reopen_2026-06/T1b"
 OUT = f"{OUTDIR}/recal_pool_h1.json"
 AGG = f"{OUTDIR}/recal_pool_h1_aggregate.json"
 
-# ── reuse T1's validated machinery verbatim (side-effect-free: __main__-guarded) ──────────────────
 T1SCRIPT = "data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.py"
 spec = importlib.util.spec_from_file_location("t1h1", T1SCRIPT)
 t1 = importlib.util.module_from_spec(spec); spec.loader.exec_module(t1)
@@ -125,7 +102,6 @@ def aggregate():
                 max_width_h1_x_frozen=round(float(np.max(wmult)), 2) if wmult else None,
                 mean_actuator_reach_pct=round(float(np.mean(reach)), 1),
             )
-    # ── verdict (verbatim criterion, ACI per_horizon) ──
     primary = agg['aci_per_horizon']['mean_gap_h1']                 # mean ACI per-horizon h1 gap (90 - cov_h1)
     secondary = agg['aci_per_horizon']['median_width_h1_x_frozen']  # median ACI h1 width mult vs frozen-SCP
     if primary <= 5.0 and secondary <= 6.0:

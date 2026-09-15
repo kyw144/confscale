@@ -1,21 +1,4 @@
 #!/usr/bin/env python3
-"""
-Smoke validation for the C3 error-monitored baseline.
-
-Tests the standalone ErrorMonitor class without needing a kind cluster,
-Prometheus, or the GRU predictor at inference time. Covers the three
-scenarios called out in the Paper 3 reframe brief:
-
-  - Low-error: trailing MAE stays under threshold → not elevated.
-  - High-error: trailing MAE exceeds threshold → elevated.
-  - Volatility drift: zero-mean residuals with high variance still
-    elevate the trigger, because MAE averages absolute residuals.
-
-Run:
-  python test_error_monitor.py
-or:
-  pytest test_error_monitor.py -v
-"""
 from __future__ import annotations
 
 import logging
@@ -44,17 +27,8 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 
 
 def feed(monitor: ErrorMonitor, residuals: list[float]) -> None:
-    """Push a list of signed residuals through the monitor.
-
-    We construct (forecast, observed) pairs where observed = forecast - r,
-    so |forecast - observed| = |r|. Forecast is fixed at 50 — its value
-    is irrelevant since only the absolute difference matters.
-    """
     for r in residuals:
         monitor.record(forecast=50.0, observed=50.0 - r)
-
-
-# ── Tests ───────────────────────────────────────────────────────────────
 
 
 def test_empty_monitor():
@@ -105,9 +79,7 @@ def test_high_error_elevated():
 
 def test_volatility_drift_elevated():
     print("\n[5] Volatility-drift scenario (zero-mean, high variance, threshold 5)")
-    # Symmetric ±10 residuals: mean(residual) == 0 but mean(|residual|) == 10.
-    # This is the crux test — the trigger fires on variance because the
-    # monitor averages absolute values, not signed values.
+    # A zero signed mean must not hide a large absolute error.
     pattern = [+10.0, -10.0] * 10  # length 20
     m = ErrorMonitor(window=20)
     feed(m, pattern)
@@ -144,9 +116,6 @@ def test_invalid_window():
                   "no exception raised")
         except ValueError:
             check(f"ErrorMonitor(window={bad}) raises ValueError", True)
-
-
-# ── Main ────────────────────────────────────────────────────────────────
 
 
 def main():

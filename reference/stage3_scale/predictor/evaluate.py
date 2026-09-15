@@ -1,8 +1,4 @@
-"""
-Evaluation metrics for GRU workload predictor.
-
-Computes MAPE, RMSE, R², and prediction bias on normalized or denormalized data.
-"""
+"""Evaluation metrics for GRU workload predictor."""
 
 import numpy as np
 import torch
@@ -37,17 +33,7 @@ def evaluate_model(
     norm: Optional[NormalizationParams] = None,
     device: str = 'cpu',
 ) -> EvalMetrics:
-    """Evaluate a trained model on a test DataLoader.
-
-    Args:
-        model: Trained WorkloadGRU
-        test_loader: DataLoader with (X, y) tensors
-        norm: NormalizationParams for denormalizing to RPS
-        device: torch device string
-
-    Returns:
-        EvalMetrics with MAPE, RMSE, R², bias
-    """
+    """Evaluate a trained model on a test DataLoader."""
     model.eval()
     criterion = nn.MSELoss()
 
@@ -71,7 +57,6 @@ def _compute_metrics(
     y_hat: np.ndarray,
     norm: Optional[NormalizationParams] = None,
 ) -> EvalMetrics:
-    """Compute all metrics from raw (normalized) predictions."""
     n = len(y)
 
     # RMSE (normalized)

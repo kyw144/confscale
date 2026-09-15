@@ -1,4 +1,3 @@
-"""Behavioral, causal-order, provenance and paper-regeneration checks (stdlib)."""
 import ast
 import json
 import math

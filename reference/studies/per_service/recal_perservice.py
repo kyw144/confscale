@@ -1,26 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b rider — per-service RECALIBRATOR closeout on the LOCKED MS_7129 volatility cell.
+"""Evaluate recalibration on the fixed MS_7129 volatility window."""
 
-Tests whether the paper's FIX (adaptive recalibration ACI/PID + the escalation ladder) recovers
-the +27 pp that FROZEN SCP leaves on MS_7129's matched volatility deploy (Pass 2). Reuses the
-LOCKED windows verbatim, the same GRU per run (apples-to-apples), and the EXACT recalibrator/ladder
-code (`uq.conformal_pid.ConformalPID`, `uq.aci.ACI`, `baselines.escalation_ladder.EscalationLadder`)
-driven offline with the controller's protocol (controller.py §1b–1d):
-  - residuals NORMALIZED abs (|y-ŷ|/σ); q̂ in normalized space; recalibration is h0-ONLY (h1 frozen).
-  - online order per step: update recalibrator on PRIOR interval -> set q̂[0]=quantile() -> ladder.step
-    on trailing coverage (window 30, target .9, band .05) -> q̂[0]=ladder.apply(q̂[0]) -> form interval.
-  - warm-start: prime the recalibrator buffer with the REF-window residuals so its initial quantile()
-    == the frozen SCP q̂ (the brief's "initialized on the same ref-window q̂"). α_init = target = .1.
-Defaults verbatim from methods.py: PID k_p=.1/k_i=.01/k_d=.05, ACI η=.1, buffer 200, α_clip (1e-4,.5);
-ladder band .05 / escalate K=5 / recover K=10 / widen 1.5 / conservative 3.0; coverage window 30.
-R=6 variance band (GRU FP-nondeterminism). Volatility cell ONLY. Heads/recalibrators unchanged as code.
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util
@@ -65,7 +49,7 @@ def make_recal(kind):
 
 
 def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
-    """Offline online-recalibration walk over the deploy windows. Returns coverage h0/h1 + width + ladder hist."""
+    """Offline online-recalibration walk over the deploy windows."""
     laddered = method.endswith('-lad')
     kind = 'aci' if method.startswith('aci') else 'pid'
     recal = None
@@ -80,7 +64,6 @@ def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
     prev = None
     levels = []
     for i in range(len(fc)):
-        # 1. update recalibrator on PRIOR step, set q̂[0]
         if recal is not None and prev is not None:
             recal.update(prev[0], prev[1])
         q0 = float(recal.quantile()) if recal is not None else q0_frozen

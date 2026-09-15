@@ -1,10 +1,4 @@
-"""
-GRU Predictor — the public API consumed by downstream components.
-
-Loads a trained model + config, provides predict() and predict_with_history().
-This is the contract used by UQ modules (task 05), ConfidenceScaler (task 07),
-and the analysis pipeline (task 08).
-"""
+"""GRU Predictor — the public API consumed by downstream components."""
 
 from pathlib import Path
 import numpy as np
@@ -17,24 +11,12 @@ from .data import NormalizationParams
 
 
 class GRUPredictor:
-    """Load a trained GRU model and make predictions.
-
-    Usage:
-        predictor = GRUPredictor('models/gru_compute-worker_diurnal/')
-        result = predictor.predict(history_array)  # shape (h,)
-        result = predictor.predict_with_history(timestamps, values)
-    """
+    """Load a trained GRU model and make predictions."""
 
     def __init__(self, model_dir: str, device: Optional[str] = None):
-        """
-        Args:
-            model_dir: Path to directory containing model.pt + gru_config.yaml
-            device: 'cpu', 'mps', or None (auto-detect)
-        """
         model_dir = Path(model_dir)
         self.model_dir = model_dir
 
-        # Load config
         with open(model_dir / 'gru_config.yaml') as f:
             self.config = yaml.safe_load(f)
 
@@ -46,7 +28,6 @@ class GRUPredictor:
             sigma=preproc['normalization']['sigma'],
         )
 
-        # Load model
         model_cfg = self.config['model']
         self.model = WorkloadGRU(
             input_size=model_cfg['input_size'],
@@ -68,17 +49,7 @@ class GRUPredictor:
         self.model.eval()
 
     def predict(self, history: np.ndarray) -> dict:
-        """Predict future request rates from the last h observations.
-
-        Args:
-            history: shape (h,) — last h request rate observations (raw RPS)
-
-        Returns:
-            {
-                'point_forecast': np.ndarray shape (k,) — predicted rates in RPS,
-                'forecast_horizon_s': [30, 60, ...] — timestamps for each step
-            }
-        """
+        """Predict future request rates from the last h observations."""
         if len(history) != self.h:
             raise ValueError(
                 f"History must have exactly {self.h} values, got {len(history)}"
@@ -105,15 +76,7 @@ class GRUPredictor:
         timestamps: list[float],
         values: list[float],
     ) -> dict:
-        """Convenience: extract last h values from a timeseries, run predict().
-
-        Args:
-            timestamps: List of timestamps (seconds)
-            values: List of RPS values
-
-        Returns:
-            Same as predict()
-        """
+        """Convenience: extract last h values from a timeseries, run predict()."""
         if len(values) < self.h:
             raise ValueError(
                 f"Need at least {self.h} observations, got {len(values)}"

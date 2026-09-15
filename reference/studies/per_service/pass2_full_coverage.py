@@ -1,25 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b Pass 2 (FULL) — per-service coverage across the LOCKED within-range set.
+"""Evaluate per-service coverage on the fixed within-range service set."""
 
-Converts the +27 pp MS_7129 anchor (n=1) into a per-service gap DISTRIBUTION. Reuses the LOCKED
-harness `pass2_perservice.run_test` verbatim (heads BE/SCP/QR + GRU unmodified; SCP q̂ on the explicit
-cal window; h0 & h1; per-service sanity gate first). Reads the re-materialised windows from
-`pass2_full_windows.json`. NO re-selection, NO invented windows (Option A).
-
-Heads (Option A, anchor precedent): SCP + QR at R=6 (FP-nondeterminism variance band, no per-rep
-re-seed — matches pass2_variance.py); BE single-run diagnostic (R=6 BE ≈ 14 h, infeasible). Phases
-ordered SCP → QR → BE so the verdict-bearing SCP distribution is written first. Incremental writes
-(per cell) for resumability; per-cell try/except so a data-gap in one window can't abort the sweep.
-
-Distribution deliverable: per-channel (level / volatility, separately) min/median/max of the SCP
-deploy gap + fraction under-covering by ≥10 pp, over SANITY-PASSING cells, broken out by severity band.
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util, time, traceback

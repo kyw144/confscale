@@ -15,7 +15,6 @@ DATA_DIR = Path(__file__).resolve().parents[1] / 'outputs' / 'training_data'
 SWEEP_DIR = Path(__file__).resolve().parents[1] / 'models' / 'gru' / 'sweep'
 CSV_PATH = DATA_DIR / 'pattern_B_24h.csv'  # Hardest pattern = bursty
 
-# Grid from the plan
 h_values = [30, 60, 90]
 k_values = [1, 2, 4]
 hidden_sizes = [32, 64, 128]
@@ -50,7 +49,6 @@ for h, k, hs, nl in itertools.product(h_values, k_values, hidden_sizes, num_laye
     except Exception as e:
         print(f"FAILED: {e}")
 
-# Save results
 if results:
     df = pd.DataFrame(results)
     df.to_csv(SWEEP_DIR / 'sweep_results.csv', index=False)

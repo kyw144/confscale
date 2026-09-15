@@ -1,24 +1,10 @@
 #!/usr/bin/env python
-"""E-V8 Pass 1 — MSRTMCR -> RPS ETL (parallel, deduped).
+"""Deduplicate microservice traces and aggregate request rates."""
 
-Produces the cluster-aggregate and per-service request-rate (MCR) time series
-from the Alibaba 2022 MSRTMCR trace at 60s native cadence. ~89% of raw rows are
-EXACT duplicates -> drop_duplicates() before aggregating (else 2-3x overcount).
-
-HARD RULE: NO coverage / interval / forecasting computed. Series + structure only.
-
-Outputs (in this dir):
-  cluster_agg_series.csv   timestamp_ms,timestamp_min,providerrpc_mcr,http_mcr  (1440 rows)
-  service_totals.csv       msname,providerrpc_mcr,http_mcr,n_ts
-  topN_providerrpc_series.csv  timestamp_ms + one col per top-20 service
-  etl_summary.json         timing, n_services, grid coverage, failures
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, time, json, glob, tarfile
@@ -74,7 +60,6 @@ def main():
     big = pd.concat(parts, ignore_index=True)
     print(f"concat rows={len(big):,}  elapsed={time.time()-t0:.0f}s", flush=True)
 
-    # --- cluster-aggregate series on the full 1440 grid ---
     ca = big.groupby('timestamp')[MCR].sum().sort_index()
     full_grid = pd.Index(np.arange(0, N_TS * STEP_MS, STEP_MS), name='timestamp')
     ca = ca.reindex(full_grid)
@@ -83,14 +68,12 @@ def main():
     ca_out.insert(1, 'timestamp_min', ca_out['timestamp_ms'] // STEP_MS)
     ca_out.to_csv(f"{DIR}/cluster_agg_series.csv", index=False)
 
-    # --- per-service totals + top-N ---
     st = big.groupby('msname')[MCR].sum()
     st['n_ts'] = big.groupby('msname')['timestamp'].nunique()
     st = st.sort_values('providerrpc_mcr', ascending=False)
     st.reset_index().to_csv(f"{DIR}/service_totals.csv", index=False)
     topN = st.head(20).index.tolist()
 
-    # --- top-N per-service series (primary signal = providerrpc_mcr) ---
     piv = (big[big.msname.isin(topN)]
            .pivot_table(index='timestamp', columns='msname',
                         values='providerrpc_mcr', aggfunc='sum')

@@ -1,20 +1,4 @@
-"""Figures: generate publication-quality figures for the P3 paper.
-
-Figures owned by this module:
-    1. System Architecture Diagram (programmatic SVG)
-    2. Workload Patterns with Predictions + CI Bands (4-panel)
-    3. SLO Violation Rate Bar Chart
-    4. Resource Overhead Bar Chart
-    6. Time-Series Excerpt — Burst Event (3-panel)
-    7. Time-in-Tier Distribution
-
-Owned by sibling modules (so they read the right data sources):
-    5. λ Pareto frontier — `analysis/lambda_analysis.py` (λ-sweep cells)
-    8. Coverage Calibration Plot — `analysis/calibration.py` (scale-log post-hoc)
-
-All figures save at 300 DPI to PDF (vector-compatible) with consistent styling.
-Uses seaborn colorblind palette for accessibility.
-"""
+"""Generate experiment figures."""
 
 import logging
 from pathlib import Path
@@ -38,7 +22,6 @@ from .metrics import (
 
 logger = logging.getLogger(__name__)
 
-# ── Global Styling ──────────────────────────────────────────────────────────
 
 METHOD_ORDER = [
     "hpa-reactive", "hpa-predictive", "hpa-predictive-safety",
@@ -80,7 +63,6 @@ FIGURE_DPI = 300
 
 
 def _setup_style():
-    """Configure matplotlib style for publication-quality figures."""
     plt.rcParams.update({
         "font.family": "sans-serif",
         "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
@@ -98,21 +80,14 @@ def _setup_style():
     sns.set_palette("colorblind")
 
 
-# ── Figure 1: System Architecture Diagram ───────────────────────────────────
-
 def generate_figure_1(output_path: str) -> str:
-    """Figure 1: System Architecture — MAPE-K loop with confidence-aware tiered policy.
-
-    This is a programmatic diagram (not data-driven), showing the MAPE-K
-    control loop with the confidence tier system.
-    """
+    """Figure 1: System Architecture — MAPE-K loop with confidence-aware tiered policy."""
     _setup_style()
     fig, ax = plt.subplots(1, 1, figsize=(7, 4.5))
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 6)
     ax.axis("off")
 
-    # Color scheme
     c_blue = "#2c3e50"
     c_green = "#27ae60"
     c_orange = "#f39c12"
@@ -147,28 +122,22 @@ def generate_figure_1(output_path: str) -> str:
     draw_box(1, 2, 1.8, 0.9, "Plan\n(Tier Policy)", c_gray, fontsize=7)
     draw_box(1, 0.5, 1.8, 0.9, "Execute\n(K8s Scale)", c_gray, fontsize=7)
 
-    # Vertical arrows
     for y1, y2 in [(4.55, 3.95), (3.05, 2.45), (1.55, 0.95)]:
         draw_arrow(1, y1, 1, y2, color=c_gray)
 
-    # Knowledge base on right
     draw_box(3.5, 5, 1.8, 3.5, "Knowledge\n\n• SLO Model\n• Capacity\n  Curves\n• Service\n  Profile", c_blue, fontsize=7)
 
-    # Tier system on far right
     draw_box(6, 5, 1.5, 0.9, "Tier 1\nLow Uncertainty", c_green, fontsize=7)
     draw_box(6, 3.5, 1.5, 0.9, "Tier 2\nModerate Uncertainty", c_orange, fontsize=7)
     draw_box(6, 2, 1.5, 0.9, "Tier 3\nHigh Uncertainty", c_red, fontsize=7)
 
-    # Tier transition arrow
     ax.annotate("", xy=(5.25, 5), xytext=(5.25, 2),
                 arrowprops=dict(arrowstyle="<->", color=c_gray, lw=1))
 
-    # UQ Methods box
     draw_box(8.5, 5, 1.5, 0.7, "BE", "#e377c2", fontsize=7)
     draw_box(8.5, 3.8, 1.5, 0.7, "SCP", "#2ca02c", fontsize=7)
     draw_box(8.5, 2.6, 1.5, 0.7, "QR", "#17becf", fontsize=7)
 
-    # Feedback loop
     ax.annotate(
         "", xy=(1.9, 5), xytext=(0.1, 0.5),
         arrowprops=dict(arrowstyle="->", color=c_gray, lw=1,
@@ -177,7 +146,6 @@ def generate_figure_1(output_path: str) -> str:
     ax.text(0.65, 2.75, "Feedback", ha="center", fontsize=6, color=c_gray,
             fontstyle="italic", rotation=50)
 
-    # Title
     ax.set_title("MAPE-K Architecture with Confidence-Aware Tiered Scaling",
                 fontsize=12, fontweight="bold", pad=15)
 
@@ -188,17 +156,12 @@ def generate_figure_1(output_path: str) -> str:
     return output_path
 
 
-# ── Figure 2: Workload Patterns with Predictions ────────────────────────────
-
 def generate_figure_2(
     input_dir: Path,
     output_path: str,
     method: str = "confscale-scp",
 ) -> str:
-    """Figure 2: 4-panel time series showing workload patterns with predictions.
-
-    Shows actual RPS, GRU forecast, and confidence intervals for each workload.
-    """
+    """Figure 2: 4-panel time series showing workload patterns with predictions."""
     _setup_style()
     ts_df = load_timeseries(input_dir)
 
@@ -218,7 +181,6 @@ def generate_figure_2(
     for i, wl in enumerate(workloads_present[:4]):
         ax = axes[i]
 
-        # Get one replicate for this workload
         wl_data = ts_df[(ts_df["workload"] == wl) & (ts_df["method"] == method)]
         if len(wl_data) == 0:
             wl_data = ts_df[ts_df["workload"] == wl]
@@ -229,7 +191,6 @@ def generate_figure_2(
             ax.set_title(WORKLOAD_LABELS.get(wl, wl))
             continue
 
-        # Take first run
         run_id = wl_data["run_id"].iloc[0]
         run_data = wl_data[wl_data["run_id"] == run_id].sort_values("timestamp")
 
@@ -238,11 +199,9 @@ def generate_figure_2(
             t0 = run_data["timestamp"].iloc[0]
             t = run_data["timestamp"] - t0
 
-            # Plot actual RPS
             ax.plot(t, run_data["rps"], color=WORKLOAD_COLORS.get(wl, "#3498db"),
                    linewidth=0.8, alpha=0.8, label="Actual RPS")
 
-            # Plot replicas on twin axis
             ax2 = ax.twinx()
             ax2.plot(t, run_data["replicas"], color="orange", linewidth=0.6,
                     alpha=0.5, linestyle="--", label="Replicas")
@@ -264,8 +223,6 @@ def generate_figure_2(
     return output_path
 
 
-# ── Figure 3: SLO Violation Rate Bar Chart ─────────────────────────────────
-
 def generate_figure_3(df: pd.DataFrame, output_path: str) -> str:
     """Figure 3: Grouped bar chart of SLO violation rate per method × workload."""
     _setup_style()
@@ -281,7 +238,6 @@ def generate_figure_3(df: pd.DataFrame, output_path: str) -> str:
     if not methods_present or not workloads_present:
         return _generate_placeholder_figure(output_path, "Figure 3: SLO Violation Rate\n(Insufficient data)")
 
-    # Compute means and standard errors
     agg = df.groupby(["method", "workload"]).agg(
         mean=("slo_violation_rate", "mean"),
         std=("slo_violation_rate", "std"),
@@ -317,7 +273,6 @@ def generate_figure_3(df: pd.DataFrame, output_path: str) -> str:
             alpha=0.85,
         )
 
-    # HPA-reactive reference line
     hpa_means = agg[agg["method"] == "hpa-reactive"].groupby("workload")["mean"].mean()
     if len(hpa_means) > 0:
         ref_val = hpa_means.mean()
@@ -340,8 +295,6 @@ def generate_figure_3(df: pd.DataFrame, output_path: str) -> str:
     logger.info("Figure 3 saved: %s", output_path)
     return output_path
 
-
-# ── Figure 4: Resource Overhead Bar Chart ──────────────────────────────────
 
 def generate_figure_4(df: pd.DataFrame, output_path: str) -> str:
     """Figure 4: Resource Overhead per method × workload."""
@@ -383,10 +336,8 @@ def generate_figure_4(df: pd.DataFrame, output_path: str) -> str:
                   color=list(WORKLOAD_COLORS.values())[j % len(WORKLOAD_COLORS)],
                   alpha=0.85)
 
-    # Use a cleaner grouped approach
     plt.close(fig)
 
-    # Redo with proper grouped bars
     agg = df.groupby(["method", "workload"]).agg(
         overhead_mean=("overhead_replica_seconds", "mean"),
         overhead_std=("overhead_replica_seconds", "std"),
@@ -434,12 +385,8 @@ def generate_figure_4(df: pd.DataFrame, output_path: str) -> str:
     return output_path
 
 
-# ── Figure 5 (λ Pareto) lives in analysis/lambda_analysis.py ────────────────
-# It depends on the dedicated λ-sweep output directories
-# (`outputs/p3_lambda_sweep_*`), which `report.py` does not load.
+# Lambda-sweep plots need dedicated sweep outputs, which report.py does not load.
 
-
-# ── Figure 6: Time-Series Excerpt (Burst Event) ─────────────────────────────
 
 def generate_figure_6(
     input_dir: Path,
@@ -447,10 +394,7 @@ def generate_figure_6(
     method: str = "confscale-scp",
     workload: str = "B",
 ) -> str:
-    """Figure 6: 3-panel time series of a burst event.
-
-    Shows RPS + predictions (top), replica response (middle), p95 latency (bottom).
-    """
+    """Figure 6: 3-panel time series of a burst event."""
     _setup_style()
 
     ts_df = load_timeseries(input_dir)
@@ -458,7 +402,6 @@ def generate_figure_6(
     if len(ts_df) == 0:
         return _generate_placeholder_figure(output_path, "Figure 6: Burst Event Excerpt\n(No data available)")
 
-    # Get bursty workload for the specified method
     wl_data = ts_df[(ts_df["workload"] == workload) & (ts_df["method"] == method)]
     if len(wl_data) == 0:
         wl_data = ts_df[ts_df["workload"] == workload]
@@ -522,16 +465,11 @@ def generate_figure_6(
     return output_path
 
 
-# ── Figure 7: Time-in-Tier Distribution ────────────────────────────────────
-
 def generate_figure_7(
     df: pd.DataFrame,
     output_path: str,
 ) -> str:
-    """Figure 7: Stacked bar chart of time spent in each tier per workload.
-
-    Falls back to workload-level analysis if tier data is not directly available.
-    """
+    """Figure 7: Stacked bar chart of time spent in each tier per workload."""
     _setup_style()
 
     workloads_present = [w for w in WORKLOAD_ORDER if w in df["workload"].unique()]
@@ -542,7 +480,6 @@ def generate_figure_7(
 
     fig, ax = plt.subplots(figsize=(6, 4))
 
-    # Check if tier data exists
     if "tier" in df.columns:
         for wl in workloads_present:
             wl_data = df[df["workload"] == wl]
@@ -557,7 +494,6 @@ def generate_figure_7(
                        label=f"Tier {tier}" if wl == workloads_present[0] else "")
                 bottom += pct
     else:
-        # Fall back: classify workloads as tier proxies
         tier_map = {
             "A": ("Tier 1 (stable)", TIER_COLORS["tier1"]),
             "B": ("Tier 2/3 (bursty)", TIER_COLORS["tier2"]),
@@ -572,7 +508,6 @@ def generate_figure_7(
             ax.barh(WORKLOAD_LABELS.get(wl, wl), 1.0, color=color, alpha=0.6,
                    edgecolor="black", linewidth=0.5)
 
-        # Create legend
         legend_items = [
             mpatches.Patch(color=TIER_COLORS["tier1"], label="Tier 1 (Stable/Predictable)"),
             mpatches.Patch(color=TIER_COLORS["tier2"], label="Tier 2 (Moderate Uncertainty)"),
@@ -592,17 +527,10 @@ def generate_figure_7(
     return output_path
 
 
-# ── Figure 8 (coverage calibration) lives in analysis/calibration.py ────────
-# It joins controller_scale_log.json against timeseries.csv to compute
-# empirical coverage; running it here from the runs DataFrame alone produced
-# all-NaN output. Run `python -m paper3_experiments.analysis.calibration
-# --input <merged_dir> --output <results_dir>` to regenerate.
+# Coverage plots need interval logs joined to observations, not just run summaries.
 
-
-# ── Helpers ─────────────────────────────────────────────────────────────────
 
 def _generate_placeholder_figure(output_path: str, message: str) -> str:
-    """Generate a placeholder figure when data is missing."""
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.text(0.5, 0.5, message, ha="center", va="center", fontsize=12,
            transform=ax.transAxes, color="gray")
@@ -612,23 +540,12 @@ def _generate_placeholder_figure(output_path: str, message: str) -> str:
     return output_path
 
 
-# ── All Figures ─────────────────────────────────────────────────────────────
-
 def generate_all_figures(
     df: pd.DataFrame,
     input_dir: Path,
     output_dir: Path,
 ) -> dict[str, str]:
-    """Generate all 8 figures.
-
-    Args:
-        df: Runs DataFrame (from loader)
-        input_dir: Root directory with run outputs (for timeseries data)
-        output_dir: Directory to save figures
-
-    Returns:
-        dict mapping figure names to file paths.
-    """
+    """Generate all 8 figures."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -654,8 +571,7 @@ def generate_all_figures(
         df, str(output_dir / "fig_4_overhead_bars.pdf")
     )
 
-    # Figure 5 (λ Pareto): generated by analysis/lambda_analysis.py
-    # Figure 6: Burst event excerpt
+    # Lambda-sweep plots need dedicated sweep outputs, which report.py does not load.
     figures["fig_6_burst_excerpt"] = generate_figure_6(
         input_dir, str(output_dir / "fig_6_burst_excerpt.pdf")
     )
@@ -665,5 +581,5 @@ def generate_all_figures(
         df, str(output_dir / "fig_7_time_in_tier.pdf")
     )
 
-    # Figure 8 (coverage calibration): generated by analysis/calibration.py
+    # Coverage plots need interval logs joined to observations, not just run summaries.
     return figures

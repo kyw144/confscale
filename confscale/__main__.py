@@ -1,4 +1,4 @@
-"""Offline entrypoint: imports no cluster runtime and never sends requests."""
+"""Offline verification, table reproduction and demonstration."""
 import argparse
 import json
 from pathlib import Path

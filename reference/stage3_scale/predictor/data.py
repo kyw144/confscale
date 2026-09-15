@@ -1,9 +1,4 @@
-"""
-Data loading pipeline for GRU workload predictor.
-
-Loads 24h training data from the profiler (task 02), normalizes per-pattern,
-constructs sliding window sequences, and splits chronologically 60/20/20.
-"""
+"""Data loading pipeline for GRU workload predictor."""
 
 from pathlib import Path
 import pandas as pd
@@ -28,7 +23,6 @@ class NormalizationParams:
 
 
 def _validate_window_sizes(n_rows: int, h: int, k: int) -> None:
-    """Ensure the dataset has enough rows for the given window sizes."""
     min_rows = h + k + 1
     if n_rows < min_rows:
         raise ValueError(
@@ -44,17 +38,9 @@ def load_training_data(
     batch_size: int = 64,
     device: Optional[str] = None,
 ) -> tuple:
-    """Load 24h training data, split chronologically 60/20/20.
+    """Split chronologically 60/20/20; h and k count 30-second intervals.
 
-    Args:
-        csv_path: Path to pattern_X_24h.csv
-        h: History window size (number of 30s intervals)
-        k: Forecast horizon (number of 30s intervals ahead)
-        batch_size: Batch size for DataLoader
-        device: torch device (default: 'cpu')
-
-    Returns:
-        (train_loader, val_loader, test_loader, norm_params)
+    Return (train_loader, val_loader, test_loader, norm_params).
     """
     df = pd.read_csv(csv_path)
     _validate_window_sizes(len(df), h, k)
@@ -101,10 +87,7 @@ def load_training_data(
 
 
 def load_live_history(csv_path: str, norm: NormalizationParams, h: int = 60) -> np.ndarray:
-    """Load the last h data points for live prediction.
-    
-    Returns normalized array of shape (1, h, 1).
-    """
+    """Return normalized history of shape (1, h, 1)."""
     df = pd.read_csv(csv_path)
     if len(df) < h:
         raise ValueError(f"Need at least {h} rows, got {len(df)}")

@@ -1,9 +1,4 @@
-"""
-Prometheus TSDB snapshot utilities.
-
-Provides functions to trigger and copy Prometheus TSDB snapshots
-at the end of experimental runs for archival and re-analysis.
-"""
+"""Prometheus TSDB snapshot utilities."""
 
 import logging
 import subprocess
@@ -19,21 +14,7 @@ logger = logging.getLogger(__name__)
 
 def trigger_snapshot(prometheus_url: str, max_retries: int = 3,
                      backoff_s: float = 3.0) -> Optional[str]:
-    """
-    Trigger a Prometheus TSDB snapshot via admin API.
-
-    Args:
-        prometheus_url: Prometheus HTTP API base URL (e.g., http://localhost:9090)
-        max_retries: Number of retry attempts on connection failure
-        backoff_s: Backoff multiplier in seconds
-
-    Returns:
-        Snapshot name string (e.g., '20260509T120000Z-abcdef'), or None on failure.
-
-    Raises:
-        Does NOT raise — failures are logged and return None.
-        The snapshot is a backup; query-based extraction is the primary data source.
-    """
+    """Trigger a Prometheus TSDB snapshot via admin API."""
     url = f"{prometheus_url.rstrip('/')}/api/v1/admin/tsdb/snapshot"
     last_error = None
     for attempt in range(max_retries):
@@ -72,20 +53,7 @@ def copy_snapshot(snapshot_name: str, output_dir: Path,
                   namespace: str = "monitoring",
                   container: str = "prometheus",
                   kube_context: str = "kind-p3-experiments") -> bool:
-    """
-    Copy a TSDB snapshot from the Prometheus pod to a local directory.
-
-    Args:
-        snapshot_name: Snapshot name from trigger_snapshot()
-        output_dir: Local directory to copy the snapshot into
-        pod_name: Prometheus pod name
-        namespace: Kubernetes namespace
-        container: Container name within the pod
-        kube_context: kubectl context name
-
-    Returns:
-        True on success, False on failure.
-    """
+    """Copy a TSDB snapshot from the Prometheus pod to a local directory."""
     snapshot_path = f"/prometheus/snapshots/{snapshot_name}"
     dest_dir = output_dir / "prometheus_snapshot"
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -99,7 +67,6 @@ def copy_snapshot(snapshot_name: str, output_dir: Path,
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         if result.returncode == 0:
-            # Verify the copy
             if any(dest_dir.iterdir()):
                 logger.info("TSDB snapshot copied to %s", dest_dir)
                 return True
@@ -123,13 +90,7 @@ def copy_snapshot(snapshot_name: str, output_dir: Path,
 
 def capture_snapshot(prometheus_url: str, output_dir: Path,
                      **kwargs) -> dict:
-    """
-    Trigger and copy a TSDB snapshot. Convenience wrapper.
-
-    Returns:
-        dict with 'success' (bool), 'snapshot_name' (str or None),
-        and 'error' (str or None).
-    """
+    """Trigger and copy a TSDB snapshot."""
     snap_name = trigger_snapshot(prometheus_url)
     if snap_name is None:
         return {"success": False, "snapshot_name": None, "error": "trigger_failed"}

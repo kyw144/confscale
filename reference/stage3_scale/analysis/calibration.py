@@ -1,22 +1,4 @@
-"""Post-hoc calibration analysis for ConfScale controllers.
-
-For each cell that ran a UQ method (confscale-be / confscale-scp / confscale-qr),
-we have a `controller_scale_log.json` recording the controller's prediction
-interval at every scale decision, and a `timeseries.csv` recording observed
-RPS over time. This module joins them to compute empirical coverage relative
-to the controller's 90% target (alpha=0.1).
-
-Outputs per cell:
-- empirical_coverage: fraction of scale decisions where actual RPS (one
-  horizon ahead) fell inside [ci_lower, ci_upper]
-- median_width / p95_width: absolute interval width in RPS units
-- spike_coverage: coverage restricted to scale decisions where the observed
-  RPS was in the top decile for that cell
-- width_replica_corr: Spearman correlation between interval width and
-  scheduled replicas (signals whether wider intervals drive more replicas)
-
-Per-method aggregates: mean ± std across the 12 cells per method.
-"""
+"""Post-hoc calibration analysis for ConfScale controllers."""
 
 from __future__ import annotations
 
@@ -44,10 +26,7 @@ UQ_METHODS = (
 HORIZON_STEP = 0           # First-step-ahead horizon (controller scales on this)
 TARGET_COVERAGE = 0.90     # 1 - alpha (alpha=0.1 in conformal.py)
 
-# Sub-methods identified from the cell's recal/policy metadata (not the
-# directory-name prefix). Offline-SCP cells stay as "confscale-scp"; online
-# recalibration shifts them to "confscale-scp-online" so aggregates separate
-# the two regimes.
+# Use recalibration metadata rather than directory names to distinguish online SCP.
 SCP_METHOD_OFFLINE = "confscale-scp"
 SCP_METHOD_ONLINE = "confscale-scp-online"
 
@@ -57,29 +36,17 @@ def _iso_to_unix(ts: str) -> float:
 
 
 def _detect_method(cell_dir: Path) -> str | None:
-    """Pull method name from the cell directory name (e.g. confscale-scp_b_rep1_...).
-
-    Returns the *base* method (confscale-{be,scp,qr}); use _resolve_method_variant
-    after loading the scale log to refine SCP cells into offline vs online-recal.
-    """
     parts = cell_dir.name.split("_")
     return parts[0] if parts and parts[0] in UQ_METHODS else None
 
 
 def _has_recal(scale_df: pd.DataFrame) -> bool:
-    """True iff at least one log entry carries a 'recal' block (online-recal SCP)."""
     if scale_df.empty or "recal" not in scale_df.columns:
         return False
     return scale_df["recal"].apply(lambda v: isinstance(v, dict)).any()
 
 
 def _resolve_method_variant(base_method: str, scale_df: pd.DataFrame) -> str:
-    """Refine the base method name using the loaded scale log.
-
-    SCP cells with a recal block become 'confscale-scp-online'; everything else
-    keeps the directory-derived label so existing offline-SCP cells continue to
-    aggregate together.
-    """
     if base_method == SCP_METHOD_OFFLINE and _has_recal(scale_df):
         return SCP_METHOD_ONLINE
     return base_method
@@ -100,10 +67,6 @@ def _load_scale_log(cell_dir: Path) -> pd.DataFrame:
     df["ci_lower_h0"] = _pick("ci_lower")
     df["ci_upper_h0"] = _pick("ci_upper")
     df["point_forecast_h0"] = _pick("point_forecast")
-    # Online-recal q_hat trajectory: ci_lower/ci_upper above ALREADY reflect
-    # the per-iteration q_hat (controller computes them inside the same loop
-    # body where q_hat updates land), but the q_hat value itself is useful
-    # for diagnostics — extract it where the recal block is present.
     if "recal" in df.columns:
         def _q_hat_h(v):
             if isinstance(v, dict):
@@ -122,8 +85,6 @@ def _load_scale_log(cell_dir: Path) -> pd.DataFrame:
 
 
 def _load_operator_summary(cell_dir: Path) -> dict:
-    """Read operator_metrics_summary.json if present (online-recal cells expose
-    online_recal.initial_q_hat / final_q_hat there)."""
     path = cell_dir / "operator_metrics_summary.json"
     if not path.exists():
         return {}
@@ -147,7 +108,6 @@ def _load_timeseries(cell_dir: Path) -> pd.DataFrame:
 
 def _lookup_future_rps(ts: pd.DataFrame, scale_unix: float, horizon_s: float,
                        tolerance_s: float = 30.0) -> float:
-    """Return actual RPS at scale_unix + horizon_s, allowing ±tolerance match."""
     if ts.empty:
         return float("nan")
     target = scale_unix + horizon_s
@@ -159,15 +119,7 @@ def _lookup_future_rps(ts: pd.DataFrame, scale_unix: float, horizon_s: float,
 
 
 def analyze_cell(cell_dir: Path, interval_s: int = 30) -> dict:
-    """Compute calibration stats for a single cell.
-
-    Online-recal-SCP cells (controller_scale_log entries carry a `recal` block)
-    are tagged as `confscale-scp-online` and additionally report the q_hat
-    trajectory drawn from per-iteration `q_hat_used` and from
-    `operator_metrics_summary.json` (`online_recal.initial_q_hat`/`final_q_hat`).
-    The empirical-coverage computation is unchanged: ci_lower/ci_upper in the
-    log already reflect the q_hat active at each decision, dynamic or not.
-    """
+    """Compute calibration stats for a single cell."""
     base_method = _detect_method(cell_dir)
     if base_method is None:
         return {}
@@ -216,7 +168,6 @@ def analyze_cell(cell_dir: Path, interval_s: int = 30) -> dict:
     abs_err = (point_pred - rows["actual_rps_h0"]).abs()
     rel_err = abs_err / (rows["actual_rps_h0"].abs() + 1.0)
 
-    # Extract workload letter and replicate number from the cell name
     parts = cell_dir.name.split("_")
     workload = parts[1].upper() if len(parts) > 1 else None
     replicate = parts[2] if len(parts) > 2 else None
@@ -279,15 +230,7 @@ def analyze_all_cells(input_dir: Path, interval_s: int = 30) -> pd.DataFrame:
 
 
 def collect_q_hat_timeseries(input_dir: Path) -> pd.DataFrame:
-    """Emit a long-form table of q_hat_used over time for online-recal cells.
-
-    Rows: one per logged scale decision in any cell that carries a recal block.
-    Columns: cell, method, workload, replicate, elapsed_s, q_hat_h0,
-    recal_updated.
-
-    Useful as input to time-series figures or for confirming the calibration
-    trajectory (initial → final q_hat) per cell.
-    """
+    """Emit a long-form table of q_hat_used over time for online-recal cells."""
     rows = []
     for cell in sorted(p for p in Path(input_dir).iterdir() if p.is_dir()):
         base_method = _detect_method(cell)

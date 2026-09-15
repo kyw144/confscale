@@ -1,23 +1,10 @@
 #!/usr/bin/env python3
-"""
-Metrics Collector — extract structured timeseries from Prometheus after experiments.
+"""Metrics Collector — extract structured timeseries from Prometheus after experiments."""
 
-Contract (for orchestrator):
-    collect_metrics(prometheus_url, run_id, start_time, end_time,
-                    method, workload, replicate, output_dir) -> dict
-
-Handles:
-    - NaN/inf values → sanitized to None in JSON
-    - Prometheus connection errors → retry 3x with 5s backoff
-    - Empty query results → warn, not crash
-    - Partial data → flag in metadata
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 
@@ -39,8 +26,6 @@ from .snapshot import capture_snapshot
 logger = logging.getLogger(__name__)
 
 
-# ── Prometheus API Client ──────────────────────────────────────────────
-
 class PrometheusClient:
     """Minimal Prometheus HTTP API client with retry logic."""
 
@@ -51,7 +36,6 @@ class PrometheusClient:
         self.backoff_s = backoff_s
 
     def _request(self, endpoint: str, params: dict) -> dict:
-        """Execute a Prometheus API request with retry on connection errors."""
         url = f"{self.base_url}/api/v1/{endpoint}?"
         url += urllib.parse.urlencode(params)
         last_error = None
@@ -71,7 +55,7 @@ class PrometheusClient:
         raise ConnectionError(f"Prometheus unreachable after {self.max_retries} attempts: {last_error}")
 
     def query(self, promql: str) -> list[dict]:
-        """Execute an instant query. Returns list of result dicts."""
+        """Execute an instant query."""
         params = {"query": promql}
         if self.evaluation_time is not None:
             params["time"] = self.evaluation_time
@@ -79,7 +63,7 @@ class PrometheusClient:
         return data["data"]["result"]
 
     def query_range(self, promql: str, start: float, end: float, step: str) -> list[dict]:
-        """Execute a range query. Returns list of result dicts with 'values' arrays."""
+        """Execute a range query."""
         data = self._request("query_range", {
             "query": promql,
             "start": start,
@@ -88,8 +72,6 @@ class PrometheusClient:
         })
         return data["data"]["result"]
 
-
-# ── Value Sanitization ─────────────────────────────────────────────────
 
 def sanitize_value(value: Any) -> Optional[float]:
     """Convert a Prometheus value to a float, returning None for NaN/Inf."""
@@ -104,11 +86,8 @@ def sanitize_value(value: Any) -> Optional[float]:
     return v
 
 
-# ── Query Execution ────────────────────────────────────────────────────
-
 def _execute_scalar_queries(client: PrometheusClient, queries: list[dict],
                             window_s: int) -> dict[str, Any]:
-    """Execute all scalar instant queries and return a flat dict of results."""
     results = {}
     window = f"{window_s}s"
     for q in queries:
@@ -123,7 +102,6 @@ def _execute_scalar_queries(client: PrometheusClient, queries: list[dict],
                 val = sanitize_value(raw)
             else:
                 val = q["fallback"]
-            # Apply transform if defined
             if val is not None and "transform" in q:
                 val = eval(q["transform"])(val)
             results[q["output_key"]] = val
@@ -135,7 +113,6 @@ def _execute_scalar_queries(client: PrometheusClient, queries: list[dict],
 
 def _execute_timeseries_queries(client: PrometheusClient, queries: list[dict],
                                 start: float, end: float) -> dict[str, list[tuple[float, float]]]:
-    """Execute all timeseries range queries. Returns {column_name: [(timestamp, value), ...]}."""
     results = {}
     for q in queries:
         try:
@@ -161,12 +138,9 @@ def _execute_timeseries_queries(client: PrometheusClient, queries: list[dict],
     return results
 
 
-# ── Output Writers ─────────────────────────────────────────────────────
-
 def _write_metrics_json(scalars: dict, output_dir: Path, run_id: str,
                         method: str, workload: str, replicate: int,
                         duration_s: int, window_s: int) -> Path:
-    """Write the summary metrics.json file."""
     # Nest the flat scalar keys into the structured schema
     structured: dict[str, Any] = {
         "run_id": run_id,
@@ -176,7 +150,6 @@ def _write_metrics_json(scalars: dict, output_dir: Path, run_id: str,
         "duration_s": duration_s,
         "window_s": window_s,
     }
-    # Build nested dicts from dotted keys: "slo.p95_ms" → {"slo": {"p95_ms": ...}}
     for key, val in scalars.items():
         parts = key.split(".")
         d = structured
@@ -194,7 +167,6 @@ def _write_metrics_json(scalars: dict, output_dir: Path, run_id: str,
 
 def _write_timeseries_csv(ts_data: dict[str, list[tuple[float, float]]],
                           output_dir: Path, duration_s: int) -> Path:
-    """Write the timeseries.csv file, aligning all columns by timestamp."""
     # Build a merged dict: {timestamp: {col: value, ...}}
     merged: dict[float, dict[str, Optional[float]]] = {}
     columns = list(ts_data.keys())
@@ -217,8 +189,6 @@ def _write_timeseries_csv(ts_data: dict[str, list[tuple[float, float]]],
     return path
 
 
-# ── Main Entry Point ───────────────────────────────────────────────────
-
 def collect_metrics(
     prometheus_url: str,
     run_id: str,
@@ -232,30 +202,12 @@ def collect_metrics(
     snapshot_pod_name: str = "prometheus-prometheus-kube-prometheus-prometheus-0",
     trace_csv_path: Optional[Path] = None,
 ) -> dict[str, Any]:
-    """
-    Extract metrics from Prometheus and write structured output.
-
-    Args:
-        prometheus_url: Prometheus HTTP API base URL (e.g., http://localhost:9090)
-        run_id: Unique run identifier (e.g., hpa-reactive_diurnal_rep1_20260509_120000)
-        start_time: Experiment start time (UTC)
-        end_time: Experiment end time (UTC)
-        method: Method name (e.g., hpa-reactive, confscale-be)
-        workload: Workload pattern (e.g., diurnal, spike)
-        replicate: Replicate number (1-indexed)
-        output_dir: Directory to write metrics.json and timeseries.csv
-        do_snapshot: If True, trigger and copy a Prometheus TSDB snapshot
-        snapshot_pod_name: Prometheus pod name for kubectl cp
-
-    Returns:
-        dict with status, metadata, and summary statistics
-    """
+    """Extract metrics from Prometheus and write structured output."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     client = PrometheusClient(prometheus_url, evaluation_time=end_time.timestamp())
 
-    # Convert datetimes to epoch seconds for Prometheus queries
     start_epoch = start_time.timestamp()
     end_epoch = end_time.timestamp()
     duration_s = int(end_epoch - start_epoch)
@@ -264,16 +216,13 @@ def collect_metrics(
     status = "ok"
     warnings: list[str] = []
 
-    # ── 1. Execute scalar queries ──
     logger.info("Executing scalar queries...")
     scalar_results = _execute_scalar_queries(client, SCALAR_QUERIES, window_s)
 
-    # ── 2. Execute SLO queries ──
     logger.info("Executing SLO queries...")
     slo_results = _execute_scalar_queries(client, SLO_QUERIES, window_s)
     scalar_results.update(slo_results)
 
-    # ── 2b. Compute E2E SLO metrics from workload trace CSV ──
     if trace_csv_path and trace_csv_path.exists():
         logger.info("Computing E2E SLO metrics from trace: %s", trace_csv_path)
         e2e_metrics = compute_e2e_slo_metrics(trace_csv_path)
@@ -286,7 +235,6 @@ def collect_metrics(
     elif trace_csv_path:
         logger.warning("Trace CSV not found at %s — skipping E2E SLO metrics", trace_csv_path)
 
-    # ── 3. Execute UQ queries (optional) ──
     logger.info("Checking for UQ metrics...")
     try:
         uq_results = _execute_scalar_queries(client, UQ_QUERIES, window_s)
@@ -296,13 +244,11 @@ def collect_metrics(
     except Exception as e:
         logger.info("UQ metrics not available (expected for non-UQ runs): %s", e)
 
-    # ── 4. Execute timeseries queries ──
     logger.info("Executing timeseries queries...")
     ts_results = _execute_timeseries_queries(
         client, TIMESERIES_QUERIES, start_epoch, end_epoch
     )
 
-    # Compute derived metrics
     avg_replicas = scalar_results.pop("resources._avg_replicas_for_overhead", 1.0)
     if avg_replicas is not None:
         scalar_results["resources.overhead_replica_seconds"] = max(0, (avg_replicas - 1) * window_s)
@@ -322,12 +268,10 @@ def collect_metrics(
             status = "degraded"
         warnings.append("Timeseries queries returned no datapoints")
 
-    # ── 6. Write output ──
     _write_metrics_json(scalar_results, output_dir, run_id,
                         method, workload, replicate, duration_s, window_s)
     _write_timeseries_csv(ts_results, output_dir, duration_s)
 
-    # ── 6. Optional TSDB snapshot ──
     snapshot_info = None
     if do_snapshot:
         logger.info("Capturing TSDB snapshot...")
@@ -337,7 +281,6 @@ def collect_metrics(
         if not snapshot_info["success"]:
             warnings.append(f"TSDB snapshot failed: {snapshot_info.get('error')}")
 
-    # ── 7. Check data quality ──
     summary = {
         "status": status,
         "warnings": warnings,
@@ -360,8 +303,6 @@ def collect_metrics(
     }
     return summary
 
-
-# ── CLI (for standalone testing) ────────────────────────────────────────
 
 if __name__ == "__main__":
     import argparse

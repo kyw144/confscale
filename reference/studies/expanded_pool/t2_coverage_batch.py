@@ -1,27 +1,10 @@
 #!/usr/bin/env python
-"""T2 Step 3 — reduced coverage batch: frozen SCP + ACI/PID(+ladder) recovery at R=3.
+"""Evaluate coverage recovery on the fixed expanded service pool."""
 
-ADDITIVE: imports the LOCKED `pass2_perservice.py` for series/window helpers and
-COPIES the three recal-walk helpers (`forecasts`, `make_recal`, `walk`) VERBATIM from the locked
-`recal_perservice.py` (that script runs the MS_7129 analysis at module scope, so it cannot be
-imported without side effects). Edits no locked code.
-
-Per batch service (selected from sanity-passing T2 candidates, 3 volatility + 3 floor-aware level),
-reproduces frozen-SCP vs adaptive-recal coverage over the deploy window at R=3 replicates,
-h0-only recalibration with warm-started buffer, matching the controller protocol exactly
-(`recal_perservice.py:59-93`). Reports per-service frozen vs ACI/PID/laddered coverage h0/h1 and
-width multipliers vs frozen.
-
-Usage:  .venv/bin/python data/p3_runs/reopen_2026-06/T2/t2_coverage_batch.py <start_idx> <end_idx>
-        # half-open [start,end) into the selected batch list (0-based).
-Appends/updates t2_coverage_batch.json after EACH service (crash-safe; resume-safe).
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util, os
@@ -51,7 +34,6 @@ GATE = f"{T2}/t2_sanity_gate.json"
 OUT = f"{T2}/t2_coverage_batch.json"
 
 
-# ----- helpers copied VERBATIM from recal_perservice.py:40-93 (locked logic) -----
 def forecasts(u, seg_arr, mu, sigma):
     """Per-window raw-RPS point forecasts (h0,h1) + actuals (h0,h1) for a segment."""
     X, Y = p2.windows(seg_arr, mu, sigma)
@@ -72,7 +54,7 @@ def make_recal(kind):
 
 
 def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
-    """Offline online-recalibration walk over the deploy windows. Returns coverage h0/h1 + width + ladder hist."""
+    """Offline online-recalibration walk over the deploy windows."""
     laddered = method.endswith('-lad')
     kind = 'aci' if method.startswith('aci') else 'pid'
     recal = None
@@ -87,7 +69,6 @@ def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
     prev = None
     levels = []
     for i in range(len(fc)):
-        # 1. update recalibrator on PRIOR step, set q̂[0]
         if recal is not None and prev is not None:
             recal.update(prev[0], prev[1])
         q0 = float(recal.quantile()) if recal is not None else q0_frozen
@@ -106,7 +87,6 @@ def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
         prev = (abs(ac[i, 0] - fc[i, 0]) / sigma, not c0)
     return (100 * np.mean(cov0), 100 * np.mean(cov1), float(np.mean(w0)),
             max(levels) if levels else 0)
-# ----- end verbatim copy -----
 
 
 def windows_for(service, channel):
@@ -117,8 +97,7 @@ def windows_for(service, channel):
 
 
 def select_batch():
-    """Deterministic batch: first 3 sanity-passing volatility (ratio desc) + first 3 sanity-passing
-    floor-aware level (resid_inflation asc) candidates, in CSV row order."""
+    """Deterministic batch: first 3 sanity-passing volatility (ratio desc) + first 3 sanity-passing floor-aware level (resid_inflation asc) candidates, in CSV row order."""
     with open(GATE) as f:
         gate = json.load(f)
     passing = [g for g in gate if g.get('sanity_pass')]

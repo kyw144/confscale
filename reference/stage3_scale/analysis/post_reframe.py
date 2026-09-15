@@ -1,29 +1,4 @@
-"""Post-reframe analysis pipeline (Stream C of paper3_agenda_2026-05-25).
-
-Walks the post-reframe batch directories and produces the cost-and-coverage
-artifacts for §6 of the post-reframe paper:
-
-    aggregated_metrics_post_reframe.csv  - one row per cell across batches
-    tables/table_a_coverage_cost_drift.md
-    tables/table_b_ladder_overhead.md
-    tables/table_c_resource_overhead_updated.md
-    figures/figure_a_cost_vs_coverage.pdf
-    statistics/pairwise_raw_vs_laddered.json
-    _STATUS.md
-
-Per-cell metric sources (see _COST_EXTRACTION_BRIEF.md §2.1):
-    run_config.yaml                 -> method/workload/replicate/duration
-    metrics.json.resources          -> overhead_replica_seconds, mean_replicas
-    metrics.json.{slo,e2e}          -> p95_ms, slo_violation_rate
-    operator_metrics_summary.json   -> coverage_monitor.*, ladder.*
-
-The post-reframe CSV supersedes the five hand-cut JSON extracts in
-data/p3_runs/results/ (drift_coverage_extended, aci_laddered_coverage,
-pid_laddered_no_drift_60min, rolling_origin_laddered_coverage,
-laddered_n5_combined). Those remain on disk as provenance.
-
-Entry point: `python -m stage3_scale.analysis.post_reframe`
-"""
+"""Aggregate drift, ladder and resource-overhead results."""
 
 from __future__ import annotations
 
@@ -45,13 +20,8 @@ except ImportError:  # script-style invocation (`python analysis/post_reframe.py
 logger = logging.getLogger(__name__)
 
 
-# ── Batch registry ─────────────────────────────────────────────────────────
-#
-# Each entry maps a batch directory name to a dict of metadata controlling how
-# the loader walks it. `subdirs` are sub-paths inside the batch dir that
-# themselves contain run directories (e.g. drift_injection's F_phase1/F_phase2/G/H).
-# `stream_a_nesting=True` means individual cells may have inner data/p3_runs/...
-# clutter from a wrong-cwd orchestrator launch (Stream A bug, brief §2.1.2).
+# subdirs contains nested run directories; stream_a_nesting handles historical
+# outputs written under a duplicated data/p3_runs path.
 
 @dataclass
 class BatchSpec:
@@ -97,8 +67,6 @@ POST_REFRAME_BATCHES: list[BatchSpec] = [
 ]
 
 
-# ── Per-cell extraction ────────────────────────────────────────────────────
-
 def _safe_load_yaml(path: Path) -> dict:
     try:
         return yaml.safe_load(path.read_text()) or {}
@@ -116,11 +84,7 @@ def _safe_load_json(path: Path) -> Any:
 
 
 def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
-    """Pull the per-cell metric dict from one run directory.
-
-    Returns None if the cell is unparseable (missing both metrics.json and
-    operator_metrics_summary.json). Missing fields are NaN-filled.
-    """
+    """Pull the per-cell metric dict from one run directory."""
     parsed = _parse_run_dirname(cell_dir.name)
     if parsed is None:
         return None
@@ -154,7 +118,6 @@ def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
     )
 
     row = {
-        # Identity
         "run_id": cell_dir.name,
         "batch": batch,
         "method": parsed["method"],
@@ -163,7 +126,6 @@ def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
         "status": config.get("status", "unknown") if isinstance(config, dict) else "unknown",
         "duration_s": duration_s,
         "actual_duration_s": config.get("actual_duration_s", 0) if isinstance(config, dict) else 0,
-        # Cost
         "overhead_replica_seconds": overhead,
         "overhead_replica_seconds_per_hour": overhead_per_hour,
         "mean_replicas": resources.get("mean_replicas", np.nan),
@@ -181,23 +143,19 @@ def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
         "slo_violation_rate": e2e.get("slo_violation_rate", np.nan),
         "slo_violation_intervals": e2e.get("slo_violation_intervals", np.nan),
         "total_intervals": e2e.get("total_intervals", np.nan),
-        # Coverage monitor
         "coverage_rate": cov.get("coverage_rate", np.nan),
         "final_alert_state": cov.get("final_alert_state"),
         "total_validated": cov.get("total_validated", np.nan),
         "total_covered": cov.get("total_covered", np.nan),
-        # Ladder
         "l0_cycles": ladder.get("l0_cycles", np.nan),
         "l1_cycles": ladder.get("l1_cycles", np.nan),
         "l2_cycles": ladder.get("l2_cycles", np.nan),
         "max_escalation": ladder.get("max_escalation", np.nan),
         "max_level": ladder.get("max_level", np.nan),
-        # Controller state
         "final_replicas": op_summary.get("final_replicas", np.nan) if isinstance(op_summary, dict) else np.nan,
         "total_intervals_controller": op_summary.get("total_intervals", np.nan) if isinstance(op_summary, dict) else np.nan,
         "total_scale_operations": op_summary.get("total_scale_operations", np.nan) if isinstance(op_summary, dict) else np.nan,
         "mean_decision_latency_ms": op_summary.get("mean_decision_latency_ms", np.nan) if isinstance(op_summary, dict) else np.nan,
-        # Method config knobs
         "ladder_enabled": bool(method_config.get("ladder", False)) if isinstance(method_config, dict) else False,
         "coverage_target": method_config.get("coverage_target", np.nan) if isinstance(method_config, dict) else np.nan,
         "coverage_window": method_config.get("coverage_window", np.nan) if isinstance(method_config, dict) else np.nan,
@@ -205,16 +163,8 @@ def extract_cell(cell_dir: Path, batch: str) -> Optional[dict]:
     return row
 
 
-# ── Batch discovery ────────────────────────────────────────────────────────
-
 def discover_post_reframe_runs(outputs_root: Path) -> pd.DataFrame:
-    """Walk all post-reframe batches and return a one-row-per-cell DataFrame.
-
-    Brief §2.1 — the canonical post-reframe loader. Tolerates missing batches
-    (e.g. Stream B not launched), missing operator summaries (hpa-* baselines),
-    and the Stream A cwd-nesting bug (cell-level data is still at the cell
-    root; the redundant data/p3_runs/... subdir is ignored).
-    """
+    """Walk all post-reframe batches and return a one-row-per-cell DataFrame."""
     outputs_root = Path(outputs_root)
     rows: list[dict] = []
     anomalies: list[str] = []
@@ -254,8 +204,6 @@ def discover_post_reframe_runs(outputs_root: Path) -> pd.DataFrame:
     df.attrs["anomalies"] = anomalies
     return df
 
-
-# ── Pooling and aggregation helpers ────────────────────────────────────────
 
 # Methods whose laddered n=5 pool comes from drift_injection_e1 (n=3) + laddered_replication_extension (n=2)
 LADDERED_POOL_SOURCES: dict[str, list[str]] = {
@@ -297,8 +245,6 @@ def _mean_std_n(series: pd.Series) -> tuple[float, float, int]:
     return (float(np.mean(vals)), float(np.std(vals, ddof=1)) if len(vals) > 1 else 0.0, len(vals))
 
 
-# ── Table A: coverage + cost on F/G/H ──────────────────────────────────────
-
 TABLE_A_METHODS = [
     "confscale-pid",
     "confscale-pid-laddered",
@@ -335,7 +281,6 @@ def build_table_a(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
             })
     out = pd.DataFrame(rows)
 
-    # Markdown rendering
     md = ["# Table A — Coverage and cost on F/G/H",
           "",
           "Per-cell `coverage_rate` from `operator_metrics_summary.json.coverage_monitor`,",
@@ -359,8 +304,6 @@ def build_table_a(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     ])
     return out, "\n".join(md)
 
-
-# ── Table B: raw vs laddered delta ─────────────────────────────────────────
 
 LADDER_PAIRS = [
     ("confscale-pid", "confscale-pid-laddered"),
@@ -416,16 +359,8 @@ def build_table_b(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     return out, "\n".join(md)
 
 
-# ── Table C: Pattern A 60-min PID rows added to the original Table 2 ───────
-
 def build_table_c(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
-    """Append confscale-pid and confscale-pid-laddered Pattern A 60-min rows.
-
-    The original Table 2 (resource overhead on A/B/D) is at
-    data/p3_runs/results/real/tables/table_2_resource_overhead.md.
-    This output mirrors the structure with the new rows added and flags the
-    B/D gap per brief §2.4.
-    """
+    """Append confscale-pid and confscale-pid-laddered Pattern A 60-min rows."""
     a_pid = df[
         (df["method"] == "confscale-pid")
         & (df["workload"] == "A")
@@ -480,13 +415,8 @@ def build_table_c(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
     return out, "\n".join(md)
 
 
-# ── Pairwise stats ─────────────────────────────────────────────────────────
-
 def run_pairwise_tests(df: pd.DataFrame) -> dict:
-    """Per agenda §3.3: Welch's t-test + Cohen's d, Holm-Bonferroni across 9 comparisons.
-
-    Imports the helpers from stats.py.
-    """
+    """Per agenda §3.3: Welch's t-test + Cohen's d, Holm-Bonferroni across 9 comparisons."""
     try:
         from .stats import welch_t_test, cohens_d_independent, bonferroni_holm_correction
     except ImportError:
@@ -549,8 +479,6 @@ def run_pairwise_tests(df: pd.DataFrame) -> dict:
     }
 
 
-# ── Figure A: cost vs coverage scatter ─────────────────────────────────────
-
 def make_figure_a(df: pd.DataFrame, output_path: Path) -> None:
     import matplotlib.pyplot as plt
 
@@ -582,7 +510,6 @@ def make_figure_a(df: pd.DataFrame, output_path: Path) -> None:
         ax.set_title(f"Pattern {pat}")
         ax.set_xlim(0.0, 1.0)
     axes[0].set_ylabel("Overhead replica-seconds / hour (log)")
-    # One legend on the right
     handles, labels = axes[-1].get_legend_handles_labels()
     seen: set[str] = set()
     uniq = [(h, l) for h, l in zip(handles, labels) if not (l in seen or seen.add(l))]
@@ -597,8 +524,6 @@ def make_figure_a(df: pd.DataFrame, output_path: Path) -> None:
     plt.close(fig)
     logger.info("Wrote figure %s", output_path)
 
-
-# ── Provenance: compare to existing JSON extracts ──────────────────────────
 
 PROVENANCE_EXTRACTS = [
     "drift_coverage_extended_20260524.json",
@@ -640,8 +565,6 @@ def cross_check_against_extracts(df: pd.DataFrame, results_root: Path) -> list[d
     return diffs
 
 
-# ── Orchestrator ───────────────────────────────────────────────────────────
-
 def run_pipeline(outputs_root: Path, results_root: Path) -> dict:
     out_dir = results_root / "post_reframe"
     (out_dir / "tables").mkdir(parents=True, exist_ok=True)
@@ -652,12 +575,10 @@ def run_pipeline(outputs_root: Path, results_root: Path) -> dict:
     if len(df) == 0:
         raise RuntimeError(f"No post-reframe cells discovered under {outputs_root}")
 
-    # Unified CSV
     csv_path = out_dir / "aggregated_metrics_post_reframe.csv"
     df.to_csv(csv_path, index=False)
     logger.info("Wrote %s (%d rows)", csv_path, len(df))
 
-    # Tables
     _table_a_df, table_a_md = build_table_a(df)
     (out_dir / "tables" / "table_a_coverage_cost_drift.md").write_text(table_a_md + "\n")
     _table_b_df, table_b_md = build_table_b(df)
@@ -665,16 +586,13 @@ def run_pipeline(outputs_root: Path, results_root: Path) -> dict:
     _table_c_df, table_c_md = build_table_c(df)
     (out_dir / "tables" / "table_c_resource_overhead_updated.md").write_text(table_c_md + "\n")
 
-    # Stats
     stats_result = run_pairwise_tests(df)
     (out_dir / "statistics" / "pairwise_raw_vs_laddered.json").write_text(
         json.dumps(stats_result, indent=2, default=_json_default)
     )
 
-    # Figure
     make_figure_a(df, out_dir / "figures" / "figure_a_cost_vs_coverage.pdf")
 
-    # Provenance cross-check
     cross = cross_check_against_extracts(df, results_root)
     (out_dir / "statistics" / "provenance_cross_check.json").write_text(
         json.dumps(cross, indent=2, default=_json_default)

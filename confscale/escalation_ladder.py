@@ -1,28 +1,4 @@
-"""
-Coverage-conditional escalation ladder — outer safety net above Conformal PID.
-
-E1 brief §4. The PID recalibrator runs continuously as the inner loop; this
-ladder fires only when trailing empirical coverage stays below the band for
-``escalation_persistence`` consecutive cycles *despite* PID being active.
-
-Levels:
-  0 — nominal: pass the recalibrator's half-width through unchanged
-  1 — widening: multiply the half-width by ``widening_factor``
-  2 — conservative tier: hand off a fixed high-confidence multiple (3× by default)
-      to mimic the "safety" scaling tier in the legacy controller
-
-De-escalation requires ``recovery_persistence`` consecutive cycles at or above
-``target_coverage`` and steps down exactly one level at a time (no skipping
-2→0). Any cycle that's neither below band nor at/above target leaves both
-counters reset to zero, so oscillating coverage cannot accumulate spurious
-escalation.
-
-This is a pure state machine — no kubectl, no Prometheus, no IO. The
-controller calls :meth:`step` once per cycle with the latest trailing coverage,
-then calls :meth:`apply` to transform the recalibrator's half-width before
-feeding it to the scaler. A Prometheus gauge for the current level is exported
-by the controller, not here.
-"""
+"""Escalate interval width after persistent undercoverage."""
 
 from __future__ import annotations
 
@@ -86,18 +62,8 @@ class EscalationLadder:
         """Trailing coverage strictly below this triggers escalation counting."""
         return self.target_coverage - self.escalation_band
 
-    # ── Step ────────────────────────────────────────────────────────────
-
     def step(self, trailing_coverage: float) -> int:
-        """Advance one cycle and return the resulting level.
-
-        Cycles below the band increment the escalation counter; cycles at or
-        above the target increment the recovery counter; cycles in the
-        middle band reset both. When a counter reaches its persistence
-        threshold the level moves one step (and the counter resets), so
-        re-escalating or further de-escalating requires another full
-        persistence run.
-        """
+        """Advance one cycle; recover one level at a time and reset counters in the middle band."""
         tc = float(trailing_coverage)
 
         if tc < self.escalation_threshold:
@@ -127,16 +93,8 @@ class EscalationLadder:
 
         return self.level
 
-    # ── Apply ───────────────────────────────────────────────────────────
-
     def apply(self, base_half_width: float) -> float:
-        """Transform the recalibrator's half-width per the current level.
-
-        Level 0: pass-through. Level 1: multiply by ``widening_factor``.
-        Level 2: multiply by ``conservative_factor`` (fixed high-confidence
-        tier; mimics the legacy "safety" tier — controller wiring may
-        substitute a quantile-based equivalent if needed).
-        """
+        """Transform the recalibrator's half-width per the current level."""
         h = float(base_half_width)
         if self.level == self.LEVEL_NOMINAL:
             return h
@@ -144,10 +102,7 @@ class EscalationLadder:
             return h * self.widening_factor
         return h * self.conservative_factor
 
-    # ── Introspection ───────────────────────────────────────────────────
-
     def state(self) -> dict:
-        """Snapshot for Prometheus / scale-log embedding."""
         return {
             "level": int(self.level),
             "escalation_counter": int(self.escalation_counter),

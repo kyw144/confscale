@@ -1,14 +1,9 @@
-"""
-InfoSys Benchmark — Frontend (API Gateway)
-Receives HTTP traffic, fans out to downstream services, measures SLO latency.
-Target: p95 < 200ms
-"""
+"""InfoSys Benchmark — Frontend (API Gateway) Receives HTTP traffic, fans out to downstream services, measures SLO latency."""
 
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if True:
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 from flask import Flask, request, jsonify
@@ -33,7 +28,7 @@ DOWNSTREAM_TIMEOUT = float(os.environ.get("DOWNSTREAM_TIMEOUT", 5.0))
 @app.route("/api/process")
 @latency
 def api_process():
-    """Fan-out to processor service. This is the SLO measurement point."""
+    """Fan-out to processor service."""
     complexity = request.args.get("n", "50000")
     items = request.args.get("items", "3")
 

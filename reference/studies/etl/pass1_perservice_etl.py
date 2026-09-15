@@ -1,31 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b Pass 1 — re-aggregate the EXISTING MSRTMCR ETL to PER-SERVICE granularity
-and compute per-service LOAD descriptors. NO new download. NO coverage/forecasting.
+"""Aggregate trace data by service and select evaluation candidates."""
 
-FIREWALL (Pass 1): only load statistics. No coverage, interval widths, residuals, or
-anything forecast-error-adjacent. Selection happens on descriptors only (separate script).
-
-Dedup: WITHIN-service only. df.drop_duplicates() (full-row; msname is in every row so it
-is inherently within-service) collapses the 81.5% exact-duplicate rows, THEN
-groupby(msname,timestamp).sum() aggregates the service's distinct instances/nodes -> the
-service's request rate. Never dedup across services.
-
-Pool: to keep the wide pivot tractable and operationally meaningful (autoscaling a
-0.0006-RPS service is meaningless), descriptors are computed for the TOP-K services by mean
-level among >=80%-covered services. K is a structural pool size (locked on load stats), not
-a coverage choice. The CoV quartile etc. are taken WITHIN this pool.
-
-Outputs (in this dir):
-  perservice_pool_series.csv     wide: timestamp_min + one col per pool service (60s grid, NaN=gap)
-  perservice_descriptors.csv     one row/service: mean, range, cov, ac1, sigma_diff, suff, shape tag
-  pass1_etl_summary.json
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, time, json, glob, tarfile
@@ -45,7 +24,6 @@ N_TS = 1440
 SUFF_MIN = int(0.80 * N_TS)   # 1152 bins
 POOL_K = 500                  # top-K by mean level (structural pool size)
 
-# --- pool selection from the immutable totals (mean level = total / n_ts) ---
 st = pd.read_csv(TOTALS)
 st = st[st['n_ts'] >= SUFF_MIN].copy()
 st['mean_level'] = st['providerrpc_mcr'] / st['n_ts']
@@ -90,7 +68,6 @@ def main():
     print(f"wide pivot shape={wide.shape} elapsed={time.time()-t0:.0f}s", flush=True)
     wide.reset_index().to_csv(f"{DIR}/perservice_pool_series.csv", index=False)
 
-    # --- per-service load descriptors (NO coverage) ---
     rows = []
     for ms in wide.columns:
         s = wide[ms]

@@ -1,4 +1,4 @@
-"""Paper 3's local inspection core. Importing this package performs no I/O."""
+"""Conformal recalibration and replica planning."""
 from .aci import ACI
 from .conformal_pid import ConformalPID, EmptyResidualBufferError
 from .coverage_monitor import CoverageMonitor

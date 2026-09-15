@@ -1,55 +1,10 @@
 #!/usr/bin/env python
-"""T1 (P3 re-open) — PER-HORIZON h1 recalibration, OFFLINE additive replay.
+"""Replay per-horizon recalibration on service residuals, without cluster execution."""
 
-Converts the Table-6 / §4.5 limitation ("recalibration is h0-only; the actuator's
-max-over-horizon decision is driven by the FROZEN h1 bound on a large fraction of
-cycles") into a measured result, additively.
-
-WHAT THIS DOES (and does NOT do):
-  - COPIES + extends the LOCKED offline replay machinery of
-        data/p3_runs/results/ev8b_perservice_20260601_024537/recal_perservice.py
-        data/p3_runs/results/ev8b_perservice_20260601_024537/h1_binds_analysis.py
-        data/p3_runs/results/ev8b_pass2_full_20260601_210028/pass2_full_recal.py
-    verbatim (same windows, R=6 seeds, warm-start, h0-only order) and ADDS a second
-    recalibrator instance per method that recalibrates the h1 quantile too.
-  - Per-horizon design = a LIST of k unchanged scalar ConformalPID/ACI objects
-    (Option B of the A1 memo). The classes are reused verbatim — no edit to
-    conformal_pid.py / aci.py / controller.py. h1 instance is warm-started on the
-    REF-window h1 residuals (so q̂1(cycle0)==frozen SCP q1, mirroring the locked h0
-    warm-start) and updated on a 2-tick-lagged h1 residual stream (h1 validates two
-    cycles later vs h0's one).
-  - Runs BOTH modes in one pass per method:
-        frozen_h1  : h0 recalibrated, h1 frozen  -> reproduces the locked baseline
-        per_horizon: h0 recalibrated, h1 recalibrated  -> the T1 result
-    The frozen_h1 reproduction is the faithfulness cross-check: cov_h0/width_h0 and
-    the frozen-h1-binds % must match the locked recal_volatility.json / h1_binds.json
-    / pass2_full_recal.json before the per_horizon numbers are trusted.
-
-METRICS (additive; locked Table 6 preserved verbatim):
-  - cov_h0, cov_h1 (cov_h1 ADAPTED under per_horizon vs frozen 72.9% on anchor)
-  - width_h0, width_h1 (raw RPS full widths) + width-x-frozen multipliers
-  - h1_binds_pct  = fraction of deploy cycles where ci_upper[1] >= ci_upper[0]
-                    (which horizon wins the actuator's np.max). May NOT fall to zero
-                    under per_horizon — recalibrating h1 WIDENS it.
-  - actuator_reach_pct = fraction of cycles where the WINNING (max) bound is a
-                    *recalibrated* bound. frozen_h1: = 100 - h1_binds (only h0-wins
-                    cycles carry a recalibrated bound). per_horizon: = 100% by
-                    construction (no frozen quantity left in the max()).
-
-OFFLINE ONLY — torch CPU, numpy, pandas, the uq.* heads, the pre-extracted Alibaba
-per-service CSV. No kubectl/kind/Prometheus. Run from repo root:
-    .venv/bin/python data/p3_runs/reopen_2026-06/T1/recal_perservice_h1.py
-
-Timescale note (A1): the Alibaba replay is on a 60s grid, so h0=60s / h1=120s here
-(vs the paper's 30s/60s testbed). Horizon INDEX (k=2, one-/two-step) is identical;
-do not conflate the wall-clock.
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util
@@ -63,7 +18,6 @@ from uq.conformal_pid import ConformalPID
 from uq.aci import ACI
 from baselines.escalation_ladder import EscalationLadder
 
-# ── reuse the locked helpers verbatim (same import pattern as the originals) ──────────────────────
 P2DIR = "data/p3_runs/results/ev8b_perservice_20260601_024537"
 spec = importlib.util.spec_from_file_location("p2", f"{P2DIR}/pass2_perservice.py")
 p2 = importlib.util.module_from_spec(spec); spec.loader.exec_module(p2)
@@ -86,7 +40,7 @@ CELLS = [
 
 
 def forecasts(u, seg_arr, mu, sigma):
-    """Per-window raw-RPS point forecasts (h0,h1) + actuals (h0,h1). Verbatim from the originals."""
+    """Per-window raw-RPS point forecasts (h0,h1) + actuals (h0,h1)."""
     X, Y = p2.windows(seg_arr, mu, sigma)
     fc, ac = [], []
     for i in range(len(X)):
@@ -106,24 +60,13 @@ def make_recal(kind):
 
 
 def warm_start(recal, ref_resids):
-    """Prime the buffer with REF-window residuals so quantile()==frozen SCP q̂ at cycle 0.
-    Identical mechanism to the locked h0 warm-start (recal_perservice.py:66-67)."""
+    """Prime the buffer with REF-window residuals so quantile()==frozen SCP q̂ at cycle 0."""
     for r in ref_resids[-200:]:
         recal.residuals.append(abs(float(r)))
 
 
 def walk(method, per_horizon, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids0, ref_resids1):
-    """Offline recalibration walk over the deploy windows.
-
-    method      : 'frozen' | 'aci' | 'pid' | 'aci-lad' | 'pid-lad'
-    per_horizon : False -> h1 frozen (reproduces the locked baseline)
-                  True  -> h1 also recalibrated (the T1 result)
-
-    h0 path is BIT-IDENTICAL to the locked walk (recal0, 1-lag, warm-start, ladder on
-    h0 trailing coverage). The h1 path adds recal1 (2-lag, warm-start) when per_horizon.
-    For the laddered variant the ladder multiplier is applied to q1 too ONLY under
-    per_horizon (A1 §5.2 symmetry); the ladder TRIGGER stays the h0 coverage monitor.
-    """
+    """Offline recalibration walk over the deploy windows."""
     laddered = method.endswith('-lad')
     kind = 'aci' if method.startswith('aci') else 'pid'
     is_recal = (method != 'frozen')
@@ -145,11 +88,9 @@ def walk(method, per_horizon, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids0, 
     q0_used, q1_used = [], []
     levels = []
     for i in range(len(fc)):
-        # ── h0: update recalibrator on PRIOR step, then set q̂0 (controller §1c) ──
         if recal0 is not None and prev0 is not None:
             recal0.update(prev0[0], prev0[1])
         q0 = float(recal0.quantile()) if recal0 is not None else q0_frozen
-        # ── h1: update on the 2-tick-lagged step, then set q̂1 ──
         if recal1 is not None and len(prev1_buf) == 2:
             r1, m1 = prev1_buf[0]                       # residual/miss from cycle i-2
             recal1.update(r1, m1)
@@ -157,14 +98,12 @@ def walk(method, per_horizon, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids0, 
             q1 = float(recal1.quantile())
         else:
             q1 = q1_frozen
-        # ── ladder on the h0 trailing coverage (controller §1d) ──
         if ladder is not None:
             tc = (sum(mon) / len(mon)) if mon else 1.0
             ladder.step(tc); levels.append(ladder.level)
             q0 = float(ladder.apply(q0))
             if per_horizon:                              # A1 §5.2: widen every horizon symmetrically
                 q1 = float(ladder.apply(q1))
-        # ── form intervals ──
         hw0 = sigma * q0
         hw1 = sigma * q1
         lo0, hi0 = max(fc[i, 0] - hw0, 0.0), max(fc[i, 0] + hw0, 0.0)
@@ -173,7 +112,6 @@ def walk(method, per_horizon, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids0, 
         c1 = bool(lo1 <= ac[i, 1] <= hi1)
         cov0.append(c0); cov1.append(c1); w0.append(2 * hw0); w1.append(2 * hw1)
         up0.append(hi0); up1.append(hi1); q0_used.append(q0); q1_used.append(q1)
-        # ── feedback bookkeeping (miss computed against the FINAL interval, as the originals do) ──
         mon.append(c0)
         prev0 = (abs(ac[i, 0] - fc[i, 0]) / sigma, not c0)
         prev1_buf.append((abs(ac[i, 1] - fc[i, 1]) / sigma, not c1))
@@ -219,7 +157,6 @@ def run_cell(cell, methods):
         ref_resids1 = np.abs(ac_rf[:, 1] - fc_rf[:, 1]) / sigma       # h1 warm-start (NEW)
         fc_dp, ac_dp = forecasts(u, dp, mu, sigma)
         bias_acc.append(100 * (fc_dp[:, 0].mean() - ac_dp[:, 0].mean()) / (ac_dp[:, 0].mean() + 1e-9))
-        # frozen-method widths (mode-invariant) for x-frozen multipliers
         fz = walk('frozen', False, fc_dp, ac_dp, sigma, q0_frozen, q1_frozen, ref_resids0, ref_resids1)
         frozen_w0.append(fz['width_h0']); frozen_w1.append(fz['width_h1'])
         for m in methods:

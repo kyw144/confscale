@@ -1,33 +1,10 @@
 #!/usr/bin/env python
-"""E-V8b rider #2 — how often is the max-over-horizon scaling decision driven by the FROZEN h1
-bound instead of the recalibrated h0 bound?  (paper3_claims_update item 9)
+"""Measure when the frozen second horizon determines the replica target."""
 
-The actuator (`orchestrator/controller.py::compute_target_replicas`) scales to
-    effective_rate = float(np.max(ci_upper))                       # ci-upper / risk-quantile / tier-3
-i.e. the MAX over the K=2 forecast horizons of ci_upper (also the exported Prometheus gauge
-"…predicted_rps … max over forecast horizon"). Recalibration (ACI/PID) is **h0-only by code**
-(controller.py §1c sets `uq.q_hat[0]` only; §1d ladder applies to q_hat[0] only) — h1 stays at the
-frozen-SCP quantile for every method. So the decision sees
-    max( ci_upper[0]_recalibrated , ci_upper[1]_frozen ).
-If ci_upper[1]_frozen >= ci_upper[0]_recalibrated on a cycle, the max picks the FROZEN h1 bound and
-the h0 recalibration is INVISIBLE to the scaling decision on that cycle.
-
-This script does NOT import recal_perservice.py (that module has no __main__ guard and writes
-recal_volatility.json at import — importing it would overwrite the original artifact). Instead it
-REPLICATES recal_perservice.py's protocol verbatim — same locked windows, same R=6 seeds, same
-warm-start (buffer primed with ref-window residuals so q̂(cycle0)==frozen SCP), same h0-only
-online order — and only ADDS per-cycle recording of the ci_upper bounds. A coverage/width
-cross-check against recal_volatility.json confirms the replication is faithful before any binding
-fraction is trusted.
-
-Originals untouched. New script + JSON only.  R=6 (GRU FP-nondeterminism variance band, cf. E-V3/E-V8b).
-"""
-
-# Local artifact reference entrypoint; cluster behavior is unverified.
 if __name__ == "__main__":
     import os as _artifact_os
     if _artifact_os.environ.get("CONFSCALE_ENABLE_REFERENCE_RUNTIME") != "1":
-        raise SystemExit("Reference runtime disabled. Read docs/MAC_VERIFICATION.md; "
+        raise SystemExit("Reference runtime disabled. Read README.md#cluster-runs; "
                          "local demo: python -m confscale demo")
 
 import sys, json, importlib.util
@@ -53,7 +30,7 @@ COVWIN = 30
 
 
 def forecasts(u, seg_arr, mu, sigma):
-    """Per-window raw-RPS point forecasts (h0,h1) + actuals (h0,h1). Verbatim from recal_perservice.py."""
+    """Per-window raw-RPS point forecasts (h0,h1) + actuals (h0,h1)."""
     X, Y = p2.windows(seg_arr, mu, sigma)
     fc, ac = [], []
     for i in range(len(X)):
@@ -73,11 +50,7 @@ def make_recal(kind):
 
 
 def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
-    """Offline online-recalibration walk over the deploy window. IDENTICAL recalibration order to
-    recal_perservice.py::walk; additionally records per-cycle ci_upper bounds for the binding analysis.
-
-    Returns dict with per-cycle arrays + the coverage/width summary used to cross-check replication.
-    """
+    """Offline online-recalibration walk over the deploy window."""
     laddered = method.endswith('-lad')
     kind = 'aci' if method.startswith('aci') else 'pid'
     recal = None
@@ -91,12 +64,10 @@ def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
     cov0, cov1, w0 = [], [], []
     prev = None
     levels = []
-    # per-cycle recordings (NEW)
     up0_recal, up1_frozen, up0_frozen, q0_used, fc0_rec, fc1_rec = [], [], [], [], [], []
     hw1 = sigma * q1_frozen                              # h1 half-width is frozen for ALL methods
     hw0_frozen = sigma * q0_frozen                       # what h0 would be WITHOUT recalibration
     for i in range(len(fc)):
-        # 1. update recalibrator on PRIOR step, set q̂[0]  (h0-only — matches controller §1c)
         if recal is not None and prev is not None:
             recal.update(prev[0], prev[1])
         q0 = float(recal.quantile()) if recal is not None else q0_frozen
@@ -126,7 +97,6 @@ def walk(method, fc, ac, sigma, q0_frozen, q1_frozen, ref_resids):
         fc0=np.array(fc0_rec), fc1=np.array(fc1_rec))
 
 
-# ── R=6 replication of recal_perservice.py's outer loop, instrumented ────────────────────────────
 METHODS = ['frozen', 'aci', 'pid', 'aci-lad', 'pid-lad']   # task centers aci/pid; frozen=baseline, -lad optional
 per = {m: {'h1binds': [], 'h0binds_frac': [], 'recal_gt_frozen_frac': [],
            'h0_uplift_rps': [], 'h0_uplift_x': [], 'sig_uplift_rps': [],
@@ -231,7 +201,6 @@ for m in METHODS:
 with open(f"{DIR}/h1_binds.json", 'w') as f:
     json.dump(out, f, indent=2)
 
-# ── console summary ──────────────────────────────────────────────────────────────────────────────
 print(f"\nMS_7129 volatility (locked) | R={R} | n_deploy={out['n_deploy']} | sanity bias {out['sanity_bias_pct']}%")
 print(f"frozen q_hat: q0={out['frozen_q_hat']['q0']} q1={out['frozen_q_hat']['q1']} (norm)  "
       f"-> sigma*q0={out['frozen_q_hat']['q0']*np.mean([np.mean(q_frozen_acc['q0'])]):.4g} (ref only)")

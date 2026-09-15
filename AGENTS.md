@@ -19,3 +19,6 @@ edit its papers, ledgers, evidence or cluster resources as part of maintenance h
   different outcomes. Preserve failed runs and report limitations honestly.
 - Update the run guide/validation record with actual verification. Push only
   scoped changes; never rewrite pushed history.
+
+Use short docstrings and comments for non-obvious constraints. Keep user-facing
+documentation in README.md; store validation and provenance details in receipts.

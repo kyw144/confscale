@@ -1,18 +1,6 @@
-"""
-Split-Conformal Prediction (SCP) — Distribution-free uncertainty quantification.
+"""Split-conformal prediction; coverage guarantees require exchangeability.
 
-Calibrates on a held-out set to produce prediction intervals with
-finite-sample coverage guarantee: P(Y ∈ [r̂_lo, r̂_hi]) ≥ 1-α.
-
-Key properties:
-  - Guaranteed coverage (under exchangeability)
-  - Constant-width intervals (main weakness)
-  - Fast inference (1 forward pass, no ensemble)
-  - No model retraining needed
-
-Reference:
-  Vovk, Gammerman, Shafer (2005). Algorithmic Learning in a Random World.
-  Lin, Trivedi, Sun (2022). Conformal Prediction Intervals for Time Series.
+References: Vovk, Gammerman & Shafer (2005); Lin, Trivedi & Sun (2022).
 """
 
 from pathlib import Path
@@ -26,7 +14,6 @@ import numpy as np
 import torch
 import yaml
 
-# Resolve sibling imports
 _parent = str(Path(__file__).resolve().parent.parent)
 if _parent not in sys.path:
     sys.path.insert(0, _parent)
@@ -39,21 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class SplitConformal(UncertaintyQuantifier):
-    """Inductive (split) conformal prediction for time series forecasting.
-
-    Uses absolute residual as nonconformity score.
-    Produces constant-width prediction intervals per forecast horizon.
-
-    Strengths:
-      - Finite-sample, distribution-free coverage guarantee
-      - Cheap inference (1 forward pass)
-      - Simple calibration (one pass over calibration set)
-
-    Weaknesses:
-      - Constant-width intervals (not input-adaptive)
-      - Exchangeability assumption violated by time series
-      - Can produce intervals too wide for useful scaling decisions
-    """
+    """Inductive (split) conformal prediction for time series forecasting."""
 
     method = 'scp'
 
@@ -67,25 +40,15 @@ class SplitConformal(UncertaintyQuantifier):
         self.base_model: WorkloadGRU = None
         self.norm_params: NormalizationParams = None
 
-        # Calibrated quantiles — one per forecast horizon
         self.q_hat: np.ndarray = None  # shape (k,)
 
-        # Locally-weighted variant
         self.local_weighting: bool = False
         self._local_residual_std: float = 0.0
-
-    # ── Calibration ─────────────────────────────────────────────────────
 
     def fit(self,
             train_data: tuple,
             calibration_data: tuple = None) -> 'SplitConformal':
-        """Calibrate conformal quantiles on held-out calibration data.
-
-        Args:
-            train_data: (X_train, y_train) — used to train the base model
-            calibration_data: (X_cal, y_cal) — held-out for calibration
-                              If None, uses last 20% of train_data.
-        """
+        """Calibrate conformal quantiles on held-out calibration data."""
         X_train, y_train = train_data
         X_train = np.asarray(X_train, dtype=np.float32)
         y_train = np.asarray(y_train, dtype=np.float32)
@@ -103,13 +66,11 @@ class SplitConformal(UncertaintyQuantifier):
             y_cal = np.asarray(y_cal, dtype=np.float32)
             X_tr, y_tr = X_train, y_train
 
-        # Ensure correct shapes
         if X_tr.ndim == 2:
             X_tr = X_tr.reshape(X_tr.shape[0], X_tr.shape[1], 1)
         if X_cal.ndim == 2:
             X_cal = X_cal.reshape(X_cal.shape[0], X_cal.shape[1], 1)
 
-        # Train base GRU on proper training portion
         logger.info("SCP: Training base GRU on %d samples...", len(X_tr))
         from .bootstrap import _train_gru
 
@@ -133,7 +94,6 @@ class SplitConformal(UncertaintyQuantifier):
             seed=42,
         )
 
-        # Calibration: compute nonconformity scores
         logger.info("SCP: Calibrating on %d samples...", len(X_cal))
         X_cal_t = torch.from_numpy(X_cal).to(self.device)
         y_cal_t = torch.from_numpy(y_cal).to(self.device)
@@ -142,7 +102,6 @@ class SplitConformal(UncertaintyQuantifier):
         with torch.inference_mode():
             preds = self.base_model(X_cal_t).cpu().numpy()  # (N_cal, k)
 
-        # Nonconformity scores: absolute residuals per forecast horizon
         scores = np.abs(y_cal - preds)  # (N_cal, k)
 
         n_cal = len(scores)
@@ -159,10 +118,8 @@ class SplitConformal(UncertaintyQuantifier):
                      np.array2string(self.q_hat, precision=2),
                      (1 - self.alpha) * 100)
 
-        # Locally-weighted: compute residual std for adaptive scaling
         self._local_residual_std = float(np.std(scores))
 
-        # Empirical coverage on calibration
         covered = (y_cal >= preds - self.q_hat) & (y_cal <= preds + self.q_hat)
         emp_coverage = float(covered.mean())
         logger.info("SCP: Calibration coverage = %.2f%% (target: %.0f%%)",
@@ -170,14 +127,8 @@ class SplitConformal(UncertaintyQuantifier):
 
         return self
 
-    # ── Inference ───────────────────────────────────────────────────────
-
     def predict_with_uncertainty(self, history: np.ndarray) -> dict:
-        """Predict with conformal intervals.
-
-        Args:
-            history: shape (h,) — raw RPS values
-        """
+        """Predict with conformal intervals."""
         if self.base_model is None or self.q_hat is None:
             raise RuntimeError("SCP not calibrated. Call fit() first.")
         if self.norm_params is None:
@@ -192,14 +143,10 @@ class SplitConformal(UncertaintyQuantifier):
         with torch.inference_mode():
             pred_norm = self.base_model(x_tensor).cpu().numpy().flatten()
 
-        # Denormalize point forecast
         point_forecast = self.norm_params.denormalize(pred_norm)
         np.maximum(point_forecast, 0.0, out=point_forecast)
 
-        # Build intervals: denormalize(pred ± q_hat)
-        # q_hat is in normalized space — we need to convert to raw RPS
-        # Because denorm(x ± δ) = σ·(x_norm ± δ) + μ = denorm(x_norm) ± σ·δ
-        # This is exact since denormalization is linear
+        # q_hat is normalized; multiply by sigma to obtain RPS widths.
         ci_lower = point_forecast - self.norm_params.sigma * self.q_hat
         ci_upper = point_forecast + self.norm_params.sigma * self.q_hat
 
@@ -231,8 +178,6 @@ class SplitConformal(UncertaintyQuantifier):
                 'local_residual_std': self._local_residual_std,
             }
         }
-
-    # ── Evaluation ──────────────────────────────────────────────────────
 
     def evaluate_coverage(self, test_data: tuple) -> dict:
         """Evaluate empirical coverage on test data."""
@@ -284,17 +229,13 @@ class SplitConformal(UncertaintyQuantifier):
             'q_hat': self.q_hat.tolist(),
         }
 
-    # ── Persistence ─────────────────────────────────────────────────────
-
     def save(self, output_dir: str) -> None:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Save base model
         if self.base_model:
             torch.save(self.base_model.state_dict(), output_dir / 'base_model.pt')
 
-        # Save config + calibration state
         config = {
             'method': 'scp',
             'alpha': self.alpha,
@@ -334,7 +275,6 @@ class SplitConformal(UncertaintyQuantifier):
                 sigma=config['normalization']['sigma'],
             )
 
-        # Load base model
         scp.base_model = WorkloadGRU(
             input_size=1, hidden_size=64, num_layers=2,
             output_size=scp.k, dropout=0.2,

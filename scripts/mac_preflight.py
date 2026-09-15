@@ -14,5 +14,5 @@ report = {
     'optional_modules_available':{name:importlib.util.find_spec(name) is not None for name in ['numpy','torch','yaml','pandas','prometheus_client']},
     'runtime_input_directories':{name:(root/'reference/stage3_scale'/name).is_dir() for name in ['models/gru','models/uq','outputs/training_data']},
     'cluster_contacted':False, 'runtime_validated':False,
-    'next':'Read docs/MAC_VERIFICATION.md before enabling historical runtime.'}
+    'next':'Read README.md#cluster-runs before enabling historical runtime.'}
 print(json.dumps(report,indent=2,sort_keys=True))

@@ -1,18 +1,5 @@
 #!/usr/bin/env python3
-"""
-_STATUS.md generator for the hpa-qr-monitored × {F,G,H} drift batch.
-
-Pulls hpa-qr-monitored cells from the new drift output dir and
-confscale-pid cells from the 2026-05-23 overnight drift batch, joins
-per pattern, and produces the side-by-side coverage + cost tables
-plus G4 verdicts the D2 brief asks for.
-
-Run:
-  python hpa_qr_drift_status.py \
-      --new-dir data/p3_runs/outputs/hpa_qr_drift_20260525 \
-      --pid-dir data/p3_runs/outputs/drift_injection_e1_20260523_020148 \
-      --out data/p3_runs/outputs/hpa_qr_drift_20260525/_STATUS.md
-"""
+"""Summarize coverage and cost for QR-monitored drift runs."""
 from __future__ import annotations
 
 import argparse
@@ -28,7 +15,6 @@ if str(_PARENT) not in sys.path:
 
 
 def _load_cell(cell_dir: Path) -> dict | None:
-    """Return per-cell metrics dict or None if the cell is unparseable."""
     metrics_path = cell_dir / 'metrics.json'
     op_summary_path = cell_dir / 'operator_metrics_summary.json'
     if not metrics_path.exists() and not op_summary_path.exists():
@@ -60,13 +46,6 @@ def _load_cell(cell_dir: Path) -> dict | None:
 
 
 def _scan_method_pattern(root: Path, method: str, pattern: str) -> list[dict]:
-    """Find all cells for (method, pattern) under root (recursive 2 levels).
-
-    Matches cell dirs named like '<method>_<patternlower>_rep<n>_*'.
-    Handles both flat layouts (root/<cell>) and pattern-bucketed layouts
-    (root/<pattern_bucket>/<cell>) — e.g. the 2026-05-23 drift batch
-    has F_phase1/F_phase2/G/H subdirs.
-    """
     needle = f"{method}_{pattern.lower()}_rep"
     cells: list[dict] = []
     if not root.is_dir():
@@ -115,7 +94,6 @@ def _mean_std(values: list[float]) -> tuple[float | None, float | None, int]:
 
 
 def _coverage_table(cells_by_pattern: dict[str, list[dict]]) -> str:
-    """Per-pattern coverage table for one method."""
     lines = ['| pattern | rep1 cov | rep2 | rep3 | mean ± std (n) |',
              '|---------|----------|------|------|-----------------|']
     for pat in ['F', 'G', 'H']:
@@ -130,7 +108,6 @@ def _coverage_table(cells_by_pattern: dict[str, list[dict]]) -> str:
 
 
 def _cost_table(cells_by_pattern: dict[str, list[dict]]) -> str:
-    """Per-pattern overhead-replica-seconds table for one method."""
     lines = ['| pattern | rep1 overhead_rs | rep2 | rep3 | mean ± std (n) |',
              '|---------|------------------|------|------|-----------------|']
     for pat in ['F', 'G', 'H']:
@@ -161,7 +138,6 @@ def _side_by_side(qr_by_pattern, pid_by_pattern) -> str:
 
 
 def _g4_verdict(qr_by_pattern, pid_by_pattern) -> tuple[str, dict]:
-    """G4: qr coverage on ≥2 of F/G/H is ≥0.10 below pid coverage."""
     deltas = {}
     for pat in ['F', 'G', 'H']:
         qm, _, qn = _mean_std([c['coverage_rate'] for c in qr_by_pattern.get(pat, [])])
@@ -182,7 +158,6 @@ def _g4_verdict(qr_by_pattern, pid_by_pattern) -> tuple[str, dict]:
 
 
 def _g3_verdict(qr_by_pattern) -> tuple[str, dict]:
-    """G3: mean_replicas > 1 on every cell."""
     per_cell = {}
     all_pass = True
     for pat in ['F', 'G', 'H']:
@@ -196,7 +171,6 @@ def _g3_verdict(qr_by_pattern) -> tuple[str, dict]:
 
 
 def _g2_verdict(qr_by_pattern) -> tuple[str, dict]:
-    """G2: each cell emits coverage_monitor.coverage_rate."""
     per_cell = {}
     all_pass = True
     for pat in ['F', 'G', 'H']:

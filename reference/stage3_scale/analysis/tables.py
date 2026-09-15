@@ -1,14 +1,4 @@
-"""Tables: generate LaTeX and Markdown tables for the P3 paper.
-
-Tables:
-    1. SLO Violation Rate per Method × Workload
-    2. Resource Overhead per Method × Workload
-    3. UQ Method Comparison (BE vs SCP vs QR)
-    4. Lambda Sensitivity Sweep
-
-Each table generates both .tex (LaTeX) and .md (Markdown) versions.
-Statistical annotations (†, ‡, §) indicate significant differences from baseline.
-"""
+"""Export experiment tables as LaTeX and Markdown."""
 
 import logging
 from pathlib import Path
@@ -29,7 +19,6 @@ from .stats import compare_all_methods, PRIMARY_BASELINE
 
 logger = logging.getLogger(__name__)
 
-# ── Display Names ───────────────────────────────────────────────────────────
 
 METHOD_ORDER = [
     "hpa-reactive", "hpa-predictive", "hpa-predictive-safety",
@@ -61,12 +50,6 @@ def _get_significance_annotation(
     workload: str,
     comparisons: list[dict],
 ) -> str:
-    """Get significance annotation for a method×workload cell.
-
-    † = p_corrected < 0.05, d > 0.5
-    ‡ = p_corrected < 0.01, d > 0.8
-    § = p_corrected < 0.001, d > 0.8
-    """
     for c in comparisons:
         if c.get("method_a") == method and c.get("workload") == workload:
             if not c.get("significant_corrected"):
@@ -86,10 +69,7 @@ def _get_significance_annotation(
     return ""
 
 
-# ── LaTeX Helpers ───────────────────────────────────────────────────────────
-
 def _escape_latex(s: str) -> str:
-    """Escape special LaTeX characters."""
     replacements = {
         "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#",
         "_": r"\_", "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}",
@@ -107,10 +87,6 @@ def _df_to_latex(
     float_format: str = ".3f",
     notes: str = "",
 ) -> str:
-    """Convert a DataFrame to a proper LaTeX table with caption, label, and notes.
-
-    float_format: f-string style format spec (e.g., '.3f', '.0f').
-    """
     n_cols = len(df.columns) + 1  # +1 for row labels
     col_format = "l" + "c" * len(df.columns)
 
@@ -123,12 +99,10 @@ def _df_to_latex(
         r"    \toprule",
     ]
 
-    # Header
     header = " & ".join(["Method"] + [f"\\textbf{{{_escape_latex(str(c))}}}" for c in df.columns])
     lines.append(f"    {header} \\\\")
     lines.append(r"    \midrule")
 
-    # Data rows
     for idx, row in df.iterrows():
         vals = [str(idx)]
         for col in df.columns:
@@ -155,18 +129,14 @@ def _df_to_latex(
 
 
 def _df_to_markdown(df: pd.DataFrame, caption: str, float_format: str = ".3f") -> str:
-    """Convert a DataFrame to a markdown table."""
     lines = [f"### {caption}", ""]
 
-    # Header
     header = "| Method | " + " | ".join(str(c) for c in df.columns) + " |"
     lines.append(header)
 
-    # Separator
     sep = "|" + "|".join("---" for _ in range(len(df.columns) + 1)) + "|"
     lines.append(sep)
 
-    # Data
     for idx, row in df.iterrows():
         vals = [str(idx)]
         for col in df.columns:
@@ -188,25 +158,12 @@ def _df_to_markdown(df: pd.DataFrame, caption: str, float_format: str = ".3f") -
     return "\n".join(lines)
 
 
-# ── Table 1: SLO Violation Rate ─────────────────────────────────────────────
-
 def generate_table_1(
     df: pd.DataFrame,
     output_dir: Path,
     comparisons: Optional[list[dict]] = None,
 ) -> dict[str, Path]:
-    """Table 1: SLO Violation Rate per Method × Workload.
-
-    Includes mean across workloads, and significance annotations vs. HPA-reactive.
-
-    Args:
-        df: Runs DataFrame
-        output_dir: Directory for output files
-        comparisons: Pre-computed comparison results (from statistics.compare_all_methods)
-
-    Returns:
-        dict with 'latex' and 'markdown' paths.
-    """
+    """Table 1: SLO Violation Rate per Method × Workload."""
     df = compute_slo_violation_rate(df)
 
     if comparisons is None:
@@ -221,7 +178,6 @@ def generate_table_1(
         aggfunc="mean",
     )
 
-    # Reorder rows and columns
     methods_present = [m for m in METHOD_ORDER if m in pivot.index]
     workloads_present = [w for w in WORKLOAD_ORDER if w in pivot.columns]
 
@@ -231,10 +187,8 @@ def generate_table_1(
 
     pivot = pivot.loc[methods_present, workloads_present]
 
-    # Add mean column
     pivot["Mean"] = pivot.mean(axis=1)
 
-    # Rename columns
     pivot.columns = [WORKLOAD_LABELS.get(c, c) for c in pivot.columns]
 
     # Annotate with significance (cast to object so float columns accept strings)
@@ -246,11 +200,8 @@ def generate_table_1(
                 val = pivot.loc[method, WORKLOAD_LABELS.get(wl, wl)]
                 annotated.loc[method, WORKLOAD_LABELS.get(wl, wl)] = f"{val:.3f}{ann}"
 
-    # Format with method labels
     annotated.index = [METHOD_LABELS.get(m, m) for m in annotated.index]
 
-    # Generate LaTeX
-    # Re-extract numeric values for LaTeX (annotation in separate format)
     if len(pivot) > 0:
         latex_df = pivot.copy()
         latex_df.index = [METHOD_LABELS.get(m, m) for m in latex_df.index]
@@ -266,7 +217,6 @@ def generate_table_1(
     else:
         latex = "% Table 1: No data available\n"
 
-    # Generate Markdown
     md = _df_to_markdown(annotated, "Table 1: SLO Violation Rate per Method × Workload")
 
     output_dir = Path(output_dir)
@@ -282,14 +232,11 @@ def generate_table_1(
     return {"latex": latex_path, "markdown": md_path}
 
 
-# ── Table 2: Resource Overhead ──────────────────────────────────────────────
-
 def generate_table_2(
     df: pd.DataFrame,
     output_dir: Path,
 ) -> dict[str, Path]:
     """Table 2: Resource Overhead (excess replica-seconds) per Method × Workload."""
-    # Pivot on overhead_replica_seconds
     pivot = df.pivot_table(
         values="overhead_replica_seconds",
         index="method",
@@ -308,7 +255,6 @@ def generate_table_2(
     pivot["Mean"] = pivot.mean(axis=1)
     pivot.columns = [WORKLOAD_LABELS.get(c, c) for c in pivot.columns]
 
-    # Also add mean replicas for context
     replicas_pivot = df.pivot_table(
         values="mean_replicas",
         index="method",
@@ -318,11 +264,9 @@ def generate_table_2(
     if all(m in replicas_pivot.index for m in methods_present):
         replicas_pivot = replicas_pivot.loc[methods_present, workloads_present]
 
-    # Build a combined table with overhead + replicas
     latex_df = pivot.copy()
     latex_df.index = [METHOD_LABELS.get(m, m) for m in latex_df.index]
 
-    # Round for display
     latex_df = latex_df.round(0).astype(int)
 
     latex = _df_to_latex(
@@ -350,26 +294,18 @@ def generate_table_2(
     return {"latex": latex_path, "markdown": md_path}
 
 
-# ── Table 3: UQ Method Comparison ───────────────────────────────────────────
-
 def generate_table_3(
     df: pd.DataFrame,
     output_dir: Path,
     input_dir: Optional[Path] = None,
 ) -> dict[str, Path]:
-    """Table 3: UQ Method Comparison — coverage, CI width, efficiency, inference.
-
-    Pass `input_dir` to join in post-hoc calibration stats and per-cell
-    decision-latency means; without it, the table falls back to the
-    (typically empty) UQ columns on the runs DataFrame.
-    """
+    """Table 3: UQ Method Comparison — coverage, CI width, efficiency, inference."""
     uq_df = compute_uq_comparison(df, input_dir=input_dir)
 
     if len(uq_df) == 0:
         logger.warning("No UQ methods for Table 3")
         return {}
 
-    # Select and rename columns. compute_uq_comparison returns method as index.
     cols = {
         "coverage": "Coverage",
         "median_ci_width": "Median CI Width (RPS)",
@@ -383,7 +319,6 @@ def generate_table_3(
     display_df.index = [METHOD_LABELS.get(m, m) for m in display_df.index]
     display_df.columns = [available[c] for c in display_df.columns]
 
-    # Round
     if "Coverage" in display_df.columns:
         display_df["Coverage"] = display_df["Coverage"].round(3)
     if "Efficiency Score" in display_df.columns:
@@ -422,8 +357,6 @@ def generate_table_3(
     logger.info("Table 3 written: %s, %s", latex_path, md_path)
     return {"latex": latex_path, "markdown": md_path}
 
-
-# ── Table 4: Lambda Sensitivity Sweep ───────────────────────────────────────
 
 def generate_table_4(
     df: pd.DataFrame,
@@ -471,20 +404,12 @@ def generate_table_4(
     return {"latex": latex_path, "markdown": md_path}
 
 
-# ── All Tables ──────────────────────────────────────────────────────────────
-
 def generate_all_tables(
     df: pd.DataFrame,
     output_dir: Path,
     input_dir: Optional[Path] = None,
 ) -> dict[str, dict[str, Path]]:
-    """Generate all 4 tables.
-
-    `input_dir` is forwarded to Table 3 so it can read controller scale logs
-    for post-hoc calibration and inference-latency aggregates.
-
-    Returns dict mapping table names to {latex: path, markdown: path}.
-    """
+    """Generate all 4 tables."""
     # Pre-compute comparisons for Table 1 annotations
     comparisons = compare_all_methods(df)
     all_comps = comparisons.get("all_comparisons", [])

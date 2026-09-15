@@ -1,8 +1,4 @@
-"""New deterministic teaching harness around the copied paper components.
-
-This is deliberately NOT the paper's benchmark, trained GRU, or a latency model.
-All forecasts are supplied by a known synthetic signal. No requests are sent.
-"""
+"""Deterministic synthetic replay; no trained model or latency simulation."""
 from collections import deque
 import csv
 import hashlib

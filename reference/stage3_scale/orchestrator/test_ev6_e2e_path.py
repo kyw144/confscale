@@ -1,26 +1,4 @@
 #!/usr/bin/env python3
-"""
-E-V6 focused test for the workload-trace path-doubling fix (Anomaly A4).
-
-Asserts the two properties the fix must guarantee, WITHOUT touching a cluster:
-
-  (a) With run_dir resolved to an absolute path (the fix at
-      run_matrix.py:256), the workload-generator subprocess — launched with
-      cwd=run_dir AND --output-dir str(run_dir) exactly as execute_single_run
-      does — writes its trace FLAT under run_dir, where the flat
-      run_dir.glob("workload_*_timeseries.csv") finds it. A regression guard
-      shows the OLD relative run_dir doubles the path
-      (<run_dir>/data/.../workload_*.csv) and the glob misses it.
-
-  (b) Once that flat trace is found, compute_e2e_slo_metrics yields a
-      NON-EMPTY e2e block, and collect.py's mapping turns it into non-empty
-      metrics.json "e2e.*" keys — i.e. the knock-on that emptied e2e.* is gone.
-
-Run:
-  python test_ev6_e2e_path.py
-or:
-  pytest test_ev6_e2e_path.py -v
-"""
 from __future__ import annotations
 
 import json
@@ -47,9 +25,6 @@ def check(name: str, cond: bool, detail: str = "") -> None:
         _FAILURES.append(name)
 
 
-# A tiny stand-in for workload_gen.py: same output contract — argparse
-# --output-dir, os.makedirs(output_dir), write
-# {output_dir}/workload_<pat>_<ts>_timeseries.csv with the real header.
 _FAKE_GEN = '''\
 import argparse, os
 p = argparse.ArgumentParser()
@@ -67,9 +42,6 @@ with open(f"{prefix}_timeseries.csv", "w") as f:
 
 
 def _run_gen(gen_abs: Path, output_dir_arg: str, cwd: str) -> None:
-    """Invoke the fake generator the way execute_single_run invokes the real
-    one: cwd=run_dir, --output-dir str(run_dir). gen_abs is absolute so the
-    script is always found regardless of the (deliberately varied) cwd."""
     subprocess.run(
         [sys.executable, str(gen_abs), "G", "--output-dir", output_dir_arg],
         cwd=cwd, check=True, capture_output=True, text=True,
@@ -87,7 +59,6 @@ def test_resolved_run_dir_prevents_doubling() -> None:
         prev = os.getcwd()
         os.chdir(root)
         try:
-            # --- OLD behaviour (regression guard): run_dir left RELATIVE ---
             old_run_dir = rel_output / run_id
             old_run_dir.mkdir(parents=True, exist_ok=True)
             _run_gen(gen_abs, output_dir_arg=str(old_run_dir),
@@ -99,7 +70,6 @@ def test_resolved_run_dir_prevents_doubling() -> None:
                   len(old_flat) == 0 and len(doubled) == 1,
                   f"flat={len(old_flat)} doubled={len(doubled)}")
 
-            # --- NEW behaviour (the fix): run_dir RESOLVED to absolute ---
             run_id2 = "confscale-pid_g_rep2_20260531_000000"
             new_run_dir = (rel_output / run_id2).resolve()
             new_run_dir.mkdir(parents=True, exist_ok=True)
