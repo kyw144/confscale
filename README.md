@@ -4,6 +4,11 @@ Coverage monitoring and online recalibration for predictive autoscaling.
 Code and evidence for *Coverage Monitoring and Online Recalibration for
 Predictive Autoscaling under Deployment Drift* (CNSM 2026).
 
+The [paper snapshot](https://github.com/kyw144/confscale/tree/7b43867bf644f4e6b1d27d0b5c17c9ce1f1a45a8)
+remains available. This version also provides a corrected point-forecast
+controller, explicit CPU HPA presets, and separately packaged comparison results.
+The original paper evidence and reproduction commands are preserved.
+
 ## Quick start
 
 Use Python 3.10 or newer. These commands need no additional packages or cluster:
@@ -14,6 +19,7 @@ cd confscale
 python -m confscale verify
 python -m confscale reproduce
 python -m confscale demo
+python -m confscale comparisons
 ```
 
 | Command | Output |
@@ -21,11 +27,24 @@ python -m confscale demo
 | `verify` | Check source and evidence hashes |
 | `reproduce` | Five paper tables as Markdown/CSV in `generated/paper/`, plus supporting figures |
 | `demo` | Synthetic decision trace and summary in `generated/demo/` |
+| `comparisons` | Separate stored-result comparison tables in `generated/comparisons/` |
 
 `reproduce` rebuilds tables from retained results; Tables 1 and 3 start at
 aggregates. `demo` illustrates recalibration using synthetic forecasts and
 requested replica targets, without a trained model or latency simulation.
 Neither command reruns the paper experiments.
+
+`comparisons` rebuilds tables from exported per-run values and saved summaries.
+It does not rescore raw traces or rerun experiments. Its two batches remain
+separate: one compares frozen SCP, corrected point forecasts and tuned CPU HPA;
+the other compares corrected point forecasts with stock CPU and CPU/memory HPA.
+Each includes all four workload patterns. The CPU/memory arm is retained as
+evidence only; it is not an executable preset in this update.
+
+The stock-HPA batch's recorded model weights match the public input manifest;
+its configuration hashes match after line-ending normalization. The tuned-HPA
+batch retains controller configuration records but no model-hash manifest.
+The comparison provenance records this limit and the hashes of the exported data.
 
 Run all offline checks with `python scripts/validate.py`. To use the `confscale`
 command from another directory, install with `python -m pip install -e .`.
@@ -109,6 +128,35 @@ ladder variants. GRU-only baselines, KEDA and historical study drivers remain in
 entrypoints require `CONFSCALE_ENABLE_REFERENCE_RUNTIME=1`. Read them before
 opting in: they can generate traffic and modify cluster resources.
 
+### Additional controller presets
+
+Existing method names retain their defaults. These explicit presets describe
+the configurations used in the additional comparisons:
+
+| Method | Demand rule / configuration |
+|---|---|
+| `confscale-scp-frozen` | Frozen SCP intervals; coverage monitor, online recalibration and ladder disabled |
+| `confscale-point-corrected` | SCP point forecast at 30 seconds, corrected by up to ten causally matched signed errors; monitor, recalibration and ladder disabled |
+| `hpa-cpu-tuned` | Native HPA, CPU target 70%; 60-second downscale stabilization; 100% per 15 seconds in both directions, without a Pods policy |
+| `hpa-cpu-stock` | Native HPA, CPU target 80%; `behavior` omitted so the cluster supplies its defaults |
+
+The point rule subtracts the mean observed forecast error from the next point
+forecast, clips demand at zero, and divides by the configured per-replica target
+capacity before rounding up. Replica bounds and the controller's cooldown still
+apply. Its frozen prediction intervals do not determine that raw replica target.
+Each error pairs the preceding controller step's forecast with the current
+observation; missing pairs are skipped. This is step-based matching, without a
+separate timestamp-tolerance rule.
+
+[configs/comparison-smoke.json](configs/comparison-smoke.json) selects the four
+new presets for a short technical smoke. Inspect it with
+`python -m confscale.experiment plan --config configs/comparison-smoke.json`.
+It is not a protocol for reproducing either stored comparison batch.
+
+The new presets have offline software and mocked API checks. They have not had a
+new live smoke test in this checkout. The retained comparison results were
+produced by earlier runs; testing this implementation does not replicate them.
+
 Workloads A/B/C/D select diurnal/bursty/batch-ramp/signaling models. E/F/G/H use
 the diurnal model. The plan prints this mapping. A fixed seed reproduces the
 stochastic workload law, while timing and achieved traffic can vary.
@@ -124,8 +172,9 @@ A technical pass requires:
 
 - Successful execution, finite metrics and a workload trace reaching at least
   80% of its configured duration.
-- Healthy HPA conditions, or the required forecasts and later interval matches.
-  Coverage counts are recomputed from the controller log.
+- Healthy HPA conditions, or the forecast/target evidence required by the method.
+  Methods with interval monitoring also require later interval matches; their
+  coverage counts are recomputed from the controller log.
 - Restoration to one ready worker with no benchmark HPA, and stopped forwarders.
 
 Failures stop the matrix, return a nonzero exit status and retain their outputs.
@@ -176,6 +225,7 @@ Cluster deletion removes its temporary Prometheus data; exported run files remai
 | `reference/studies/` | Study-specific analysis and drivers |
 | `configs/`, `cluster/`, `requirements/` | Experiment settings, image pins and dependency locks |
 | `evidence/` | Frozen results grouped by calibration, cost, drift and study |
+| `comparisons/evidence/` | Separately exported comparison values, configurations and metric definitions |
 | `provenance/`, `validation/` | Source/input manifests, adaptations and validation receipts |
 | `inputs/`, `generated/` | Local inputs and outputs; ignored by Git |
 
@@ -192,6 +242,19 @@ ACI/PID update interval widths from residuals; the coverage monitor scores prior
 intervals; the ladder widens intervals after persistent undercoverage. The planner
 selects maximum demand across horizons and applies hysteresis before scaling.
 ACI/PID adjust h0; another horizon can still determine the replica target.
+The per-horizon repair results are offline replays; they do not establish a live
+controller that recalibrates every horizon.
+
+The additional comparisons report overhead replica-seconds **per hour** above
+one minimum replica. Their run p95 is a percentile of per-tick p95 values, not a
+pooled request percentile; tick latencies include successful requests, with zero
+for ticks without successful requests. The retained comparisons and the runtime
+smoke metric both use a 200 ms tick-violation threshold.
+Scaling counts measure changes in sampled
+desired replica counts. They are not Kubernetes API event counts; the stock-HPA
+batch's Kubernetes event logs are incomplete. Cost and service metrics can favor
+different methods, and the tuned-HPA batch's pattern-D cost criterion failed.
+These results do not establish general superiority or fault resilience.
 
 | Paper table | Analysis / evidence entry point |
 |---|---|
@@ -209,6 +272,14 @@ Alibaba traces, raw episodes and manuscript files are not bundled. No distributi
 license has been assigned; third-party notices are retained.
 
 ## Validation and maintenance
+
+The controller update passed **350 tests and 90 subtests**, including mocked
+runtime checks. All 16 original evidence files and 23 regenerated paper outputs
+match the paper baseline byte-for-byte. The
+[update receipt](validation/controller-update.json) records these software checks;
+it adds no live test or experiment result.
+
+The following checks describe the paper artifact's recorded validation:
 
 | Check | Recorded result |
 |---|---|

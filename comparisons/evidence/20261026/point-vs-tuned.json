@@ -1,0 +1,2381 @@
+{
+  "batch": "point-vs-tuned",
+  "cells": [
+    {
+      "id": "a-confscale-scp-frozen-rep-1",
+      "method": "confscale-scp-frozen",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "a-confscale-scp-frozen-rep-1-controller",
+        "metrics": "a-confscale-scp-frozen-rep-1-metrics",
+        "run_configuration": "a-confscale-scp-frozen-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-scp-frozen-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 10.0,
+        "e2e_run_p95_ms": 572.9,
+        "overhead_replica_seconds_per_hour": 20591.433333333334,
+        "tick_slo_violation_fraction": 0.9592
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-scp-frozen-rep-2",
+      "method": "confscale-scp-frozen",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "a-confscale-scp-frozen-rep-2-controller",
+        "metrics": "a-confscale-scp-frozen-rep-2-metrics",
+        "run_configuration": "a-confscale-scp-frozen-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-scp-frozen-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 538.8,
+        "overhead_replica_seconds_per_hour": 20700.0,
+        "tick_slo_violation_fraction": 0.9581
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-scp-frozen-rep-3",
+      "method": "confscale-scp-frozen",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "a-confscale-scp-frozen-rep-3-controller",
+        "metrics": "a-confscale-scp-frozen-rep-3-metrics",
+        "run_configuration": "a-confscale-scp-frozen-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-scp-frozen-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 17.0,
+        "e2e_run_p95_ms": 555.9,
+        "overhead_replica_seconds_per_hour": 20940.0,
+        "tick_slo_violation_fraction": 0.9581
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-scp-frozen-rep-4",
+      "method": "confscale-scp-frozen",
+      "pattern": "A",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "a-confscale-scp-frozen-rep-4-controller",
+        "metrics": "a-confscale-scp-frozen-rep-4-metrics",
+        "run_configuration": "a-confscale-scp-frozen-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-scp-frozen-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 549.8,
+        "overhead_replica_seconds_per_hour": 21120.0,
+        "tick_slo_violation_fraction": 0.9553
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-scp-frozen-rep-5",
+      "method": "confscale-scp-frozen",
+      "pattern": "A",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "a-confscale-scp-frozen-rep-5-controller",
+        "metrics": "a-confscale-scp-frozen-rep-5-metrics",
+        "run_configuration": "a-confscale-scp-frozen-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-scp-frozen-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 15.0,
+        "e2e_run_p95_ms": 542.3,
+        "overhead_replica_seconds_per_hour": 20711.5,
+        "tick_slo_violation_fraction": 0.9486
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-1-controller",
+        "metrics": "a-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 15.0,
+        "e2e_run_p95_ms": 555.7,
+        "overhead_replica_seconds_per_hour": 24073.36666666667,
+        "tick_slo_violation_fraction": 0.9447
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-2-controller",
+        "metrics": "a-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 537.0,
+        "overhead_replica_seconds_per_hour": 23280.0,
+        "tick_slo_violation_fraction": 0.9536
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-3-controller",
+        "metrics": "a-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 543.8,
+        "overhead_replica_seconds_per_hour": 24253.466666666667,
+        "tick_slo_violation_fraction": 0.967
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-4",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-4-controller",
+        "metrics": "a-confscale-point-corrected-rep-4-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 552.9,
+        "overhead_replica_seconds_per_hour": 24180.0,
+        "tick_slo_violation_fraction": 0.9648
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-5",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-5-controller",
+        "metrics": "a-confscale-point-corrected-rep-5-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 16.0,
+        "e2e_run_p95_ms": 542.8,
+        "overhead_replica_seconds_per_hour": 24180.0,
+        "tick_slo_violation_fraction": 0.9402
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-tuned-rep-1",
+      "method": "hpa-cpu-tuned",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "metrics": "a-hpa-cpu-tuned-rep-1-metrics",
+        "run_configuration": "a-hpa-cpu-tuned-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-hpa-cpu-tuned-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 571.5,
+        "overhead_replica_seconds_per_hour": 22560.0,
+        "tick_slo_violation_fraction": 0.9469
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-tuned-rep-2",
+      "method": "hpa-cpu-tuned",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "metrics": "a-hpa-cpu-tuned-rep-2-metrics",
+        "run_configuration": "a-hpa-cpu-tuned-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-hpa-cpu-tuned-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 10.0,
+        "e2e_run_p95_ms": 550.8,
+        "overhead_replica_seconds_per_hour": 22770.0,
+        "tick_slo_violation_fraction": 0.9614
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-tuned-rep-3",
+      "method": "hpa-cpu-tuned",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "metrics": "a-hpa-cpu-tuned-rep-3-metrics",
+        "run_configuration": "a-hpa-cpu-tuned-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-hpa-cpu-tuned-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 550.0,
+        "overhead_replica_seconds_per_hour": 23040.0,
+        "tick_slo_violation_fraction": 0.9536
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-tuned-rep-4",
+      "method": "hpa-cpu-tuned",
+      "pattern": "A",
+      "replicate": 4,
+      "sources": {
+        "metrics": "a-hpa-cpu-tuned-rep-4-metrics",
+        "run_configuration": "a-hpa-cpu-tuned-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-hpa-cpu-tuned-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 10.0,
+        "e2e_run_p95_ms": 545.7,
+        "overhead_replica_seconds_per_hour": 23340.0,
+        "tick_slo_violation_fraction": 0.9458
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-tuned-rep-5",
+      "method": "hpa-cpu-tuned",
+      "pattern": "A",
+      "replicate": 5,
+      "sources": {
+        "metrics": "a-hpa-cpu-tuned-rep-5-metrics",
+        "run_configuration": "a-hpa-cpu-tuned-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "a-hpa-cpu-tuned-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 552.3,
+        "overhead_replica_seconds_per_hour": 23820.0,
+        "tick_slo_violation_fraction": 0.9659
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-scp-frozen-rep-1",
+      "method": "confscale-scp-frozen",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "b-confscale-scp-frozen-rep-1-controller",
+        "metrics": "b-confscale-scp-frozen-rep-1-metrics",
+        "run_configuration": "b-confscale-scp-frozen-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-scp-frozen-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 42.0,
+        "e2e_run_p95_ms": 1000.3,
+        "overhead_replica_seconds_per_hour": 28320.0,
+        "tick_slo_violation_fraction": 0.72
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-scp-frozen-rep-2",
+      "method": "confscale-scp-frozen",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "b-confscale-scp-frozen-rep-2-controller",
+        "metrics": "b-confscale-scp-frozen-rep-2-metrics",
+        "run_configuration": "b-confscale-scp-frozen-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-scp-frozen-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1133.0,
+        "overhead_replica_seconds_per_hour": 26580.0,
+        "tick_slo_violation_fraction": 0.7252
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-scp-frozen-rep-3",
+      "method": "confscale-scp-frozen",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "b-confscale-scp-frozen-rep-3-controller",
+        "metrics": "b-confscale-scp-frozen-rep-3-metrics",
+        "run_configuration": "b-confscale-scp-frozen-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-scp-frozen-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 41.0,
+        "e2e_run_p95_ms": 1175.5,
+        "overhead_replica_seconds_per_hour": 30089.999999999996,
+        "tick_slo_violation_fraction": 0.8016
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-scp-frozen-rep-4",
+      "method": "confscale-scp-frozen",
+      "pattern": "B",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "b-confscale-scp-frozen-rep-4-controller",
+        "metrics": "b-confscale-scp-frozen-rep-4-metrics",
+        "run_configuration": "b-confscale-scp-frozen-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-scp-frozen-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 44.0,
+        "e2e_run_p95_ms": 1050.0,
+        "overhead_replica_seconds_per_hour": 31860.0,
+        "tick_slo_violation_fraction": 0.8243
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-scp-frozen-rep-5",
+      "method": "confscale-scp-frozen",
+      "pattern": "B",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "b-confscale-scp-frozen-rep-5-controller",
+        "metrics": "b-confscale-scp-frozen-rep-5-metrics",
+        "run_configuration": "b-confscale-scp-frozen-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-scp-frozen-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1205.4,
+        "overhead_replica_seconds_per_hour": 32910.0,
+        "tick_slo_violation_fraction": 0.84
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-1-controller",
+        "metrics": "b-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 41.0,
+        "e2e_run_p95_ms": 989.8,
+        "overhead_replica_seconds_per_hour": 25440.0,
+        "tick_slo_violation_fraction": 0.7707
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-2-controller",
+        "metrics": "b-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 38.0,
+        "e2e_run_p95_ms": 1131.2,
+        "overhead_replica_seconds_per_hour": 25260.000000000004,
+        "tick_slo_violation_fraction": 0.6916
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-3-controller",
+        "metrics": "b-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 44.0,
+        "e2e_run_p95_ms": 1136.4,
+        "overhead_replica_seconds_per_hour": 27780.0,
+        "tick_slo_violation_fraction": 0.7776
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-4",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-4-controller",
+        "metrics": "b-confscale-point-corrected-rep-4-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 39.0,
+        "e2e_run_p95_ms": 1049.1,
+        "overhead_replica_seconds_per_hour": 29340.0,
+        "tick_slo_violation_fraction": 0.8218
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-5",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-5-controller",
+        "metrics": "b-confscale-point-corrected-rep-5-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1220.0,
+        "overhead_replica_seconds_per_hour": 30660.000000000004,
+        "tick_slo_violation_fraction": 0.8153
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-tuned-rep-1",
+      "method": "hpa-cpu-tuned",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "metrics": "b-hpa-cpu-tuned-rep-1-metrics",
+        "run_configuration": "b-hpa-cpu-tuned-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-hpa-cpu-tuned-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 26.0,
+        "e2e_run_p95_ms": 990.2,
+        "overhead_replica_seconds_per_hour": 25604.216666666664,
+        "tick_slo_violation_fraction": 0.7245
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-tuned-rep-2",
+      "method": "hpa-cpu-tuned",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "metrics": "b-hpa-cpu-tuned-rep-2-metrics",
+        "run_configuration": "b-hpa-cpu-tuned-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-hpa-cpu-tuned-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 24.0,
+        "e2e_run_p95_ms": 1134.2,
+        "overhead_replica_seconds_per_hour": 25440.0,
+        "tick_slo_violation_fraction": 0.7501
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-tuned-rep-3",
+      "method": "hpa-cpu-tuned",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "metrics": "b-hpa-cpu-tuned-rep-3-metrics",
+        "run_configuration": "b-hpa-cpu-tuned-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-hpa-cpu-tuned-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 35.0,
+        "e2e_run_p95_ms": 1197.8,
+        "overhead_replica_seconds_per_hour": 26550.0,
+        "tick_slo_violation_fraction": 0.7587
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-tuned-rep-4",
+      "method": "hpa-cpu-tuned",
+      "pattern": "B",
+      "replicate": 4,
+      "sources": {
+        "metrics": "b-hpa-cpu-tuned-rep-4-metrics",
+        "run_configuration": "b-hpa-cpu-tuned-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-hpa-cpu-tuned-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1024.3,
+        "overhead_replica_seconds_per_hour": 30330.000000000004,
+        "tick_slo_violation_fraction": 0.8321
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-tuned-rep-5",
+      "method": "hpa-cpu-tuned",
+      "pattern": "B",
+      "replicate": 5,
+      "sources": {
+        "metrics": "b-hpa-cpu-tuned-rep-5-metrics",
+        "run_configuration": "b-hpa-cpu-tuned-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "b-hpa-cpu-tuned-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 44.0,
+        "e2e_run_p95_ms": 1206.9,
+        "overhead_replica_seconds_per_hour": 32339.999999999996,
+        "tick_slo_violation_fraction": 0.8281
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-scp-frozen-rep-1",
+      "method": "confscale-scp-frozen",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "c-confscale-scp-frozen-rep-1-controller",
+        "metrics": "c-confscale-scp-frozen-rep-1-metrics",
+        "run_configuration": "c-confscale-scp-frozen-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-scp-frozen-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 27.0,
+        "e2e_run_p95_ms": 1230.2,
+        "overhead_replica_seconds_per_hour": 56731.5,
+        "tick_slo_violation_fraction": 0.9596
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-scp-frozen-rep-2",
+      "method": "confscale-scp-frozen",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "c-confscale-scp-frozen-rep-2-controller",
+        "metrics": "c-confscale-scp-frozen-rep-2-metrics",
+        "run_configuration": "c-confscale-scp-frozen-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-scp-frozen-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 29.0,
+        "e2e_run_p95_ms": 1215.4,
+        "overhead_replica_seconds_per_hour": 56851.56666666667,
+        "tick_slo_violation_fraction": 0.9625
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-scp-frozen-rep-3",
+      "method": "confscale-scp-frozen",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "c-confscale-scp-frozen-rep-3-controller",
+        "metrics": "c-confscale-scp-frozen-rep-3-metrics",
+        "run_configuration": "c-confscale-scp-frozen-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-scp-frozen-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 20.0,
+        "e2e_run_p95_ms": 1225.7,
+        "overhead_replica_seconds_per_hour": 57300.00000000001,
+        "tick_slo_violation_fraction": 0.9646
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-scp-frozen-rep-4",
+      "method": "confscale-scp-frozen",
+      "pattern": "C",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "c-confscale-scp-frozen-rep-4-controller",
+        "metrics": "c-confscale-scp-frozen-rep-4-metrics",
+        "run_configuration": "c-confscale-scp-frozen-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-scp-frozen-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 25.0,
+        "e2e_run_p95_ms": 1234.5,
+        "overhead_replica_seconds_per_hour": 57390.0,
+        "tick_slo_violation_fraction": 0.962
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-scp-frozen-rep-5",
+      "method": "confscale-scp-frozen",
+      "pattern": "C",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "c-confscale-scp-frozen-rep-5-controller",
+        "metrics": "c-confscale-scp-frozen-rep-5-metrics",
+        "run_configuration": "c-confscale-scp-frozen-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-scp-frozen-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 29.0,
+        "e2e_run_p95_ms": 1220.0,
+        "overhead_replica_seconds_per_hour": 56820.00000000001,
+        "tick_slo_violation_fraction": 0.9643
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-1-controller",
+        "metrics": "c-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 30.0,
+        "e2e_run_p95_ms": 1236.8,
+        "overhead_replica_seconds_per_hour": 47186.2,
+        "tick_slo_violation_fraction": 0.9639
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-2-controller",
+        "metrics": "c-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 25.0,
+        "e2e_run_p95_ms": 1239.9,
+        "overhead_replica_seconds_per_hour": 47396.316666666666,
+        "tick_slo_violation_fraction": 0.957
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-3-controller",
+        "metrics": "c-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 31.0,
+        "e2e_run_p95_ms": 1216.2,
+        "overhead_replica_seconds_per_hour": 48687.03333333333,
+        "tick_slo_violation_fraction": 0.9644
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-4",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-4-controller",
+        "metrics": "c-confscale-point-corrected-rep-4-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 30.0,
+        "e2e_run_p95_ms": 1236.4,
+        "overhead_replica_seconds_per_hour": 48120.0,
+        "tick_slo_violation_fraction": 0.9601
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-5",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-5-controller",
+        "metrics": "c-confscale-point-corrected-rep-5-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 27.0,
+        "e2e_run_p95_ms": 1233.8,
+        "overhead_replica_seconds_per_hour": 47306.26666666666,
+        "tick_slo_violation_fraction": 0.9689
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-tuned-rep-1",
+      "method": "hpa-cpu-tuned",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "metrics": "c-hpa-cpu-tuned-rep-1-metrics",
+        "run_configuration": "c-hpa-cpu-tuned-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-hpa-cpu-tuned-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 23.0,
+        "e2e_run_p95_ms": 1218.9,
+        "overhead_replica_seconds_per_hour": 46560.0,
+        "tick_slo_violation_fraction": 0.9586
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-tuned-rep-2",
+      "method": "hpa-cpu-tuned",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "metrics": "c-hpa-cpu-tuned-rep-2-metrics",
+        "run_configuration": "c-hpa-cpu-tuned-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-hpa-cpu-tuned-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 20.0,
+        "e2e_run_p95_ms": 1252.3,
+        "overhead_replica_seconds_per_hour": 46050.0,
+        "tick_slo_violation_fraction": 0.9708
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-tuned-rep-3",
+      "method": "hpa-cpu-tuned",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "metrics": "c-hpa-cpu-tuned-rep-3-metrics",
+        "run_configuration": "c-hpa-cpu-tuned-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-hpa-cpu-tuned-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 23.0,
+        "e2e_run_p95_ms": 1228.0,
+        "overhead_replica_seconds_per_hour": 47996.649999999994,
+        "tick_slo_violation_fraction": 0.9621
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-tuned-rep-4",
+      "method": "hpa-cpu-tuned",
+      "pattern": "C",
+      "replicate": 4,
+      "sources": {
+        "metrics": "c-hpa-cpu-tuned-rep-4-metrics",
+        "run_configuration": "c-hpa-cpu-tuned-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-hpa-cpu-tuned-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 24.0,
+        "e2e_run_p95_ms": 1214.3,
+        "overhead_replica_seconds_per_hour": 49050.0,
+        "tick_slo_violation_fraction": 0.9706
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-tuned-rep-5",
+      "method": "hpa-cpu-tuned",
+      "pattern": "C",
+      "replicate": 5,
+      "sources": {
+        "metrics": "c-hpa-cpu-tuned-rep-5-metrics",
+        "run_configuration": "c-hpa-cpu-tuned-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "c-hpa-cpu-tuned-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 24.0,
+        "e2e_run_p95_ms": 1238.3,
+        "overhead_replica_seconds_per_hour": 48326.83333333333,
+        "tick_slo_violation_fraction": 0.9702
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-scp-frozen-rep-1",
+      "method": "confscale-scp-frozen",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "d-confscale-scp-frozen-rep-1-controller",
+        "metrics": "d-confscale-scp-frozen-rep-1-metrics",
+        "run_configuration": "d-confscale-scp-frozen-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-scp-frozen-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 20.0,
+        "e2e_run_p95_ms": 965.9,
+        "overhead_replica_seconds_per_hour": 19620.0,
+        "tick_slo_violation_fraction": 0.193
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-scp-frozen-rep-2",
+      "method": "confscale-scp-frozen",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "d-confscale-scp-frozen-rep-2-controller",
+        "metrics": "d-confscale-scp-frozen-rep-2-metrics",
+        "run_configuration": "d-confscale-scp-frozen-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-scp-frozen-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 17.0,
+        "e2e_run_p95_ms": 948.3,
+        "overhead_replica_seconds_per_hour": 19560.0,
+        "tick_slo_violation_fraction": 0.1944
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-scp-frozen-rep-3",
+      "method": "confscale-scp-frozen",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "d-confscale-scp-frozen-rep-3-controller",
+        "metrics": "d-confscale-scp-frozen-rep-3-metrics",
+        "run_configuration": "d-confscale-scp-frozen-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-scp-frozen-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 22.0,
+        "e2e_run_p95_ms": 977.6,
+        "overhead_replica_seconds_per_hour": 18300.0,
+        "tick_slo_violation_fraction": 0.193
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-scp-frozen-rep-4",
+      "method": "confscale-scp-frozen",
+      "pattern": "D",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "d-confscale-scp-frozen-rep-4-controller",
+        "metrics": "d-confscale-scp-frozen-rep-4-metrics",
+        "run_configuration": "d-confscale-scp-frozen-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-scp-frozen-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 18.0,
+        "e2e_run_p95_ms": 979.3,
+        "overhead_replica_seconds_per_hour": 18690.0,
+        "tick_slo_violation_fraction": 0.1931
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-scp-frozen-rep-5",
+      "method": "confscale-scp-frozen",
+      "pattern": "D",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "d-confscale-scp-frozen-rep-5-controller",
+        "metrics": "d-confscale-scp-frozen-rep-5-metrics",
+        "run_configuration": "d-confscale-scp-frozen-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-scp-frozen-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 20.0,
+        "e2e_run_p95_ms": 959.8,
+        "overhead_replica_seconds_per_hour": 19740.0,
+        "tick_slo_violation_fraction": 0.1927
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-1-controller",
+        "metrics": "d-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 19.0,
+        "e2e_run_p95_ms": 968.4,
+        "overhead_replica_seconds_per_hour": 16200.0,
+        "tick_slo_violation_fraction": 0.1939
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-2-controller",
+        "metrics": "d-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 19.0,
+        "e2e_run_p95_ms": 957.7,
+        "overhead_replica_seconds_per_hour": 16320.0,
+        "tick_slo_violation_fraction": 0.1924
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-3-controller",
+        "metrics": "d-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 17.0,
+        "e2e_run_p95_ms": 941.8,
+        "overhead_replica_seconds_per_hour": 14460.0,
+        "tick_slo_violation_fraction": 0.1953
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-4",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 4,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-4-controller",
+        "metrics": "d-confscale-point-corrected-rep-4-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 25.0,
+        "e2e_run_p95_ms": 960.5,
+        "overhead_replica_seconds_per_hour": 14100.000000000002,
+        "tick_slo_violation_fraction": 0.1937
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-5",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 5,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-5-controller",
+        "metrics": "d-confscale-point-corrected-rep-5-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 20.0,
+        "e2e_run_p95_ms": 964.1,
+        "overhead_replica_seconds_per_hour": 18990.0,
+        "tick_slo_violation_fraction": 0.1913
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-tuned-rep-1",
+      "method": "hpa-cpu-tuned",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "metrics": "d-hpa-cpu-tuned-rep-1-metrics",
+        "run_configuration": "d-hpa-cpu-tuned-rep-1-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-hpa-cpu-tuned-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 38.0,
+        "e2e_run_p95_ms": 1135.1,
+        "overhead_replica_seconds_per_hour": 15269.999999999998,
+        "tick_slo_violation_fraction": 0.1855
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-tuned-rep-2",
+      "method": "hpa-cpu-tuned",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "metrics": "d-hpa-cpu-tuned-rep-2-metrics",
+        "run_configuration": "d-hpa-cpu-tuned-rep-2-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-hpa-cpu-tuned-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 42.0,
+        "e2e_run_p95_ms": 1135.6,
+        "overhead_replica_seconds_per_hour": 15750.0,
+        "tick_slo_violation_fraction": 0.1852
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-tuned-rep-3",
+      "method": "hpa-cpu-tuned",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "metrics": "d-hpa-cpu-tuned-rep-3-metrics",
+        "run_configuration": "d-hpa-cpu-tuned-rep-3-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-hpa-cpu-tuned-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 38.0,
+        "e2e_run_p95_ms": 1145.0,
+        "overhead_replica_seconds_per_hour": 14880.000000000002,
+        "tick_slo_violation_fraction": 0.1844
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-tuned-rep-4",
+      "method": "hpa-cpu-tuned",
+      "pattern": "D",
+      "replicate": 4,
+      "sources": {
+        "metrics": "d-hpa-cpu-tuned-rep-4-metrics",
+        "run_configuration": "d-hpa-cpu-tuned-rep-4-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-hpa-cpu-tuned-rep-4-trace"
+      },
+      "values": {
+        "desired_count_changes": 38.0,
+        "e2e_run_p95_ms": 1129.4,
+        "overhead_replica_seconds_per_hour": 15209.999999999998,
+        "tick_slo_violation_fraction": 0.1871
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-tuned-rep-5",
+      "method": "hpa-cpu-tuned",
+      "pattern": "D",
+      "replicate": 5,
+      "sources": {
+        "metrics": "d-hpa-cpu-tuned-rep-5-metrics",
+        "run_configuration": "d-hpa-cpu-tuned-rep-5-configuration",
+        "score": "point-vs-tuned-aggregate",
+        "workload_trace": "d-hpa-cpu-tuned-rep-5-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1138.2,
+        "overhead_replica_seconds_per_hour": 11609.999999999998,
+        "tick_slo_violation_fraction": 0.1823
+      },
+      "zero_success": false
+    }
+  ],
+  "checkpoint_provenance": {
+    "files": [],
+    "status": "configuration-only"
+  },
+  "cohort": {
+    "admitted_cells": 60,
+    "complexity": 50000,
+    "duration_s": 1800,
+    "methods": [
+      "confscale-scp-frozen",
+      "confscale-point-corrected",
+      "hpa-cpu-tuned"
+    ],
+    "patterns": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "pool_with_other_batches": false,
+    "replicates_per_method_pattern": 5
+  },
+  "kind": "STORED_RESULT_COMPARISON",
+  "method_configurations": {
+    "confscale-point-corrected": {
+      "recorded_settings": {
+        "coverage_monitor": false,
+        "h0_only": true,
+        "ladder": false,
+        "max_replicas": 20,
+        "min_replicas": 1,
+        "online_recal": false,
+        "point_bias_window": 10,
+        "policy": "tier",
+        "recalibrator": "none",
+        "safety_factor": 2.0,
+        "slo_capacity": 10.0,
+        "target_util": 0.7,
+        "uq_method": "scp"
+      },
+      "runtime_support": "supported-method"
+    },
+    "confscale-scp-frozen": {
+      "recorded_settings": {
+        "coverage_monitor": false,
+        "ladder": false,
+        "max_replicas": 20,
+        "min_replicas": 1,
+        "online_recal": false,
+        "policy": "tier",
+        "recalibrator": "none",
+        "safety_factor": 2.0,
+        "slo_capacity": 10.0,
+        "target_util": 0.7,
+        "uq_method": "scp"
+      },
+      "runtime_support": "supported-method"
+    },
+    "hpa-cpu-tuned": {
+      "recorded_settings": {
+        "cpu_target_pct": 70,
+        "downscale_stabilization_s": 60,
+        "hpa_api_version": "autoscaling/v2",
+        "max_replicas": 20,
+        "min_replicas": 1,
+        "upscale_stabilization_s": 0
+      },
+      "runtime_support": "supported-method"
+    }
+  },
+  "metric_definitions": {
+    "desired_count_changes": {
+      "definition": "Saved metrics.resources.replica_churn: changes in sampled desired replica counts. This is not a count of Kubernetes HPA event-log records or completed resizes.",
+      "unit": "sampled desired-count changes/run"
+    },
+    "e2e_run_p95_ms": {
+      "definition": "Run-level 95th percentile of per-tick p95 latencies. Tick latencies use successful requests; a tick with no successful requests records zero. This is not the p95 of pooled requests.",
+      "unit": "ms"
+    },
+    "overhead_replica_seconds_per_hour": {
+      "definition": "Overhead replica-seconds above one minimum replica, divided by configured workload duration in hours.",
+      "unit": "replica-seconds/hour"
+    },
+    "tick_slo_violation_fraction": {
+      "definition": "Fraction of workload ticks whose successful-request p95 exceeds 200 ms; zero-success ticks have p95 zero and therefore do not count as violations.",
+      "threshold_ms": 200,
+      "unit": "fraction"
+    }
+  },
+  "qualifications": [
+    "Stored-result reproduction only: no independent raw-run rescore, new experiment, or scientific replication.",
+    "The batches are separate cohorts and must not be pooled.",
+    "Means are over admitted runs within each method and workload pattern.",
+    "Latency and tick-violation ordering can differ; neither metric establishes general superiority or fault resilience.",
+    "Reported Welch intervals are copied from saved summaries, unpaired and unadjusted; shared-host and block dependence are not modelled.",
+    "Definition-reference hashes identify code inspected during export; they do not prove which code bytes executed historically. The 200 ms tick threshold and run-p95 definition were checked against every retained workload trace.",
+    "Corrected-point versus tuned CPU HPA fails the recorded cost criterion on pattern D, despite the overall three-of-four-pattern rule passing. Its cost-difference 95% interval spans zero.",
+    "Against tuned CPU HPA, the corrected point controller has higher mean p95 but lower tick-violation share on pattern C; pattern D has lower mean p95 but higher tick-violation share.",
+    "The stored cost criterion allows at most 5% greater mean overhead than the reference; a pass does not mean strictly cheaper.",
+    "The recorded service criterion requires complete per-run values. Mean p95 must be no greater than the reference, or have a recorded two-sided Welch p-value above 0.05, or be within +5% of the reference. Mean tick-violation fraction and request-error fraction must each be no more than reference +0.03, and no candidate run may have zero successful requests.",
+    "The recorded overall rule requires an eligible completed cohort, enough valid replicates, and cost plus service criteria passing on at least three of four patterns. The saved verdict is PASS with three of four patterns passing. These decisions are copied, not independently recomputed here; a non-significant p-value does not establish equivalence.",
+    "These frozen-interval and corrected-point configurations have interval recalibration, coverage monitoring and escalation disabled; they do not measure online interval repair.",
+    "No retained checkpoint-hash manifest is supplied for this batch; model configuration is retained, but historical checkpoint bytes are not independently verified here."
+  ],
+  "recorded_comparisons": [
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -7.620000000000118,
+          "relative_percent": -1.3753023138288485,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 887.3666666666686,
+          "relative_percent": 3.840416630601007,
+          "welch_95": {
+            "df": 7.690844781243298,
+            "high": 1550.838189450236,
+            "low": 223.89514388310113
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.000660000000000105,
+          "relative_percent": -0.06913021618905071,
+          "welch_95": null
+        }
+      },
+      "pattern": "A",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -5.5,
+          "relative_percent": -0.9964851251947676,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 3180.7800000000025,
+          "relative_percent": 15.282963386258583,
+          "welch_95": {
+            "df": 6.075304553878345,
+            "high": 3679.2988507365817,
+            "low": 2682.2611492634232
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.0018000000000001348,
+          "relative_percent": -0.18831209591364162,
+          "welch_95": null
+        }
+      },
+      "pattern": "A",
+      "recorded_gate": {
+        "cost": false,
+        "pattern_pass": false,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "confscale-scp-frozen"
+    },
+    {
+      "candidate": "confscale-scp-frozen",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -2.1200000000001182,
+          "relative_percent": -0.382630040067884,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -2293.413333333334,
+          "relative_percent": -9.925618165555846,
+          "welch_95": {
+            "df": 5.4402675955515996,
+            "high": -1688.464611796456,
+            "low": -2898.362054870212
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.0011400000000000299,
+          "relative_percent": 0.119406737053799,
+          "welch_95": null
+        }
+      },
+      "pattern": "A",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": true
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -5.379999999999882,
+          "relative_percent": -0.4843879425216878,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -356.8433333333305,
+          "relative_percent": -1.2720398039271736,
+          "welch_95": {
+            "df": 7.479960806920365,
+            "high": 3725.1949480818625,
+            "low": -4438.881614748523
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.0032999999999999696,
+          "relative_percent": -0.42378322845768196,
+          "welch_95": null
+        }
+      },
+      "pattern": "B",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": true
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -7.540000000000191,
+          "relative_percent": -0.677545738830397,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -2256.0,
+          "relative_percent": -7.532051282051282,
+          "welch_95": {
+            "df": 7.948934002352065,
+            "high": 1356.0987913119575,
+            "low": -5868.098791311957
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.006819999999999826,
+          "relative_percent": -0.8718774769246282,
+          "welch_95": null
+        }
+      },
+      "pattern": "B",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": true
+      },
+      "reference": "confscale-scp-frozen"
+    },
+    {
+      "candidate": "confscale-scp-frozen",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": 2.1600000000003092,
+          "relative_percent": 0.19447545647714098,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 1899.1566666666695,
+          "relative_percent": 6.769925757971306,
+          "welch_95": {
+            "df": 7.728342521901992,
+            "high": 6084.816939866223,
+            "low": -2286.503606532884
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.0035199999999998566,
+          "relative_percent": 0.4520354436881798,
+          "welch_95": null
+        }
+      },
+      "pattern": "B",
+      "recorded_gate": {
+        "cost": false,
+        "pattern_pass": false,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": 2.2599999999997635,
+          "relative_percent": 0.18368607562012446,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 142.46666666665988,
+          "relative_percent": 0.29932049205934363,
+          "welch_95": {
+            "df": 5.972686297958497,
+            "high": 1684.6006009720625,
+            "low": -1399.6672676387427
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.0036000000000001586,
+          "relative_percent": -0.3724934296297993,
+          "welch_95": null
+        }
+      },
+      "pattern": "C",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": 7.459999999999809,
+          "relative_percent": 0.6089000620326984,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -9279.450000000012,
+          "relative_percent": -16.27442243421799,
+          "welch_95": {
+            "df": 5.691157320531164,
+            "high": -8491.250116048197,
+            "low": -10067.649883951826
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.00025999999999992696,
+          "relative_percent": 0.02701018076043289,
+          "welch_95": null
+        }
+      },
+      "pattern": "C",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": true
+      },
+      "reference": "confscale-scp-frozen"
+    },
+    {
+      "candidate": "confscale-scp-frozen",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -5.2000000000000455,
+          "relative_percent": -0.4226405279755555,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 9421.916666666672,
+          "relative_percent": 19.795316327624707,
+          "welch_95": {
+            "df": 4.4663670704806915,
+            "high": 10957.80586917437,
+            "low": 7886.027464158974
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.0038600000000000856,
+          "relative_percent": -0.39939573288083163,
+          "welch_95": null
+        }
+      },
+      "pattern": "C",
+      "recorded_gate": {
+        "cost": false,
+        "pattern_pass": false,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -178.16000000000008,
+          "relative_percent": -15.673992222828291,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 1470.0,
+          "relative_percent": 10.107260726072607,
+          "welch_95": {
+            "df": 7.825238843205227,
+            "high": 4120.115030068379,
+            "low": -1180.1150300683794
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.008419999999999983,
+          "relative_percent": 4.553812871822598,
+          "welch_95": null
+        }
+      },
+      "pattern": "D",
+      "recorded_gate": {
+        "cost": false,
+        "pattern_pass": false,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    },
+    {
+      "candidate": "confscale-point-corrected",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -7.67999999999995,
+          "relative_percent": -0.7948829410668768,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -3168.0,
+          "relative_percent": -16.515483265561464,
+          "welch_95": {
+            "df": 4.874158252105992,
+            "high": -798.6178372139716,
+            "low": -5537.382162786029
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 7.999999999996898e-05,
+          "relative_percent": 0.04139929621194834,
+          "welch_95": null
+        }
+      },
+      "pattern": "D",
+      "recorded_gate": {
+        "cost": true,
+        "pattern_pass": true,
+        "service": true,
+        "strictly_cheaper": true
+      },
+      "reference": "confscale-scp-frozen"
+    },
+    {
+      "candidate": "confscale-scp-frozen",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -170.48000000000013,
+          "relative_percent": -14.998328435943918,
+          "welch_95": null
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 4638.0,
+          "relative_percent": 31.88943894389439,
+          "welch_95": {
+            "df": 5.169655542067408,
+            "high": 6675.317498961654,
+            "low": 2600.6825010383463
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.008340000000000014,
+          "relative_percent": 4.510546241211473,
+          "welch_95": null
+        }
+      },
+      "pattern": "D",
+      "recorded_gate": {
+        "cost": false,
+        "pattern_pass": false,
+        "service": true,
+        "strictly_cheaper": false
+      },
+      "reference": "hpa-cpu-tuned"
+    }
+  ],
+  "recorded_status": {
+    "cohort_complete": true,
+    "hpa_event_log_complete": null,
+    "overall_rule_verdict": "PASS",
+    "proposal_observation_complete": null,
+    "rule_patterns_passed": 3
+  },
+  "schema_version": 1,
+  "summaries": [
+    {
+      "method": "confscale-scp-frozen",
+      "n": 5,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 13.6,
+          "n": 5,
+          "values": [
+            10.0,
+            12.0,
+            17.0,
+            14.0,
+            15.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 551.9399999999999,
+          "n": 5,
+          "sd": 13.464508903038396,
+          "values": [
+            572.9,
+            538.8,
+            555.9,
+            549.8,
+            542.3
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 20812.586666666666,
+          "n": 5,
+          "sd": 213.62360798584217,
+          "values": [
+            20591.433333333334,
+            20700.0,
+            20940.0,
+            21120.0,
+            20711.5
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.95586,
+          "n": 5,
+          "sd": 0.004307319351986799,
+          "values": [
+            0.9592,
+            0.9581,
+            0.9581,
+            0.9553,
+            0.9486
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 5,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 14.2,
+          "n": 5,
+          "values": [
+            15.0,
+            14.0,
+            14.0,
+            12.0,
+            16.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 546.4399999999999,
+          "n": 5,
+          "sd": 7.694348575415614,
+          "values": [
+            555.7,
+            537.0,
+            543.8,
+            552.9,
+            542.8
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 23993.36666666667,
+          "n": 5,
+          "sd": 403.9207884391858,
+          "values": [
+            24073.36666666667,
+            23280.0,
+            24253.466666666667,
+            24180.0,
+            24180.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9540599999999999,
+          "n": 5,
+          "sd": 0.011860775691328101,
+          "values": [
+            0.9447,
+            0.9536,
+            0.967,
+            0.9648,
+            0.9402
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-tuned",
+      "n": 5,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 10.8,
+          "n": 5,
+          "values": [
+            11.0,
+            10.0,
+            12.0,
+            10.0,
+            11.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 554.0600000000001,
+          "n": 5,
+          "sd": 10.053009499647352,
+          "values": [
+            571.5,
+            550.8,
+            550.0,
+            545.7,
+            552.3
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 23106.0,
+          "n": 5,
+          "sd": 494.9545433673682,
+          "values": [
+            22560.0,
+            22770.0,
+            23040.0,
+            23340.0,
+            23820.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.95472,
+          "n": 5,
+          "sd": 0.008825927713277525,
+          "values": [
+            0.9469,
+            0.9614,
+            0.9536,
+            0.9458,
+            0.9659
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-scp-frozen",
+      "n": 5,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 39.8,
+          "n": 5,
+          "values": [
+            42.0,
+            36.0,
+            41.0,
+            44.0,
+            36.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1112.8400000000001,
+          "n": 5,
+          "sd": 85.89844585322838,
+          "values": [
+            1000.3,
+            1133.0,
+            1175.5,
+            1050.0,
+            1205.4
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 29952.0,
+          "n": 5,
+          "sd": 2571.141769720215,
+          "values": [
+            28320.0,
+            26580.0,
+            30089.999999999996,
+            31860.0,
+            32910.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.7822199999999999,
+          "n": 5,
+          "sd": 0.05614144636540817,
+          "values": [
+            0.72,
+            0.7252,
+            0.8016,
+            0.8243,
+            0.84
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 5,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 39.6,
+          "n": 5,
+          "values": [
+            41.0,
+            38.0,
+            44.0,
+            39.0,
+            36.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1105.3,
+          "n": 5,
+          "sd": 88.44885527806456,
+          "values": [
+            989.8,
+            1131.2,
+            1136.4,
+            1049.1,
+            1220.0
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 27696.0,
+          "n": 5,
+          "sd": 2372.694670622413,
+          "values": [
+            25440.0,
+            25260.000000000004,
+            27780.0,
+            29340.0,
+            30660.000000000004
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.7754000000000001,
+          "n": 5,
+          "sd": 0.05194790659882263,
+          "values": [
+            0.7707,
+            0.6916,
+            0.7776,
+            0.8218,
+            0.8153
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-tuned",
+      "n": 5,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 33.0,
+          "n": 5,
+          "values": [
+            26.0,
+            24.0,
+            35.0,
+            36.0,
+            44.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1110.6799999999998,
+          "n": 5,
+          "sd": 99.21984176564686,
+          "values": [
+            990.2,
+            1134.2,
+            1197.8,
+            1024.3,
+            1206.9
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 28052.84333333333,
+          "n": 5,
+          "sd": 3108.3120697127924,
+          "values": [
+            25604.216666666664,
+            25440.0,
+            26550.0,
+            30330.000000000004,
+            32339.999999999996
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.7787000000000001,
+          "n": 5,
+          "sd": 0.04859917694776318,
+          "values": [
+            0.7245,
+            0.7501,
+            0.7587,
+            0.8321,
+            0.8281
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-scp-frozen",
+      "n": 5,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 26.0,
+          "n": 5,
+          "values": [
+            27.0,
+            29.0,
+            20.0,
+            25.0,
+            29.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1225.16,
+          "n": 5,
+          "sd": 7.661788303000788,
+          "values": [
+            1230.2,
+            1215.4,
+            1225.7,
+            1234.5,
+            1220.0
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 57018.61333333334,
+          "n": 5,
+          "sd": 302.85822737526655,
+          "values": [
+            56731.5,
+            56851.56666666667,
+            57300.00000000001,
+            57390.0,
+            56820.00000000001
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9625999999999999,
+          "n": 5,
+          "sd": 0.0020161845153656073,
+          "values": [
+            0.9596,
+            0.9625,
+            0.9646,
+            0.962,
+            0.9643
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 5,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 28.6,
+          "n": 5,
+          "values": [
+            30.0,
+            25.0,
+            31.0,
+            30.0,
+            27.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1232.62,
+          "n": 5,
+          "sd": 9.430906637222106,
+          "values": [
+            1236.8,
+            1239.9,
+            1216.2,
+            1236.4,
+            1233.8
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 47739.16333333333,
+          "n": 5,
+          "sd": 643.0796825519468,
+          "values": [
+            47186.2,
+            47396.316666666666,
+            48687.03333333333,
+            48120.0,
+            47306.26666666666
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9628599999999998,
+          "n": 5,
+          "sd": 0.004524709935454442,
+          "values": [
+            0.9639,
+            0.957,
+            0.9644,
+            0.9601,
+            0.9689
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-tuned",
+      "n": 5,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 22.8,
+          "n": 5,
+          "values": [
+            23.0,
+            20.0,
+            23.0,
+            24.0,
+            24.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1230.3600000000001,
+          "n": 5,
+          "sd": 15.323446087613554,
+          "values": [
+            1218.9,
+            1252.3,
+            1228.0,
+            1214.3,
+            1238.3
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 47596.69666666667,
+          "n": 5,
+          "sd": 1252.2143743074582,
+          "values": [
+            46560.0,
+            46050.0,
+            47996.649999999994,
+            49050.0,
+            48326.83333333333
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.96646,
+          "n": 5,
+          "sd": 0.005717342039794366,
+          "values": [
+            0.9586,
+            0.9708,
+            0.9621,
+            0.9706,
+            0.9702
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-scp-frozen",
+      "n": 5,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 19.4,
+          "n": 5,
+          "values": [
+            20.0,
+            17.0,
+            22.0,
+            18.0,
+            20.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 966.18,
+          "n": 5,
+          "sd": 12.874665044186601,
+          "values": [
+            965.9,
+            948.3,
+            977.6,
+            979.3,
+            959.8
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 19182.0,
+          "n": 5,
+          "sd": 645.3836068571931,
+          "values": [
+            19620.0,
+            19560.0,
+            18300.0,
+            18690.0,
+            19740.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.19324000000000002,
+          "n": 5,
+          "sd": 0.0006655824516917422,
+          "values": [
+            0.193,
+            0.1944,
+            0.193,
+            0.1931,
+            0.1927
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 5,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 20.0,
+          "n": 5,
+          "values": [
+            19.0,
+            19.0,
+            17.0,
+            25.0,
+            20.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 958.5,
+          "n": 5,
+          "sd": 10.159970472398053,
+          "values": [
+            968.4,
+            957.7,
+            941.8,
+            960.5,
+            964.1
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 16014.0,
+          "n": 5,
+          "sd": 1940.5617743323705,
+          "values": [
+            16200.0,
+            16320.0,
+            14460.0,
+            14100.000000000002,
+            18990.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.19332,
+          "n": 5,
+          "sd": 0.0015270887335056887,
+          "values": [
+            0.1939,
+            0.1924,
+            0.1953,
+            0.1937,
+            0.1913
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-tuned",
+      "n": 5,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 38.4,
+          "n": 5,
+          "values": [
+            38.0,
+            42.0,
+            38.0,
+            38.0,
+            36.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1136.66,
+          "n": 5,
+          "sd": 5.661095300381351,
+          "values": [
+            1135.1,
+            1135.6,
+            1145.0,
+            1129.4,
+            1138.2
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 14544.0,
+          "n": 5,
+          "sd": 1669.3052447051143,
+          "values": [
+            15269.999999999998,
+            15750.0,
+            14880.000000000002,
+            15209.999999999998,
+            11609.999999999998
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.1849,
+          "n": 5,
+          "sd": 0.0017535677916750178,
+          "values": [
+            0.1855,
+            0.1852,
+            0.1844,
+            0.1871,
+            0.1823
+          ]
+        }
+      }
+    }
+  ]
+}

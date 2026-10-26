@@ -21,7 +21,9 @@ def main():
         [sys.executable, '-S', '-m', 'confscale', 'verify'],
         [sys.executable, '-S', '-m', 'confscale', 'reproduce', '--output', str(output / 'paper')],
         [sys.executable, '-S', '-m', 'confscale', 'demo', '--output', str(output / 'demo')],
+        [sys.executable, '-S', '-m', 'confscale', 'comparisons', '--output', str(output / 'comparisons')],
         [sys.executable, '-S', '-m', 'confscale.experiment', 'plan'],
+        [sys.executable, '-S', '-m', 'confscale.experiment', 'plan', '--config', 'configs/comparison-smoke.json'],
         [sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v'],
     ]
     if args.runtime_tests:

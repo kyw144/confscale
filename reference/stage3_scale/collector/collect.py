@@ -87,27 +87,45 @@ def sanitize_value(value: Any) -> Optional[float]:
 
 
 def _execute_scalar_queries(client: PrometheusClient, queries: list[dict],
-                            window_s: int) -> dict[str, Any]:
+                            window_s: int, overhead_evidence: Optional[dict] = None) -> dict[str, Any]:
+    """Execute all scalar instant queries and return a flat dict of results."""
     results = {}
     window = f"{window_s}s"
     for q in queries:
         if q.get("optional") and q.get("fallback") is None:
             # Optional UQ metrics — skip quietly if they don't exist
             continue
+        evidence = None
+        if q["name"] == "overhead_replica_seconds" and overhead_evidence is not None:
+            evidence = overhead_evidence
+            evidence.update(query_succeeded=False, returned_data=False,
+                            returned_sample_count=0, scrape_sample_count=None,
+                            value=None, evaluated_at=None, error=None)
         try:
             promql = q["promql"].format(window=window, window_s=window_s)
             data = client.query(promql)
+            if evidence is not None:
+                # This is the overhead query's own response, before fallback.
+                # An instant avg_over_time result contains aggregate samples;
+                # Prometheus does not return its underlying scrape count.
+                evidence.update(query_succeeded=True, returned_data=bool(data),
+                                returned_sample_count=sum(bool(r.get("value")) for r in data))
             if data and data[0].get("value"):
                 raw = data[0]["value"][1]
                 val = sanitize_value(raw)
+                if evidence is not None:
+                    evidence.update(value=val, evaluated_at=sanitize_value(data[0]["value"][0]))
             else:
                 val = q["fallback"]
+            # Apply transform if defined
             if val is not None and "transform" in q:
                 val = eval(q["transform"])(val)
             results[q["output_key"]] = val
         except Exception as e:
             logger.warning("Scalar query '%s' failed: %s", q["name"], e)
             results[q["output_key"]] = q.get("fallback")
+            if evidence is not None:
+                evidence.update(query_succeeded=False, error=f"{type(e).__name__}: {e}")
     return results
 
 
@@ -217,7 +235,8 @@ def collect_metrics(
     warnings: list[str] = []
 
     logger.info("Executing scalar queries...")
-    scalar_results = _execute_scalar_queries(client, SCALAR_QUERIES, window_s)
+    overhead_evidence = {}
+    scalar_results = _execute_scalar_queries(client, SCALAR_QUERIES, window_s, overhead_evidence)
 
     logger.info("Executing SLO queries...")
     slo_results = _execute_scalar_queries(client, SLO_QUERIES, window_s)
@@ -268,6 +287,8 @@ def collect_metrics(
             status = "degraded"
         warnings.append("Timeseries queries returned no datapoints")
 
+    # Provenance is appended after legacy completeness counters.
+    scalar_results["resources.overhead_query"] = overhead_evidence
     _write_metrics_json(scalar_results, output_dir, run_id,
                         method, workload, replicate, duration_s, window_s)
     _write_timeseries_csv(ts_results, output_dir, duration_s)

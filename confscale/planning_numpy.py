@@ -1,5 +1,7 @@
 """Replica targets and tier hysteresis."""
 import time
+import statistics
+from collections import deque
 from typing import Optional
 import numpy as np
 
@@ -35,10 +37,13 @@ def compute_target_replicas(
     max_replicas: int = 20,
     policy: str = "tier",
     lambda_risk: Optional[float] = None,
+    h0_only: bool = False,
+    point_bias: Optional[float] = None,
 ) -> tuple[int, int]:
     """Return (tier, replicas) from the maximum horizon demand.
 
     lambda_risk overrides policy; ci-upper returns tier 0 while hysteresis tracks confidence tiers.
+    h0_only uses the corrected first forecast; raw confidence still selects cooldowns.
     """
     # Always classify tier so hysteresis cooldown selection works.
     if confidence_score < TIER_HIGH_CONF:
@@ -48,7 +53,17 @@ def compute_target_replicas(
     else:
         classified_tier = 3
 
-    if lambda_risk is not None:
+    if h0_only or point_bias is not None:
+        try:
+            h0 = float(point_forecast[0])
+            bias = 0.0 if point_bias is None else float(point_bias)
+        except (TypeError, ValueError, IndexError) as error:
+            raise ValueError('Corrected point control requires finite h0 and bias') from error
+        if not np.isfinite(h0) or not np.isfinite(bias):
+            raise ValueError('Corrected point control requires finite h0 and bias')
+        effective_rate = max(0.0, h0 - bias)
+        tier = classified_tier
+    elif lambda_risk is not None:
         upper = ci_upper if ci_upper is not None else point_forecast * 1.5
         upper_gap = np.maximum(upper - point_forecast, 0.0)
         effective = point_forecast + lambda_risk * upper_gap
@@ -81,6 +96,33 @@ def compute_target_replicas(
     replicas = max(min_replicas, min(replicas, max_replicas))
 
     return tier, replicas
+
+
+class PointBiasCorrector:
+    """Match the immediately preceding h0 forecast to the current observation.
+
+    Missing forecasts or observations break the pair. Unmatched forecasts are
+    not retained across steps; matched errors remain in the bounded FIFO.
+    """
+
+    def __init__(self, window: int):
+        if isinstance(window, bool) or not isinstance(window, int) or not 0 <= window <= 10:
+            raise ValueError('point bias window must be an integer from 0 to 10')
+        self.residuals = deque(maxlen=window)
+        self.previous_h0 = None
+
+    def step(self, rps, pred: Optional[dict]) -> dict:
+        if self.previous_h0 is not None and rps is not None and np.isfinite(rps):
+            self.residuals.append(self.previous_h0 - float(rps))
+        point = pred.get('point_forecast') if pred is not None else None
+        h0 = float(point[0]) if point is not None and len(point) else None
+        if h0 is not None and not np.isfinite(h0):
+            h0 = None
+        self.previous_h0 = h0
+        bias = statistics.mean(self.residuals) if self.residuals else 0.0
+        return {'raw_h0': h0, 'bias_rps': bias, 'matched_errors': len(self.residuals),
+                'corrected_rps': max(0.0, h0 - bias) if h0 is not None else None}
+
 
 class HysteresisManager:
     """Prevent oscillation with tier-downgrade delays and tier-specific cooldowns."""

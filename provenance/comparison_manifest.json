@@ -1,0 +1,1806 @@
+{
+  "kind": "SANITIZED_STORED_COMPARISON_PROVENANCE",
+  "records": [
+    {
+      "batch": "point-vs-tuned",
+      "destination": "comparisons/evidence/20261026/point-vs-tuned.json",
+      "destination_sha256": "3fdbe8b76abcef15a8c4d7168e6cc77e08b06b182f1c9c5ca2edaa65e4f70860",
+      "sources": [
+        {
+          "id": "point-vs-tuned-aggregate",
+          "kind": "saved_score",
+          "sha256": "2dcc83267168909c2177e0e1446b667d7b8ef4d85aaeef77b4ac28b59f36442f"
+        },
+        {
+          "id": "point-vs-tuned-scoring-definition",
+          "kind": "definition_reference",
+          "sha256": "46cd6c1875052c2e47459b60d8d7e0c13d9f9d49d2056bed1713438b49b9f124"
+        },
+        {
+          "id": "point-vs-tuned-metric-definition",
+          "kind": "definition_reference",
+          "sha256": "1df6b234d825dc4feb6cb349a9ee2b491bc018b7c4ad2f562781ec8a5195de43"
+        },
+        {
+          "id": "point-vs-tuned-workload-definition",
+          "kind": "definition_reference",
+          "sha256": "4ee31df623444948a7c7606e4646e637f883ce837e8f7e1209cd82bfaff583ef"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "7a5f783699ba89ea41e032fef35c1c05e110d986ac56036f6735ed68c00dc626"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "f26f68ed2b547051df71032c0d05499441075f036acbbf9c02599f9805c3c635"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "e8d8479921eeb8697fe7e4e0bdf4deaccd8560d1b588c5e68d5853178120e830"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "47eac654e6b7ef8ba5d30cdb2db34ff3f6452756bea6b51d2bc551021d6e5d66"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "c09a8aaf7d4ff3f2e4422c0673e703d7179fc72f8c8b906d76ce52a3388c6bb7"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "e555b4304f85d5c29f2bb31506b59beb43113e0e0a15e5b13f108521d8454463"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "663166985dc19ab53e6e9f5d90f24068a39f3a8ec86b068e7f9c163fc9edad60"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "d82cd62ed234ba96075b5d82dbbe40affba13dbae587d1e0361a008570c9ed26"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "5a7e692d89f0476fac8bedc7ae5de4dd0820701eca7ca3f9717f9b286d3c209d"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "f27840d8a25aa2ab6f8aa7dbd0efda6f6406ffcd7e103b54ff1f44fa16d3af41"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "b34cde43181292db34bd36757c795e7eee6a6b7f979023cc18037f6672671db7"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "7c1e3af44938dd03005bda0cecd6fb4d3d73c4f47c5804c79d5c8c4ed2edf4c1"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "b917d511a1562b1fb00d0f4bfd4ae7b248c23d981075b3872277437f0e5452e4"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "167e4ca794e2ef5f1a06f675382ffe45e8a8abc2d1c913df96001ccb470ad683"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "35c8764fb2f7536e6bf4beca402436fc46525026692b2682554884ad0898c94c"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "7a7e36a827a5450809013531c8509a9cae5458d2e8bfbec0e4dc2156adfb97a0"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "44761e349ef7297a91c8ed6cc67ed2730a771ebe70e5c05bb9a4b6bbdec74409"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "a6b92fcd4290f84ebfb3a789637d268790507385d9b5b17d4c695c43df8f8cf4"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "c5ddbacf92f4f82bcfb4275bced2d69943bf6f96b4b1c65ed42436113327042f"
+        },
+        {
+          "id": "a-confscale-scp-frozen-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "c2077bf507c99cf1fc8234135af981893f2f72aa0f29f7279fa73109c28df0a5"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "856a8f4943ca1f46244c23850b8f72236af8098a49292d2028bf5565c129f58d"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "dc570cf5c6db048a272a4062df5d8a2876f4455bb0e6e5ea4715e3e4e245fb00"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "502106f88eaa117ea94b6356cd98395d5311442ad74c675d279baa55f304b08b"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "39ebab95227138a885475ef80ae58c6dfa97a7aa9295551a00f0154df8ccfaab"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "14dc16f555ddb6af2a33851df77c1256bd7e44b7dd914799f9b9b1bfd850d165"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "95111ea54da1d582ac17438cc6d3894e13ff7f0db326ff86a20fcb916c1efd22"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "7850ce1be985c1e9c04cddac41fa4ff01a0edbac413b7794d72807780553526c"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "af325f930da2d628f61a82989a12b73dfc2b44bc6922826c5d50d7b5f7dfdbe8"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "c58be17afc5a2e02b69f9fc8cec1bc92272fb733effb3e5e14080c6251cd0f8c"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "9de7d8b1bd1ee4c8b4bb69de1879119268edf95e5658befdf0f6af8571120b6e"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "4e5d130b7a87bf3371f765c15b5f3fc03c116034911e74a55793db2926c6f6e7"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "94ed4370382ab625df5196dba77dc71e9f586608ef230f93ee85990a3b438e4a"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "35e4c43050428adef00e5e0bb31736699a51f9d8d317dcd5acb9faf073a42bf6"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "c0e24fce4837335cede4ca2d6696810568c6fd1cd7c7432686300c91ed7bed34"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "6cebd591f5a8d3e57ede3c80b999e7779b863e40d66cd70b0aa2d44006428601"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "d7ea21c596069971aa8f7840464ef7b708986ede47340ac70ef0c2f6c692fe3b"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "93d58ecf4e2904b456f8c6b22685c9530820273c88abbb9aeadda312be90416b"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "b7d75146fc56cbc26c42de622c1aa767896751e5d159b4e8c3b7f809adad4314"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "387fc93dac7a6eddeffd1897dc859d5deae33e6a0bf0287ba4f57720c9bcecf0"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "2b2c9dd75915d51d3b09b5aed87ff986db66c9d30fc432c6a4defa59316d3c01"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "51fa8ffa8a7b1ab189c6095c86cec22c96052a536977fa643fd9581c912109ab"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "c5fc74a7618467fa99b81438df5136f94be43b4810e734abd7586a45cd8d2f0d"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "ab12746b6b38d29b2dd89a3e359f23a7f5714651f0776efa8e36897a27df7761"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "a9ccbf34bedde01420434e1641b14dff7d2b02c222d022281be06f0f6faae577"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "430147a3a23ac60925e13b61843c2e367e16b7a11ea20bd0efccac899d71395e"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "20ffcc77002bce56336f88604b05261d0cab27c76ee6221a5dcc228050e41894"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "dc5520063d9f3a4155a9c16a408e3a4f908da8ba0afcb3c446a8c4293a1283da"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "cc7e981ea8a867b66f9ff547e51c23fa17822dea6e43802882b4f03cb1eda2b2"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "17c14794850b8a62388d6754bf881dcb4b612afafa056c63bb4ad8c8a7985ee6"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "38f628c4592e232cb1d2b2687a4a8878399130db1d495748a65192f45b7a00eb"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "6dc738913606b0494f4a0b619f5f15a5f2bed2b3745ecbf42c9a9e0a020801ef"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "ad22d57acf7bcbe9165caa98c6c2e19f4edd5c38962c3d0a0528504df2bc0f4a"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "0bb6bae290c9c5b20452875cea35feae149142c382696be47bc3d8d3c4281e7a"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "db242762b70652b236dd1ae4393cb7da4b4f9f6e5b66f2ee056f482f372c6be2"
+        },
+        {
+          "id": "a-hpa-cpu-tuned-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "bf68434abd2865d643c248afc23e96905c9ce18e31becfa05fa0e486ec1fd94f"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "d060c9f64125a08ceae795ccd706a47d247e5f8835bbe5659df33ebc2f70bf2d"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "ee4a21109097e00ac5838843dc6751f4a463dbf9560ecd125cb0d0791106158a"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "f54b2520c2d8f7b081526d25764ef11a2558d0ea43b21c6eb6859c0bb95cebb0"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "99e22e15fb1285cef76ac3bebdc6e782c4cbb0fc47557073282479b1cb5457d1"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "33e78c5247176833ab604f88f771d042923ab300dda1b53d36483c9a5db604c7"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "f93d981c30a1e2cf061e6d9c6b0a9c4e5f46f19c1179c5806fb50cd6e82feeb6"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "e1a278722bbb2be32374a5ad745f2a6cb75a41b6ccd84278f10f991bf5b00f99"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "66a716a42e52d61d04a1788beccc43e6bbf022814fd510b7e13d22f51e6ee4b8"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "732a985f76a4a9249ebd1ba64c87306d220264be0bcd2c1a4b596b5a6cc80386"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "272bd388601f20a1e4f1647ff675c19c72b4d9408556a1c808a70f24afec8329"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "97f9ca22dfd0b79f7d6923855fa5494af2b8b99b2c523b6d2c62b509235a329a"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "5cda8c8059f327c66193989d22511c56901d3f178913942b305ad318ed683ff6"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "3fd6c6907057c5bb7bd6ee39aaa5ae9220929904dc1aa02db285b9da7af25c3b"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "e5a62d39e3a505989754e9e689c793399db99c930e86f84dd700d795193c292d"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "3eb626d56849af1e04eef48c26ccf0b0d2adad58787e9bd25cc31fb9e90a6bb9"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "feeac71c66345f8894cc1c06b8f09b632138511e17ac1880ed5af685b114c806"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "dc2ccd759dbaa7a122961907af4baaca29f37ad405cb27c35b201d6d62a7e3a7"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "383b5ac9bb35d6e84e5b806a92524b1f6444fe8eb5ad343ac31b059f75a181fb"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "a609c938dfbbbf812ecc62868511e26c36ceeec832b78483fbba52553b69db12"
+        },
+        {
+          "id": "b-confscale-scp-frozen-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "7c17c5a8398068932ace919334d9100c9f2d85214da09e3ebb83489fe5578314"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "21d15bd30fd2f07c61b12ab2c2ba6ab7193200ea252566e5235b8b1eefc418a5"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "7ef4702e2650c6cbaa20132bdcc3f22354def9561877bc383ed5d4408beb5cee"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "d2f7e894b56a3010995a1c790916c16052ab60f221d004e28553c0158ac6a08b"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "d3f346e2f11707117f02b3a5d2257c4f9b65284b3505736b2c1c2f580ea27c5a"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "36861af0c996164acc2883aa9e81b3800bbbea56e360a8a8301e4337157a8e00"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "55920d25620eb8ddaab88070bc8d49d7217c73571d70c263dab3f09324ce868d"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "e6d4bc47a3a12d5849d0e521cd589b8214cced3e830cd392fc2c998607eefa57"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "3b2d6805d7aa607e8f2fd95565cb6d48384d79ce0b898582a9fbbd1d532a47f3"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "3f6f497a843e06fef7d782adea2a92d09ee977ed0ae5a9dbecdafdffc6be11a4"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "7c465c8205a084d3738df8b7ef8632cff1257cdc34c5be5c9f09bb82f6127002"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "1d372d318b9c631a98c1c10da200fd8e336d7aaf5c2e8489a4b4f1a2ab46a512"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "bcee0eccf18b7e30142606ca9b174481f2c3b31b19349697c751113c1134571b"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "f0a061dbca3a50cdea4e8241805f20548bb6ce992b91d112648fb31c7241b0fc"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "6ba127578a54cfd62280489f1695616a054c3458617c0b13d954aded0f581ba5"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "0163dc7a4af8dae029fed99c6406e5d2f3cbb39e71b925403639fe897d616657"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "7bff82a95d7268bd43e3a0e055bbef0b0ddcee76f2416840389e09386d34b976"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "f750a6ad95119ec94628dfa017d7ab1cd7585e6d7055fa76444cdba2f5f24f60"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "32f66390f8093d13fc357d02d9bba6009a3e717ace6a6512ffe305034f93cd39"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "40cc621099347b485496665ade823031fb4ab6b44966cf0bcae240c77a9b88f6"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "c10ce21c416299c255f54b23b329cfee13382d9789183292c2f606066095090e"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "cd1d5511fccf02764f09af5ca679bbc5731e55013385b489869304be2b7c437d"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "4d02e1b49df705ec11b8968c34423eb5d3d27d2c5d9cfd558c2352fee1f92b35"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "b7b0739d315f8d750dffd2de029d23c8d0613371cd50d1518e306c9e3d2248a8"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "a0433428bc3dba57bcccb3fe3df2ac28cb9722edf7bd66ac0734b0e511cf95db"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "ae3af0bec6352898d0e78e84d66ff8f241271cdae7b6c376a9aa43c03513222c"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "27b266898496dec5fe04bff1d6aa180467803308cecebd26f55e55ec5739b9a5"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "3cb649c6ec1be04c023ccef2d17dae142aaae8938fe1480ffa96c063746f73b4"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "134d6ac6636c73041d4aed15421b895a4a2f86f07346cad9efb0249ffed5125b"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "0525e055f4e6fcd353327e4163b59a5a93a57acefc9c6cc3ed891bd84e07d3f0"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "dc38a4c93f3992d56f112050e27f901983c54a659a75482134ba7d2dbb0d1a0d"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "9b3242bfaa3990b5badd00578983d07f9cd6a88d0d3a0922a4ff1448e8de4c76"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "14c4e9accd4dbc54fef97fd0cda7dd6be6528b4a264995663587bec6a27e3ded"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "2181d9417dc7a1bf227d3c575d6df3a4ec80bb3da38592854af527d0d6828013"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "333a1f1e7edfb4536848cdac8d4f11245731fbb2a6d6a8e3dbd7c54aacfb267a"
+        },
+        {
+          "id": "b-hpa-cpu-tuned-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "5bcd1e110e68a8e9b976419d0848605cad00807b2ad937ad1d75bf5d7c0d6176"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "52bb02b8fd81a8d51d183f4c355170462d268d780bbc570ee0e33dd69a15cb4f"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "1a8a963a3a2dede5f7400310efc4baf72948dac3e35edac26b0cb9845109139a"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "b34ed166746dd16dbd78b9f865279cbe0193360b7ed26bc861c4db085c9ac9a3"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "0bc950cc86c6c00d54274326c97905a938c532176604e0853bf807c60c58dbba"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "5c32a2e7d6e20dc5050fe1eb5fabf9af23227a9499a42bc7a147971fe7c3e270"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "07cae5a063868d1ecbc060538f6cf8ae92391aca85f3a261395d5e59bb468ec1"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "ce035e96e7c4881d176a4b3f5c0bb997494af2367b1b23ef69c0a66f1fe68960"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "4db63eeaff5733c4d6cdcf51ef06db7e7c76d94f55f39b315b73033521bf2350"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "2076307328667055bc797fb3777ed9af6b87b289c3637627cb29ec3b1c4472ba"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "1508099cb17c594014aa54c54ef69063e166dee1c9c3ea858bcf30d7ca6cab3d"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "05689a2f085c6acb286173fbe41f68e42e999a27b699886c1ef3c9a34d19dc22"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "467b70d816550bf7df53ea8a1d9b0327daacfa270db053131de5eab3f5583df8"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "67820c4b6b8feff173494b509307709d20f8247586ccdd32ff605a8241188fb4"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "126c8f4a3a5c2a00eadc85a91ac209fb04ff89a7b206eedadac9b3280dec65a2"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "6050501bd2cad278c0313734ba7958ee255c8d12601ce545e390381b9c6bbf3b"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "9c078b2dceb11c4b18883a95d784e07446557069909c18e972bdc4c531c0ba3b"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "65c99226d8d414762ee7e721e7eb83901a25de1b6875fce726398120280bdec3"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "69c12bd147e409d3ab0b1be653b59feb4200174dd33d1ae75e90b7c1e9591648"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "d7dd5179ff6614a1ae6bc6627711dae4ca52d718ee9bb3f59396597e47f2e144"
+        },
+        {
+          "id": "c-confscale-scp-frozen-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "2b70eeb6eaa71c1c474441124a6c96822d8428f057b69b75986ceb50bcb093be"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "2700f4100bbb2cf7e348f1894479defedcbe07d7c581fdfe0ae564678b8d34e9"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "9a33625d11206efc737f970d5bd304cc49a41fce0a6eed0ecf93c9a216de4371"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "96cddce4fef60f9eb3e978808894cd7dcc66100d245c344a5b900dcf0552c31c"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "a0d17fea87d23709878168642dcae77de469e78f14721f70b8ad06bec36cd915"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "3cb23909cb0c55315382974aa3eeffaf4adddfd9ef308a2a2c859aa086a7a8cf"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "041100f9a0f9a34d09ab0819a630710a1ce076f3506f089f3ba2eb2a608f3485"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "9744bb6008c82c9ea7981710ded234739895746e3dd3bb49524096d36573f411"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "85c25fac1402f4e51bf9f4f2f1b57e4c1775b38acac267035bc7772aa2ba3c40"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "eb76cef9143dc2e5fde1634d4db11d4b1d9a48fbfe79570f8a26c29f20623c2a"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "a8cab12c80975722695de54158461486e66485f985899873594a74269dc6b4c1"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "c9c2b60ed1e1703da7af34119e2dc21740898a1a6f68473af84b3eb6182821f2"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "20604014100ba68235f05f0ff074b898733b2698389a1574135c0b69d5c921b7"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "698c35cc5c9f9aa57b25e5a5418f2d377870d9d1b2834466477fd5048853a9d4"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "4017415f32da33d281ad4c4a3bb9ad238ed7d8278cc72a58f9d2f7f8d0b6166f"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "1ac07820df7964a919238c40d165557137763920173803ae59aa8a2e37684f96"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "111b0d6cb49cee0d5d13cfd37759b475bab10ff5333a4ed89614c4b4fbfb89d0"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "e7f02d037461207cfdc4f198ca32aa49c78c1ca5e4eaafefcb2725725116157b"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "94c9bbc8e11dd3f459b7ba767aa1e01ff9e25504a5143f7b0f005f1f94ce4c7a"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "dadbf60f4433dd62cdf1d624fb0b811a9c236c07798b6521a5c45912d7af4002"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "b0c4fd09fe346af3f893fb52b95eff96e9a10725f2707c0a66bedd734c77e119"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "ec7e43a312135fc051df7269e094b45c0640e3067fc443938aea887c6f2850f7"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "20aabf1ff0f4665cda35b0064b10d66e08ca7f853ec38d53f683bf2006086893"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "449d46bf62804a91a9667cdf7eafaa7ff7562d9224b8897f6a50472ce4531fc0"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "3facc21d39ef4ccdb197ccb6d446809a24b0dea1eff24f8bfcba7f1694b59c72"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "61398fba89f96229b8c054b620958b0e6c89e4d690dd8148477dfbcc5af9b808"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "fab0591c4480b268f5ecf597b3e53e101c35e2e4ebe14a09aa5190f3d94065bb"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "c01787ea39219dbd50d36d5c37ec8eaac05f5ed2cdfcd48f904ef9a39dead02a"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "aec1c9480225f534a45eeb6ec7233a8d9b150884d126532530c9dda06d59cd7c"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "4525479d3ae4e8528d684cd1a4c26b2bdbd716dce921a68f35db59e2d29cece3"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "1b6845c43c8b76d8c4a652d06a697a6f1d1e8c16a48d9b5dfb6784d1a5ecb001"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "35b2abdfd8762c8f9e232af97d4fa62e924e6c2c1fab878ac18d2a0b1aa4815e"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "a8e962ffba56a7d0421952fb41d139031f1c70e4fd0bc689bbd3c1b8f0701e12"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "877843e5a26b787e8c931caebee8cfa07c410b24451faa921a228e26b7f5bd47"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "4471cf267638271fcee7a937d93bee35a5fdee68e0ed6e435915d1328b0670c3"
+        },
+        {
+          "id": "c-hpa-cpu-tuned-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "3fc468b527e4b60a24f8b7edeaeff5d4758784a45073f257919514f6617bd013"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "36c3e3850db6f76b58ed3a1797c94fdc61021663b96e03186e8fa78932779c5b"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "f99239e5d1fe44a3b167cc6af1a335df4cf9e78ef021c14c0ab83894655c38ef"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "23625333b7e5f09cc85920c4e91985ff321c2f69b5890c682f378e7e70c94470"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "185b9b7d158214d8bc5d056fd5b77c7d0badc64e1090e1179bf08992d657085c"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "8627340f44c6e6290f0c1e7ce8160cef02543422f24ca3c4b19e7985152a4fda"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "af73d75578ff46fc25605d60777a0a4cb45769bed6fc548c8327e0e8b95868b3"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "50fb408997f51feda910086f0b2491dff0b63ed4b993142cb41a910803b56715"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "43b4806440891716d2a4ab58f7fe22d56ef7463ddb39f1058a4526d013f83ccd"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "49feaa038b6da1ed359d4a2bdc5dcdc7dd2c64f73d092e7676fd8c94616e3066"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "3423ccdf68a49f9fcc4040d572671dfe0e9c754f166c83686800f33e3840106a"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "6e6754b125c96eb8d6e1ab9a991ca52849772eb056ca6f4ff881f68b23f0a7fb"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "90840c07dc5d3808f994fb4fec5fd8a2dcc92f856a7f7c14b8b44c7bf80b57b0"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "9b0aa49de90ee104f6c0612fa07f9f8751276bf9b64360f5a69c594923c793b2"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "13f5355ab003120cb8a3362f82c59c78a87595e6cefbd422c550f1a8d5633621"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "71d1fd9650c45b9f470f462da5aef3a94396288a1712a9b85f6592b2563b438f"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "78350bb5c1db5efe19896bc236bdca2fffef4e2d35c7b73d59b3aa2e7c0678b2"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "8ba25fbb0409dba659468335a8e19f6d0839f6646a44a620d974c066477b6103"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "db0448066027e135a4ebfae39233f133ad77c4014ded6a36966cf909008be778"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "64f8027c0df566ec209b2ac87c454a31a54266976bb9478b7e83905d8bea6331"
+        },
+        {
+          "id": "d-confscale-scp-frozen-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "a8f1b403eba8aa5e5354dc9387edaf976f272ac02616a69a709fa71138ec094e"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "b1900c0bdbe19e9945161a81ac3fc5e980ec69bd96e52b007c1921acf8ce7574"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "b270b9227ae3aa1b75aa01dd39c59974fea17bb764c1339bd7682d2eac9feda1"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "2ccd8e18997b41d2b5f3981d051c1750fed92fefa1aa57dd3eab3dea89a5646c"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "2229e419ad311848257cb6660823c6a5f47b5bc64c57643ba17b8a841c326d70"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "35248711380635b2b27e5fb1efcdc62371d9441364f0b6b318b6bcddd0a77a81"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "b4b2fdc06f44d60eecb4f027079a0464bfee3cf5155f2a0c237c76943a36c53a"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "16ccea6a24578500fa55b0942948b05a0924e61dabc6da84b9c9f7432d57bb3d"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "febd108640400c2e2299472348fc0d4a77aca2f702b867d24e85f6416b223047"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "2409042b74741416c0b148be972a5b04163bfc0700fc99e12d2ca421e30823a4"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "9712fc19d54b74d1ed65c6d07e558386de2cd28e9de269b4b849dc4300b72567"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "fa1c41a050215264cbe1211c6512a54d1f4f9b0570fad02ed0763e73a4546db9"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "04c16c00ed1abf92cafbfb74cc2238b3d102f475437ca5a063ce54e86b9c2b58"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "f213fd2130db0dd4d05f684a9a3aaf7eae9c5ceaf7dd57943cae5f61aa15c888"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "3af5d70fb992f9e0e3e96fedd325d19cf0207a8f1765bc7b63c4347f53498754"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "f4543593349f0a9aff117f39e0ce0a3d57824c27a1cd4105e6bf999249fdb44a"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-4-controller",
+          "kind": "controller_configuration",
+          "sha256": "372a68607d124d074474f8c256a346861a752f7a925a7fd5f86db559135dba6b"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "58c3325cc3d74bc8e298cc144da8c47bb9e2f90ff486ceff0f054cef951ba108"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "c64031aba0083ba5b6a77d714cc08e821b0b7664fe7f25010f117b061fae2753"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "99361a755cb2d9a8d74cd3c92856757f7e79d6c9df49c657f17d90e0d998f08d"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-5-controller",
+          "kind": "controller_configuration",
+          "sha256": "7f9377e086a51e156737313c8fc23e0060a650bb4e512b5221218da79daa5a12"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "5461151bdfb5f21cd2089529f4cf6e65ca5c74f48fd9d3dd69403a69775f6d75"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "0564187d0055316874852403b6dfe901489e73481452b0559d4a5e80d5d979c6"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "2ba73488cdd12ac5eb241cb7fb9c752360d70f164cce3f2909081071d06c9fb3"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "f6abfc592aa3f78aa28c2423cee4f4038ecd06e534c0bb81daa531c7452fd32b"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "50fd13d65ce2346c4a3347d0fc869fadb67c37248a2ec3c5773fac172a41c7d7"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "e4b4ad5ba8095ba5179f8bc700c838469df388ead4ff144088de078a8aedecc2"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "8ebf22148ba1efa4e1748d9de0375df71e521e55c38ce6567dfbe7f64c7ebcdd"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "74b00e3bb58dd799eecfed6f922dc74a45a5f0756b5a4e62712d5689da3514e8"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "1e957b25750b36f6dc9cace1b9451a6d44f0c5577503ae33090c2c2ea9868a64"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-4-metrics",
+          "kind": "metrics",
+          "sha256": "fd758b4f6b7fbebb22997fa78bab9514f5780ad79173dd2fbdc931c4225ba129"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-4-configuration",
+          "kind": "run_configuration",
+          "sha256": "6a03d175931cc8926616f028d27b8403d623832f165a9bc8baff3effbc5a7a1d"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-4-trace",
+          "kind": "workload_trace",
+          "sha256": "21e0f9d5a08a762fb17a0d76041e862566e64c964ebe139cbc52bafeb254523a"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-5-metrics",
+          "kind": "metrics",
+          "sha256": "cc0cc59bd7bfca5f519fcb343749286fbdadf6d28de0cbec4d7854b9a4546dcb"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-5-configuration",
+          "kind": "run_configuration",
+          "sha256": "9e16b516e1c38eb17dfb5d0a0224f9bd302998cc52d9ab369cf1fda7eecef8c4"
+        },
+        {
+          "id": "d-hpa-cpu-tuned-rep-5-trace",
+          "kind": "workload_trace",
+          "sha256": "21826afb7f80d5c933a7143da5fd1f8bc131d6bc252722cbbeb1df23bb401d32"
+        }
+      ]
+    },
+    {
+      "batch": "point-vs-stock",
+      "destination": "comparisons/evidence/20261026/point-vs-stock.json",
+      "destination_sha256": "f8dbbdeaee13783a73a0ef5ddf56deaf8e9a3837d757a4fa4691f41822b68cd5",
+      "sources": [
+        {
+          "id": "point-vs-stock-aggregate",
+          "kind": "saved_score",
+          "sha256": "a451198f6d83b50957d41e1c15525e1c3713131c55e223949c43abe917a54786"
+        },
+        {
+          "id": "point-vs-stock-scoring-definition",
+          "kind": "definition_reference",
+          "sha256": "b7c716a889a995c43a06af88b023b353264769c945ca37a5030e8542ea236fd5"
+        },
+        {
+          "id": "point-vs-stock-metric-definition",
+          "kind": "definition_reference",
+          "sha256": "1df6b234d825dc4feb6cb349a9ee2b491bc018b7c4ad2f562781ec8a5195de43"
+        },
+        {
+          "id": "point-vs-stock-workload-definition",
+          "kind": "definition_reference",
+          "sha256": "4ee31df623444948a7c7606e4646e637f883ce837e8f7e1209cd82bfaff583ef"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "759ed30c259ee28b2ce8c165babeb5039578c58bec1b9f605bb9f35fe01c8555"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "d11821f62beefcd66aab22fb1b8cf8bbe36bc6dd989f79a4acbec23e46f9fcd6"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "eb8169df6967502375b02fd20f78710637e9b03f416c7465201d5f4042e9a12c"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "9b566241f758f497956bb39f64902d404aaf3deab0eaf8ba2f88997c8b76631a"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "4ac21d9fecd6547360ab41be10ab88ccc70c77d8fa16a0331ae999f64e914e5c"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "394efd92b515c2117e29b313c748f0828e9d3e94f5790e3c3cea7444bd272bdd"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "14db580ecb6054ef3cfddf7eb5e1a9bc974de31d9cb297a9af3428b796149bca"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "0132f507e3257a81450a9e9d0719fbabf4cfd3972285627e525c1069cc68e78e"
+        },
+        {
+          "id": "a-hpa-cpu-stock-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "e2e3db86da402b53d2cd80f9479ea239a02643f5de3ce153f68cccaab9f34979"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "92ec0166fab7af7c2b12c6d150d0c76a0eef720bec7f616b6100d2a95bf3e433"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "0bcfb16e6be091fc57aefbea96b5a3eb30d5cbfaf840934227b285f5bcc3c690"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "4044835ef7bfb67795b68a098d4ab4d0f9f8b4efae556952e6fdda9e941caf5d"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "19d00d568c9e153d07187b26585178bbb99afe358b791ede222ed6cc9ade8ded"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "174e4aaa6907b9950d392fe4b63b34fa88c42e66f60478736ce7d6a0099249ac"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "2794ace7e888afe862fc42a5e9eaeea9630b792d4a76f0a79b7b7e1e27f3594c"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "a759bbc5e0ba2273eaf3c66cc642b00577d4d48ac0e02b1f370f50f79bdafea9"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "2d98491948b73692d1cfba1ffac2e18b6acfe809d3187aea3a9c5e6128ea2f78"
+        },
+        {
+          "id": "a-hpa-cpu-memory-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "03cb4aadb5f52c19a5b63f9f5bf8685397a0af4be5c3125aa478504aae44a061"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "082136471d473c20a74102be2fedba98ee3aad475c7a6cb92a90bd8f6deaaf12"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "c8cf0956876f61ee5414af404b825e91f3e9a338f8a37caebb1590a7097672aa"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "c77e06243bc2358501307a829e8cfe18728c6c6d66c79ef1320ce9d8637a1040"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "2cd500664f1c213b2f51f3b452e3fae8d393413b70ffab41c6eb73446d0866c8"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "e37c8eb81c23d8f122c9fceb7d00ba3ecf109ef3ee77a0c717cd77a075ba7d51"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "37e1da7289d9d520decf40afaa594284eb166273daa45751b7d24361a96b1641"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "261dd80e2a077b5b9d27ee72d05e73537f047b2616886c358981ed77b6923be8"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "a36410b322234485c0bf42eac299b125c38597928ff770eb3d3e2d15f3f8746e"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "b8a40e9b09543f2874e50573f2a1a315ebe9413bed74afb37133998443fc0def"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "ce398576baaccc58ddcd175acb71ad3f9981c92459f7b94b30716e4c43a64d11"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "f0a480fbf48db83a22963a3ed45d1b73178f70cecce0ba868b4eab3252160878"
+        },
+        {
+          "id": "a-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "a8512d5370cd61fe5c6500526f2ed9758aff261c727bfbbfd65f84540eb4de9a"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "b682774ae253537231761eddeabc8dff396be147601175afe5e96c3fafea9e2b"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "e3202fb66ae121e15e7700396d4f15f3defbaf8c53f418d59a15255ef024a310"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "d89e6a255c82af0c0e20f9b66ffa08ec7a89a559d02f8017044e117ff683a10e"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "873485acb5cd395629699e0f61e061ace0e4402e5247b3d50c4b46fbfef4ac22"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "2d34fcca8ba524b55ae5d4610421c605daea3fbe913c5683b157ef402aac43a4"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "c27e4a6b390811cf4255cb4889a450194078b6119b0268ac98102c04740fa240"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "b5453f832be5ee11a5243e593e496d2215eda3669a745009b67be865463e4348"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "d1973c1bf5c8ec782e84c3b15e7a9f9a95a82bbd7173e38224375a5ac560f2e2"
+        },
+        {
+          "id": "b-hpa-cpu-stock-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "893a15bee9b18b81eb373722b5eefc6f4cef83399e5462a780846698eb7d9235"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "6b92e343167d7d95c154f4f37558c52ffab98d9900e3297d0cd2075c2da16703"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "fe2ab92cd2d043404ee2592aaa52bddfc3876c1e6aefccfcc2b25011cb710726"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "ae76cc56aeafecef2341db18e54e890fdea1f57f4d46b6508b2863a02747a28f"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "32e74b28f6f7c3ddf44b07a3b33c9184adef06d39643d49d7903e93e358e3d6a"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "d718c6f81dda23bf81bb5b766950bf4fdda66c71e58d29c0c090e8b9a702b21e"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "9caf7501928bb3a8d2ceaad9dc88c3bfd68d1236eb9837dfb3b1e1feadc893b7"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "47e01796913b47d4a5014d749f281c0cd43b59bcad20c4a7a372a4ae6aba5244"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "75a2c7b5bd48327c7331e89956b9fefc7f5cc1d6fc107cc3b4561516991aee7d"
+        },
+        {
+          "id": "b-hpa-cpu-memory-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "4d79030bffb71c32a279f8901d6b45218b9d4e1e74c3eb4a83a40987c8428799"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "abb09927736a22449871bae429f89439bb549daecce0c1aa94f5853450cae132"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "88bb9300c14eeb95cca6b54797b326a041fe5b67ca79db3917cf08ddf5c80c51"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "a098f0b6d8fe8696f90f4bac1b5e28cf2a6eee5b67b36d3f4a7eebb156836992"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "862f1d0a3381ebf348d841f7abe7987989b848223b6dad45bf130a9c156dc349"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "c5af5909b3c4c6c203026d6d32eb040dfebbd58f8e18c59ebd7f35024d8933d9"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "7f682b4ea0896e49a794481a890370e523e0b22a8648208730500705aea46189"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "b0176380f3401e51c6c84df798760d0f935ab7ec113b8be0fcd0800c0232ad23"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "47977193c79568868872b7c020e89de887316c70b926abf8507db1bc025e6f97"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "a813d8f2f5a1d447b8b8b69d0c0689a89bce12154ae81c530b832bfab5abbefa"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "66f1589912ad69c8a8ae501a788cbd00f1930fe98362ddc667c08bab1d138301"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "01d87a5b10775146746099571e3676b4ef95660ac0190adc4b190744c68d9287"
+        },
+        {
+          "id": "b-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "4fb61258cc0c0585793111c838149ffd6a92d601be9ff6404124423dc6fc6f69"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "9bcf1962a43044c002b879f43b9ef599bdb38c39d47fa2343bf4768e72cc2166"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "f72c04fbe691bc0f350cfb2a08785ee475b55fc283cfffee7c799e663f13721b"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "d84a41229b0a0e9f1588acbf9d05a88a65201725b65f05dca0f6ef320ed28254"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "baca807649fd4dadf2b7d5fe61e3a4e0db6f62830b288900ebe553906825d827"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "5476ae37464c4e6c0bb92d0819755e151463186014b8be9249bd18a0e390e764"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "3888e07cf608906a4817e9e177393c3a1dd626cd0440bea991e8b77c43c0d72f"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "d8d903a540970f73e1f3208b791d77fb09752c6d01034161da439ae74a9d0f73"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "9355a20d3f510b92b26cf9a87e70c074cec8195cdf3c56a7281ee32084bea307"
+        },
+        {
+          "id": "c-hpa-cpu-stock-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "9a72cf79db903b22ef19ab9a26d5379ae30a41950313116da95cf9b5f09bb153"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "7187b1a95dcc6f9135ae80d8f72541b8a5219fd4dd63f6ac3db45c5b8ac56225"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "ae328019513716d7141b6a40f480f33c85b670361fa958c0e5938514326ce49f"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "638c4cba82b1bb633adc4251759800ad656664e4b3574ad4ae574c27eed2ef36"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "731b7869adf032fc81b67810679dc7f28b382a402f8e706b3cbd2ab7205efaad"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "c9427bffec40f8fb3b4ffca40514c80f92d4ecac656a21d4b8ad68054a874284"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "6dd4adcde730d7f2776ea875c4421d5412abe3076e9cb95244d9ee1a419066ad"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "53a9d7d8fdf4027c0e3e6e80715d8c78cc124cb74a339bc3eb4556893673eb14"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "3b0572ca87956428bc5d74aead8fd5258c4163e7b3c6ad71e0dc4932d831389e"
+        },
+        {
+          "id": "c-hpa-cpu-memory-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "a1e3d84d51ec4addf682a9a23c71763f59710c256e17465b059659a9e606344d"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "1f6083c825003e2bb4339dc5a6e6d5a9f3e79c455f92208d80fd3c8b7a277e01"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "7e19ad07b8bb3d00521a8eb02e185e187863640fd421512815c5e8c7286a639f"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "748d0af48903d805dc5becb3d15cc6c471fdb989f1cda9e03a637391614fc18f"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "34c9f544d385f9988af9bc0c124cfe1207fa5ec7d65c4ca847140f70542f7fcf"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "9237431d296509b4df6714895eb93a47d8d7a3af19e6350ad9ddd6631eb9e757"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "60000aa6c5013112b9ab018b68e4802cfe6f23c169d82c6abf8b3b6a8468ded5"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "40cdd4989d08c57ddfe1fb4de2c039f3f50df0d11c759e8e0653522ece5409f0"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "0551f1e80b32b1746ab28f7e5b2f6e898f0246709672da75415a4893cd417c8e"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "ed544ecc921dc75bade89c22fd72d3c808abc8d1ca98f22f5c41c83b1a049767"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "78db62b1475339eae5024abacfc8aca52709c36a225f5803192606a1ef9ed922"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "938e1597110817a8ca3ce1edd6543a1d5a4cbd6d0b3b6de76bbfc1236ffa56bb"
+        },
+        {
+          "id": "c-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "39a0b7440c3cfe9beddfe4377eb28688d00d31b7b13ba15111cc89df9ca299d7"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "c455820a2a7bde083691bd6bee9e39b87286dab569fc3955b58ee4f9cc0afd3f"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "6e6bf44797becbb2b595d40ee09ca87b423d7b31c84a8aff9a795ca87707fc84"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "d4d0fec5947982c4e02a83eead74684a9f858ce0a842ee44e3766ea8016e26e1"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "b16b45f8bf235fac219019ae82f1be447c4ea0bce2b40a22e7a15736049ba578"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "d7b86f402f0a3917c8a3836bef40e2aac139a1d11d533fb03574f88dfae9c6ea"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "15d4c70d0c19e23c61fe5bb47b85b895662a063513573daf9f33dedb9f7d86c2"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "f45094368500dbe111850390a4fd12b6563f9e2252a5a6a6735f9bc3c64cf777"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "09bbe1c8b41ec64f53a7528cd80bda49abf921135dd2b4bcda27b6ffaa2781db"
+        },
+        {
+          "id": "d-hpa-cpu-stock-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "d9aa45823d6b112986aa364b89b5c4fdf2228ded89a4fa816cf05d1c268ac21f"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "294570adccdb05c178d180e83af5f5b5d7b6fc0914e641ed9d8f6e35c4d57c61"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "e29c516dd855902c80ebc97a49f5d2fe5f78300f057bbcb469aed71178b3bca5"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "a595b57a2d822c5da452e0e1f57e5c0d68503270f7e3f1136b35b7623b053f6b"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "4023c421baa01452ae42bf501440f9bf5beac6f7f5f9a63ce6a8685556551a72"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "91cd0e525a2984f3d80deb9e1d8f54c9b231eabd0e7e56bb6372fd0e32380ba9"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "ad0423ae64bd053fa5fa0338f08439f73db2d0b4b5af97bb6c7bc3f9e2a601eb"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "5e195fd620beb27adc19d91b5e313c2243659d48939f76138081e7ad6364b6d5"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "669c6c9d82380c7ba62b5871f4b75ef5ed31c47b7db8f3b0aee9d4548e8ccc66"
+        },
+        {
+          "id": "d-hpa-cpu-memory-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "8213a295f134d7607e9ddb82679f552323bf95c88163506b68ffa4f08a65baaf"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-metrics",
+          "kind": "metrics",
+          "sha256": "b87c393c02bb41a24faab2d6b108404a049a33936e05d4f645b9b6b1ed001f2c"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-configuration",
+          "kind": "run_configuration",
+          "sha256": "67fe70c7cb96632863b31abd205b19e74ff69a2cb6e88189a412c0eac9aedfad"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-trace",
+          "kind": "workload_trace",
+          "sha256": "9faec187fd741cbcb953a485d6b629f9db0c7bc669e8827d1e9968ae3a47029c"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-1-controller",
+          "kind": "controller_configuration",
+          "sha256": "ca7cbd5439d337a48f54ad3432ada74def6e13af31b3bc07a0f50bdd50ff0f8d"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-metrics",
+          "kind": "metrics",
+          "sha256": "1ec85e93a337ffa514bb2d3842ae4a2d62501b4becea553cbe66e9345834f859"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-configuration",
+          "kind": "run_configuration",
+          "sha256": "edcf746b42c76e6a0d307b102fa67cd28b99092bfcaab9e1028d198454642f84"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-trace",
+          "kind": "workload_trace",
+          "sha256": "4d8b6b5f912ae95f68616551b8d036681aa56a77d5018b40d5a2bfbe7a2bcaf0"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-2-controller",
+          "kind": "controller_configuration",
+          "sha256": "928b2f2f93529412a5df19eacfe258d9bf218a9ddc29da577fc9ae04691c4a5b"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-metrics",
+          "kind": "metrics",
+          "sha256": "ce43b5fea41b49a9334fc866524fb3121f96ee8ab17377cf8b713b2c3b62f337"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-configuration",
+          "kind": "run_configuration",
+          "sha256": "aafa98848f2cbcc85c33bd9f1cb596859ba2c198857ca5c15ebef6b5ece97438"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-trace",
+          "kind": "workload_trace",
+          "sha256": "c1248097b3a7641986a145d358189bcb87a97abccae0fcc77a559cdec68b454f"
+        },
+        {
+          "id": "d-confscale-point-corrected-rep-3-controller",
+          "kind": "controller_configuration",
+          "sha256": "062ed5a86b8473c68d2b3533d88814bb278f3600553f7cf7b4147899e846cedc"
+        },
+        {
+          "id": "point-vs-stock-model-manifest",
+          "kind": "model_manifest",
+          "sha256": "1fb6e58cbc5ac5f8e9173828d904dd6dafa4b4f448cdaf31c7fd87107ea6bb14"
+        },
+        {
+          "id": "point-vs-stock-model-batch-ramp-scp-base-model-pt",
+          "kind": "model_input",
+          "sha256": "61981639f6bcc40fe0cf2832356e476224a591766ac9b6836a5ae9b890183f30"
+        },
+        {
+          "id": "point-vs-stock-model-batch-ramp-scp-scp-config-yaml",
+          "kind": "model_input",
+          "sha256": "eeda054db2a2cee02940dec86695a1f1043c7856530455a89c372bae9364ce7f"
+        },
+        {
+          "id": "point-vs-stock-model-bursty-scp-base-model-pt",
+          "kind": "model_input",
+          "sha256": "3b38fe3ad0f1b2717564abb6ba9f1639b822f56fec5e4bfcaeaa10915a40b72e"
+        },
+        {
+          "id": "point-vs-stock-model-bursty-scp-scp-config-yaml",
+          "kind": "model_input",
+          "sha256": "ac96fc80c91e0cbd26ee3782046dbe46fba7e1f5a8f0c35b0b201a1ac9bd6a29"
+        },
+        {
+          "id": "point-vs-stock-model-diurnal-scp-base-model-pt",
+          "kind": "model_input",
+          "sha256": "80cff986cdfe94afb0365a981d0da5175f76be3eb3eb33141ce7aedddd2db33c"
+        },
+        {
+          "id": "point-vs-stock-model-diurnal-scp-scp-config-yaml",
+          "kind": "model_input",
+          "sha256": "f0daa0dc6b8e638e96ff8dc2ef3addbf50333f194d58262e3910cce05e01175f"
+        },
+        {
+          "id": "point-vs-stock-model-signaling-scp-base-model-pt",
+          "kind": "model_input",
+          "sha256": "0cfd55c326e1272e8f9e3ed3c515b0ca2e42568b303c4b7014b931a4ffb15a0d"
+        },
+        {
+          "id": "point-vs-stock-model-signaling-scp-scp-config-yaml",
+          "kind": "model_input",
+          "sha256": "934fc83062010b3334ef7b1a540753f952d5cd9b6db2539218b026e685467d2f"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Field-whitelisted stored numbers and sampled desired-count changes. Source and trace hashes identify privately retained originals; only the exported files can be verified from this artifact. Definition-reference hashes identify inspected code, not proven historical run-code identity."
+}

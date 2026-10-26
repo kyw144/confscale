@@ -14,10 +14,15 @@ def main():
     demo.add_argument('--shift-at', type=int, default=80)
     rep = sub.add_parser('reproduce', help='regenerate all five paper tables from shipped frozen aggregates')
     rep.add_argument('--output', type=Path, default=Path('generated/paper'))
+    comparisons = sub.add_parser('comparisons', help='render separately retained comparison results; no new experiment')
+    comparisons.add_argument('--output', type=Path, default=Path('generated/comparisons'))
     sub.add_parser('verify', help='check packaged source/evidence hashes')
     args = parser.parse_args()
     if args.command == 'demo': result = write_demo(args.output, args.ticks, args.shift_at)
     elif args.command == 'reproduce': result = reproduce(args.output)
+    elif args.command == 'comparisons':
+        from .comparisons import reproduce_comparisons
+        result = reproduce_comparisons(args.output)
     else:
         from .verify import verify
         result = verify()

@@ -159,7 +159,7 @@
       "source": "src/stage3_scale/collector/collect.py",
       "source_sha256": "c3b57810527023868a27d34d8d8e14ebde755b393134c0c4a964d432b811d1a2",
       "destination": "reference/stage3_scale/collector/collect.py",
-      "destination_sha256": "d2ceda51f923b7e31d4329f4f9ae0a58b4e0b606e5c3f46e400f71027806e88e",
+      "destination_sha256": "287dc58c50bd6a7770d52ffe53181bab2096d3c09ae25c28c8eb524e3a32f5e7",
       "adaptation": "direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Anchor instant Prometheus queries to the recorded workload end time; configurable client evaluation timestamp."
     },
     {
@@ -257,7 +257,7 @@
       "source": "src/stage3_scale/orchestrator/controller.py",
       "source_sha256": "65bf688816d8d3bf89149df5280fca2d2c5f668ba96b40e59f04fbfc5eadc569",
       "destination": "reference/stage3_scale/orchestrator/controller.py",
-      "destination_sha256": "87417f5cdbe23cec199549c25ed2eb3afdeb77b1f0fb9a1b09adf96f8fd5c936",
+      "destination_sha256": "7e3aa351ee8a1f79ac57b0c61ccc7c11b4079bd1cf6e4fc42ea4324e846f7b7a",
       "adaptation": "removed out-of-paper experimental levers and external telemetry; warm-start retained; direct runtime execution disabled unless explicitly enabled; standalone runtime maintenance 2026-09-14/15: Explicit metrics port, ready-replica observation distinct from requests, honest actual-replica gauge, forecast flags, and scale-command failure propagation."
     },
     {
@@ -341,7 +341,7 @@
       "source": "src/stage3_scale/orchestrator/methods.py",
       "source_sha256": "6ebfc61f924563b93463921133ed8d9646f72021a29036d8d23da24ca6f5148a",
       "destination": "reference/stage3_scale/orchestrator/methods.py",
-      "destination_sha256": "1804bbc57cc29acbce777ec01a7a3007935855957605284d9efbe277b487f9c1",
+      "destination_sha256": "daeddbf642ecfed75323cceb9fc03ca6616a1baac526aa8d0112c7ee330cadd6",
       "adaptation": "removed out-of-paper method knobs; active interpreter; standalone runtime maintenance 2026-09-14/15: Explicit context/model root, file-backed controller logs, fail on missing models instead of HPA fallback, fresh method instances."
     },
     {
@@ -579,7 +579,7 @@
       "source": "src/stage3_scale/orchestrator/controller.py",
       "source_sha256": "65bf688816d8d3bf89149df5280fca2d2c5f668ba96b40e59f04fbfc5eadc569",
       "destination": "confscale/planning_numpy.py",
-      "destination_sha256": "55ad2735c8a9c4fb2570c411c206d30c80858b7fb1b9ccdf85f52d2f15d636c1",
+      "destination_sha256": "f4ccfeaec93bcb046743da19c553b249e1a54f8779ec4183d57be3defa90a11e",
       "adaptation": "AST-selected paper planner/constants/hysteresis; unrelated lever removed; no runtime I/O"
     },
     {
