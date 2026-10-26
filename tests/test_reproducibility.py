@@ -170,7 +170,7 @@ class AssuranceTests(unittest.TestCase):
             cell = planned['cells'][0]
             write_json(directory / 'plan.json', planned)
             receipt = {'status': 'pass', 'restoration': 'pass', 'runs': [{'cell': cell, 'directory': 'cell'}],
-                       'output_sha256': {str(p.relative_to(directory)): sha256(p) for p in directory.rglob('*') if p.is_file()}}
+                       'output_sha256': {p.relative_to(directory).as_posix(): sha256(p) for p in directory.rglob('*') if p.is_file()}}
             write_json(directory / 'receipt.json', receipt)
             self.assertEqual(audit(directory)['cells_verified'], 1)
             write_json(directory / 'receipt.json', {**receipt, 'runs': []})

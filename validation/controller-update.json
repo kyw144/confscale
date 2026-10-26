@@ -24,7 +24,7 @@
         "confscale",
         "reproduce",
         "--output",
-        "generated/validation-controller-update-r5/paper"
+        "generated/validation-controller-update-r6/paper"
       ],
       "returncode": 0
     },
@@ -36,7 +36,7 @@
         "confscale",
         "demo",
         "--output",
-        "generated/validation-controller-update-r5/demo"
+        "generated/validation-controller-update-r6/demo"
       ],
       "returncode": 0
     },
@@ -48,7 +48,7 @@
         "confscale",
         "comparisons",
         "--output",
-        "generated/validation-controller-update-r5/comparisons"
+        "generated/validation-controller-update-r6/comparisons"
       ],
       "returncode": 0
     },
@@ -153,7 +153,7 @@
     "tests/runtime/test_native_hpa_presets.py": "a5077a3d8dff762c65c465317817ab781d6bd7558078e59eedbfa7e4f9890bae",
     "tests/runtime/test_runtime_review_repairs.py": "efbd9e53a7b67ce7de38308bcd1df74e5a0b6d7e77687bd58df50bb3b8c2a305",
     "tests/test_comparisons.py": "156f12608a12076ebb1781f9e35e9bfb66adb4f007bdf2da3b111672c8281164",
-    "tests/test_reproducibility.py": "f842eb488b485dbee066ea3e8e389ef9267710cec56742b8cae3024fe9f814b7"
+    "tests/test_reproducibility.py": "0b482187a7fd034db1066fa0ad6c46250ea572341c1aab312c98054985c8d131"
   },
   "limitations": [
     "New controller paths were tested offline with mocked APIs; no new cluster run or scientific replication.",
@@ -161,9 +161,9 @@
     "Historical stock-HPA event-log and per-metric proposal observations are incomplete."
   ],
   "test_output_evidence": {
-    "pytest_summary": "350 passed, 90 subtests passed in 3.85s",
-    "pytest_stdout_sha256": "40523801ccbd022e25a17e9f17c456f86ef35e64a4e596007953d3913fda6409",
-    "unittest_summary": "Ran 44 tests in 0.861s; OK",
-    "unittest_stderr_sha256": "078c5292de460c136c1d0ce2683d700efe8581b111b20d346a53076b351993be"
+    "pytest_summary": "350 passed, 90 subtests passed in 4.85s",
+    "pytest_stdout_sha256": "18da59943c1990c6579e82987fc930c80c142d4b11fbf46d6f093926e082aef7",
+    "unittest_summary": "Ran 44 tests in 0.926s; OK",
+    "unittest_stderr_sha256": "aa6c67c9ad59d1fc2dd9b5a9a6d7d1049199a85254865b4112a39f7ddf04fdf0"
   }
 }
