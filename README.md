@@ -1,13 +1,25 @@
 # ConfScale
 
-Coverage monitoring and online recalibration for predictive autoscaling.
-Code and evidence for *Coverage Monitoring and Online Recalibration for
-Predictive Autoscaling under Deployment Drift* (CNSM 2026).
+ConfScale is a Kubernetes testbed for predictive autoscaling. It combines workload
+forecasting, prediction-interval monitoring and online recalibration, with
+reactive HPA baselines for comparison.
 
-The [paper snapshot](https://github.com/kyw144/confscale/tree/7b43867bf644f4e6b1d27d0b5c17c9ce1f1a45a8)
-remains available. This version also provides a corrected point-forecast
-controller, explicit CPU HPA presets, and separately packaged comparison results.
-The original paper evidence and reproduction commands are preserved.
+This repository contains the code and supporting evidence for *Coverage Monitoring
+and Online Recalibration for Predictive Autoscaling under Deployment Drift*
+(CNSM 2026). It has since been updated with a corrected point-forecast controller,
+explicit CPU HPA presets and further comparison results. For the code accompanying
+the paper, see the [original paper version](https://github.com/kyw144/confscale/tree/7b43867bf644f4e6b1d27d0b5c17c9ce1f1a45a8).
+
+## Controller loop
+
+![The monitored predictive controller: traffic observations feed forecasting and interval-coverage checks; recalibration and optional escalation adjust intervals before replica planning and Kubernetes scaling.](assets/controller-loop.svg)
+
+The diagram shows the monitored predictive variants. Observations validate earlier
+prediction intervals; recalibration adjusts interval widths (the first forecast
+horizon for live ACI/PID), and an optional escalation ladder widens intervals before
+replica planning. The corrected-point and frozen-SCP presets disable this interval
+feedback; native HPA uses CPU feedback.
+See [controller presets](#controller-presets) for the individual configurations.
 
 ## Quick start
 
@@ -128,7 +140,7 @@ ladder variants. GRU-only baselines, KEDA and historical study drivers remain in
 entrypoints require `CONFSCALE_ENABLE_REFERENCE_RUNTIME=1`. Read them before
 opting in: they can generate traffic and modify cluster resources.
 
-### Additional controller presets
+### Controller presets
 
 Existing method names retain their defaults. These explicit presets describe
 the configurations used in the additional comparisons:
