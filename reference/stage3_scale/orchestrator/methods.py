@@ -38,6 +38,11 @@ def current_kube_context() -> str:
     return getattr(_thread_state, "kube_context", KUBE_CONTEXT)
 
 
+def explicit_thread_kube_context() -> Optional[str]:
+    """Return only an explicitly selected thread context, without the default."""
+    return getattr(_thread_state, "kube_context", None)
+
+
 def kubectl(args: list[str], timeout: int = 30) -> subprocess.CompletedProcess:
     cmd = ["kubectl", f"--context={current_kube_context()}"] + args
     return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
@@ -389,6 +394,8 @@ class ConfScaleMethod(MethodConfig):
     coverage_monitor: bool = False
     coverage_target: float = 0.9
     coverage_window: int = 30
+    h0_only: bool = False
+    point_bias_window: int = 0
     controller_process: Optional[subprocess.Popen] = None
 
     def configure(self, namespace: str = NAMESPACE) -> bool:
@@ -435,6 +442,10 @@ class ConfScaleMethod(MethodConfig):
             '--context', current_kube_context(),
             '--policy', self.policy,
         ]
+        if self.h0_only:
+            cmd += ['--h0-only']
+        if self.point_bias_window:
+            cmd += ['--point-bias-window', str(self.point_bias_window)]
         if self.lambda_risk is not None:
             cmd += ['--lambda-risk', str(self.lambda_risk)]
         if self.online_recal:
@@ -547,6 +558,7 @@ class ConfScaleMethod(MethodConfig):
             "coverage_monitor": self.coverage_monitor,
             "coverage_target": self.coverage_target,
             "coverage_window": self.coverage_window,
+            **({"h0_only": self.h0_only, "point_bias_window": self.point_bias_window} if self.h0_only or self.name == "confscale-scp-frozen" else {}),
         }
 
 
@@ -1091,6 +1103,14 @@ METHOD_REGISTRY: dict[str, MethodConfig] = {
         name="confscale-scp", uq_method="scp",
         description="Confidence-aware scaling with split-conformal UQ",
     ),
+    "confscale-scp-frozen": ConfScaleMethod(
+        name="confscale-scp-frozen", uq_method="scp",
+        description="Frozen SCP intervals with tier control and monitoring disabled",
+    ),
+    "confscale-point-corrected": ConfScaleMethod(
+        name="confscale-point-corrected", uq_method="scp", h0_only=True, point_bias_window=10,
+        description="Causally bias-corrected first point forecast with tier cooldowns",
+    ),
     # MagicScaler-style risk-quantile baseline: scales to ci_upper directly,
     # no tier policy. Engages explicitly with nearest prior (Pan et al., PVLDB 2023).
     "risk-quantile-scp": ConfScaleMethod(
@@ -1166,6 +1186,9 @@ METHOD_REGISTRY["confscale-scp-online"] = METHOD_REGISTRY["confscale-rolling-ori
 
 def get_method(name: str) -> MethodConfig:
     """Look up a method by name."""
+    if name in ('hpa-cpu-tuned', 'hpa-cpu-stock'):
+        from confscale.native_hpa import make_native_hpa
+        return make_native_hpa(name, sys.modules[__name__])
     if name not in METHOD_REGISTRY:
         raise KeyError(f"Unknown method '{name}'. Available: {list(METHOD_REGISTRY.keys())}")
 
@@ -1182,6 +1205,8 @@ def get_method(name: str) -> MethodConfig:
             max_replicas=base.max_replicas,
             policy=base.policy,
             lambda_risk=base.lambda_risk,
+            h0_only=base.h0_only,
+            point_bias_window=base.point_bias_window,
             online_recal=base.online_recal,
             recal_buffer_size=base.recal_buffer_size,
             recal_warmup=base.recal_warmup,
@@ -1275,4 +1300,4 @@ def get_method(name: str) -> MethodConfig:
 
 def list_methods() -> list[str]:
     """List all registered method names."""
-    return list(METHOD_REGISTRY.keys())
+    return list(METHOD_REGISTRY.keys()) + ['hpa-cpu-tuned', 'hpa-cpu-stock']

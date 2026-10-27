@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import signal
+import statistics
 import subprocess
 import sys
 import threading
@@ -151,10 +152,13 @@ def compute_target_replicas(
     max_replicas: int = 20,
     policy: str = "tier",
     lambda_risk: Optional[float] = None,
+    h0_only: bool = False,
+    point_bias: Optional[float] = None,
 ) -> tuple[int, int]:
     """Return (tier, replicas) from the maximum horizon demand.
 
     lambda_risk overrides policy; ci-upper returns tier 0 while hysteresis tracks confidence tiers.
+    h0_only uses the corrected first forecast; raw confidence still selects cooldowns.
     """
     # Always classify tier so hysteresis cooldown selection works.
     if confidence_score < TIER_HIGH_CONF:
@@ -164,7 +168,17 @@ def compute_target_replicas(
     else:
         classified_tier = 3
 
-    if lambda_risk is not None:
+    if h0_only or point_bias is not None:
+        try:
+            h0 = float(point_forecast[0])
+            bias = 0.0 if point_bias is None else float(point_bias)
+        except (TypeError, ValueError, IndexError) as error:
+            raise ValueError('Corrected point control requires finite h0 and bias') from error
+        if not np.isfinite(h0) or not np.isfinite(bias):
+            raise ValueError('Corrected point control requires finite h0 and bias')
+        effective_rate = max(0.0, h0 - bias)
+        tier = classified_tier
+    elif lambda_risk is not None:
         upper = ci_upper if ci_upper is not None else point_forecast * 1.5
         upper_gap = np.maximum(upper - point_forecast, 0.0)
         effective = point_forecast + lambda_risk * upper_gap
@@ -197,6 +211,32 @@ def compute_target_replicas(
     replicas = max(min_replicas, min(replicas, max_replicas))
 
     return tier, replicas
+
+
+class PointBiasCorrector:
+    """Match the immediately preceding h0 forecast to the current observation.
+
+    Missing forecasts or observations break the pair. Unmatched forecasts are
+    not retained across steps; matched errors remain in the bounded FIFO.
+    """
+
+    def __init__(self, window: int):
+        if isinstance(window, bool) or not isinstance(window, int) or not 0 <= window <= 10:
+            raise ValueError('point bias window must be an integer from 0 to 10')
+        self.residuals = deque(maxlen=window)
+        self.previous_h0 = None
+
+    def step(self, rps, pred: Optional[dict]) -> dict:
+        if self.previous_h0 is not None and rps is not None and np.isfinite(rps):
+            self.residuals.append(self.previous_h0 - float(rps))
+        point = pred.get('point_forecast') if pred is not None else None
+        h0 = float(point[0]) if point is not None and len(point) else None
+        if h0 is not None and not np.isfinite(h0):
+            h0 = None
+        self.previous_h0 = h0
+        bias = statistics.mean(self.residuals) if self.residuals else 0.0
+        return {'raw_h0': h0, 'bias_rps': bias, 'matched_errors': len(self.residuals),
+                'corrected_rps': max(0.0, h0 - bias) if h0 is not None else None}
 
 
 class HysteresisManager:
@@ -377,6 +417,10 @@ def main():
     parser.add_argument('--lambda-risk', type=float, default=None,
                        help='Continuous risk weight [0,1] blending point and ci_upper. '
                             'Overrides --policy when set.')
+    parser.add_argument('--h0-only', action='store_true',
+                       help='Use only the first point forecast for the raw target.')
+    parser.add_argument('--point-bias-window', type=int, default=0,
+                       help='Correct h0 using up to 10 preceding matched signed errors.')
     parser.add_argument('--online-recal', action='store_true',
                        help='SCP only: incrementally recalibrate q_hat from streaming '
                             'residuals. Each iteration observes prior predictions to '
@@ -441,13 +485,25 @@ def main():
     # uses the right flag regardless of which surface the user invoked.
     args.online_recal = (args.recalibrator == 'rolling-origin')
 
+    if not 0 <= args.point_bias_window <= 10:
+        parser.error('--point-bias-window must be between 0 and 10')
+    if args.point_bias_window:
+        args.h0_only = True
+    if args.h0_only and (args.method != 'scp' or args.policy != 'tier'
+                         or args.lambda_risk is not None or args.coverage_monitor
+                         or args.recalibrator != 'none' or args.ladder):
+        parser.error('h0 point control requires frozen SCP, tier cooldowns and monitoring off')
+
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    config = vars(args)
+    config = {key: value for key, value in vars(args).items()
+              if key not in ('h0_only', 'point_bias_window') or value}
     config['start_time'] = datetime.now(timezone.utc).isoformat()
     with open(output_dir / 'controller_config.yaml', 'w') as f:
         yaml.dump(config, f)
+    with open(output_dir / 'controller_config.json', 'w') as f:
+        json.dump(config, f, indent=2)
 
     logger.info("Starting %s controller", args.method.upper())
     logger.info("  Model: %s", args.model_dir)
@@ -510,6 +566,7 @@ def main():
     current_replicas = args.min_replicas
     scale_log = []
     hysteresis_mgr = HysteresisManager()
+    point_corrector = PointBiasCorrector(args.point_bias_window) if args.h0_only else None
 
     coverage_monitor: Optional[CoverageMonitor] = None
     if args.coverage_monitor:
@@ -700,9 +757,16 @@ def main():
             try:
                 history_array = np.array(history[-uq.h:], dtype=np.float32)
                 pred = uq.predict_with_uncertainty(history_array)
+                if args.h0_only:
+                    point = pred.get('point_forecast')
+                    if point is None or len(point) == 0 or not np.isfinite(float(point[0])):
+                        raise ValueError('Missing finite first-horizon forecast')
                 prediction_made = True
             except Exception as e:
+                pred = None
                 logger.warning("Prediction failed: %s", e)
+
+        point_state = point_corrector.step(rps, pred) if point_corrector is not None else None
 
         # Validate the previous interval before recording the next one.
         coverage_state = None
@@ -748,6 +812,8 @@ def main():
                 max_replicas=args.max_replicas,
                 policy=args.policy,
                 lambda_risk=args.lambda_risk,
+                h0_only=args.h0_only,
+                point_bias=point_state['bias_rps'] if point_state is not None else None,
             )
         else:
             # No prediction available — conservative fallback
@@ -790,8 +856,10 @@ def main():
             'elapsed_s': round(time.time() - start_time, 1),
             'rps': rps,
             'point_forecast': pred['point_forecast'].tolist() if prediction_made and pred else [],
+            'point_forecast_dtype': str(pred['point_forecast'].dtype) if prediction_made and pred else None,
             'ci_lower': pred['ci_lower'].tolist() if prediction_made and pred else [],
             'ci_upper': pred['ci_upper'].tolist() if prediction_made and pred else [],
+            'ci_upper_dtype': str(pred['ci_upper'].dtype) if prediction_made and pred else None,
             'confidence_score': pred['confidence_score'] if prediction_made and pred else 0.0,
             'tier': tier,
             'raw_tier': raw_tier,
@@ -808,6 +876,8 @@ def main():
                 'downgrade_count': hysteresis_mgr.proposed_downgrade_count,
             },
         }
+        if point_state is not None:
+            log_entry['point_correction'] = point_state
         if args.online_recal:
             log_entry['recal'] = {
                 'updated': recal_updated_this_iter,

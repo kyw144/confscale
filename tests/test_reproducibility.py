@@ -163,10 +163,14 @@ class AssuranceTests(unittest.TestCase):
             cell_dir = directory / 'cell'
             cell_dir.mkdir()
             self.fixture(cell_dir)
-            cell = {'method': 'confscale-pid', 'seed': 144, 'workload': 'B'}
-            write_json(directory / 'plan.json', {'cells': [cell], 'config': {'assurance': self.criteria}})
+            config, profile = load_config(ROOT / 'configs/smoke.json')
+            config['methods'] = ['confscale-pid']
+            config['assurance'] = self.criteria
+            planned = plan(config, profile)
+            cell = planned['cells'][0]
+            write_json(directory / 'plan.json', planned)
             receipt = {'status': 'pass', 'restoration': 'pass', 'runs': [{'cell': cell, 'directory': 'cell'}],
-                       'output_sha256': {str(p.relative_to(directory)): sha256(p) for p in directory.rglob('*') if p.is_file()}}
+                       'output_sha256': {p.relative_to(directory).as_posix(): sha256(p) for p in directory.rglob('*') if p.is_file()}}
             write_json(directory / 'receipt.json', receipt)
             self.assertEqual(audit(directory)['cells_verified'], 1)
             write_json(directory / 'receipt.json', {**receipt, 'runs': []})

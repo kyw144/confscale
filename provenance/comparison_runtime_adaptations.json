@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-26",
+  "paper_snapshot_commit": "7b43867bf644f4e6b1d27d0b5c17c9ce1f1a45a8",
+  "scope": "Additive comparison runtime presets; offline software validation only. No live execution or scientific replication.",
+  "pairing_semantics": "The corrected point rule matches the preceding controller step forecast to the current observation. Missing pairs are skipped; this is not timestamp-aware target matching.",
+  "source_components": [
+    {
+      "component": "signed_first_forecast_correction",
+      "sha256": "17aaa3de9ce80eb7d6eb2db4c9569e4c6d4c4c8397d95ff423d8095e479e7f08"
+    },
+    {
+      "component": "first_forecast_target_rule",
+      "sha256": "07442c2401681efbf339d98aa2ff337a37abe630c4d63caba402e7df26407f61"
+    },
+    {
+      "component": "native_hpa_identity_lifecycle",
+      "sha256": "32799978b4730bc46496b3a6b52bc8cea017a19edda18afc031c9650a02d09a2"
+    },
+    {
+      "component": "native_hpa_exact_spec_adapter",
+      "sha256": "dc7232190cc155b4a841edc2afb8d8845734c4f59b3299fc55de75332471be44"
+    },
+    {
+      "component": "overhead_query_response_provenance",
+      "sha256": "5a75c3fc7aa6a827f53868fc1cad4e8cd275785bf2d7b3e93c188b3381f58a57"
+    }
+  ],
+  "changes": [
+    {
+      "destination": "reference/stage3_scale/orchestrator/controller.py",
+      "previous_shipped_sha256": "87417f5cdbe23cec199549c25ed2eb3afdeb77b1f0fb9a1b09adf96f8fd5c936",
+      "destination_sha256": "7e3aa351ee8a1f79ac57b0c61ccc7c11b4079bd1cf6e4fc42ea4324e846f7b7a",
+      "adaptation": "Opt-in previous-step first-forecast correction; invalid first forecasts become missing predictions; unchanged valid legacy target branches; matching JSON/YAML configuration and prediction dtype metadata."
+    },
+    {
+      "destination": "reference/stage3_scale/orchestrator/methods.py",
+      "previous_shipped_sha256": "1804bbc57cc29acbce777ec01a7a3007935855957605284d9efbe277b487f9c1",
+      "destination_sha256": "daeddbf642ecfed75323cceb9fc03ca6616a1baac526aa8d0112c7ee330cadd6",
+      "adaptation": "Separate corrected-point and frozen-SCP presets; explicit flags and state; fresh native-HPA factories and explicit thread-context accessor without changing legacy context fallback."
+    },
+    {
+      "destination": "reference/stage3_scale/collector/collect.py",
+      "previous_shipped_sha256": "d2ceda51f923b7e31d4329f4f9ae0a58b4e0b606e5c3f46e400f71027806e88e",
+      "destination_sha256": "287dc58c50bd6a7770d52ffe53181bab2096d3c09ae25c28c8eb524e3a32f5e7",
+      "adaptation": "Retain overhead-query response availability before fallback, without changing queries, values or completeness counts."
+    },
+    {
+      "destination": "confscale/planning_numpy.py",
+      "previous_shipped_sha256": "55ad2735c8a9c4fb2570c411c206d30c80858b7fb1b9ccdf85f52d2f15d636c1",
+      "destination_sha256": "f4ccfeaec93bcb046743da19c553b249e1a54f8779ec4183d57be3defa90a11e",
+      "adaptation": "AST-equivalent target planner and correction helper with finite-input guards limited to the new opt-in rule."
+    },
+    {
+      "destination": "confscale/experiment.py",
+      "previous_shipped_sha256": "da3e604480bdd81f7f4e32ba463c99f1fc8c720a8b1d51847c63341129d7614b",
+      "destination_sha256": "c83f42cf27043d185558d69e138fc5af87610363563985171f6bc384d653dd79",
+      "adaptation": "Shared capabilities and effective presets; checked HPA absence before outer scaling; retained failed cell verdicts; complete file inventories and configuration-derived matrix audit."
+    },
+    {
+      "destination": "confscale/assurance.py",
+      "previous_shipped_sha256": "0f1b80cb8f9c8f42642eae4db77ba94a4b0f93cf0c98a00e13c0a0182645cb0e",
+      "destination_sha256": "62eb687df4e54d00657fe96560a9e37fb703da31c282a10ee0b810f925827ee7",
+      "adaptation": "Preserve legacy monitoring checks; verify monitor-off targets with recorded arithmetic dtype, complete native-HPA configuration/readback identity, explicit context, health and restoration evidence."
+    },
+    {
+      "destination": "confscale/capabilities.py",
+      "previous_shipped_sha256": null,
+      "destination_sha256": "a98d14153a0bde2f7aacb456388216ab87f9cffbae76add09d9f2b1913fbc73f",
+      "adaptation": "Explicit supported method capabilities and immutable comparison preset definitions."
+    },
+    {
+      "destination": "confscale/native_hpa.py",
+      "previous_shipped_sha256": null,
+      "destination_sha256": "526855b8c21dae45187a55210454d1e01d373acc52ea00b4b380aa1ca08dfbbe",
+      "adaptation": "UUID-scoped tuned and stock CPU HPA with explicit thread/context identity, incremental command and interruption receipts, exact API readback and checked cleanup."
+    },
+    {
+      "destination": "configs/comparison-smoke.json",
+      "previous_shipped_sha256": null,
+      "destination_sha256": "026e64e984adaf32ec9c642957c238a8618100e199ff231135f7c3394a866b2d",
+      "adaptation": "Four-method technical smoke configuration; no execution or replication claim."
+    }
+  ]
+}

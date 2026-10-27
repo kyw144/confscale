@@ -1,0 +1,169 @@
+{
+  "kind": "OFFLINE_SOFTWARE_VALIDATION_NOT_LIVE_EXPERIMENTS",
+  "baseline_commit": "7b43867bf644f4e6b1d27d0b5c17c9ce1f1a45a8",
+  "date": "2026-10-26",
+  "python": "3.12.13",
+  "platform": "macOS arm64",
+  "status": "pass",
+  "commands": [
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale",
+        "verify"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale",
+        "reproduce",
+        "--output",
+        "generated/validation-controller-update-r6/paper"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale",
+        "demo",
+        "--output",
+        "generated/validation-controller-update-r6/demo"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale",
+        "comparisons",
+        "--output",
+        "generated/validation-controller-update-r6/comparisons"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale.experiment",
+        "plan"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-S",
+        "-m",
+        "confscale.experiment",
+        "plan",
+        "--config",
+        "configs/comparison-smoke.json"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "tests",
+        "reference",
+        "-q"
+      ],
+      "returncode": 0
+    }
+  ],
+  "tests": {
+    "pytest_passed": 350,
+    "pytest_subtests_passed": 90,
+    "unittest_passed": 44,
+    "counts_overlap": true
+  },
+  "preservation": {
+    "frozen_evidence_files_unchanged": 16,
+    "regenerated_paper_outputs_identical": 23,
+    "original_source_commit_and_metadata_unchanged": true,
+    "original_smoke_config_and_input_manifest_unchanged": true
+  },
+  "comparison_export": {
+    "cells": 96,
+    "summaries": 24,
+    "source_hashes_recorded": 357,
+    "original_sources_bundled": false,
+    "reproduction_kind": "stored values; not an independent raw-run rescore",
+    "definition_trace_check": {
+      "cells_checked": 96,
+      "tick_violation_threshold_ms": 200,
+      "stored_numeric_results_unchanged": true,
+      "scope": "Diagnostic consistency check of retained traces; original sources are not bundled."
+    }
+  },
+  "public_surface_review": {
+    "status": "clear",
+    "scope": "Added public material; existing published evidence and lineage retained",
+    "synthetic_path_test_findings": 4
+  },
+  "tested_files_sha256": {
+    "README.md": "7b3662be5976105df89b18af52f955d99eef64ebebf0360837ca3292c2296f3a",
+    "comparisons/evidence/20261026/point-vs-stock.json": "f8dbbdeaee13783a73a0ef5ddf56deaf8e9a3837d757a4fa4691f41822b68cd5",
+    "comparisons/evidence/20261026/point-vs-tuned.json": "3fdbe8b76abcef15a8c4d7168e6cc77e08b06b182f1c9c5ca2edaa65e4f70860",
+    "configs/comparison-smoke.json": "026e64e984adaf32ec9c642957c238a8618100e199ff231135f7c3394a866b2d",
+    "confscale/__main__.py": "f1970d7622463a0b48dd01d4bce28bd5f4be84d7cfc870c040e2b32ab3f2d5e6",
+    "confscale/assurance.py": "62eb687df4e54d00657fe96560a9e37fb703da31c282a10ee0b810f925827ee7",
+    "confscale/capabilities.py": "a98d14153a0bde2f7aacb456388216ab87f9cffbae76add09d9f2b1913fbc73f",
+    "confscale/comparisons.py": "e6adc00d4589f27d521b857e04d7ae070afba0f937fb39e629d15a8e92751b05",
+    "confscale/experiment.py": "c83f42cf27043d185558d69e138fc5af87610363563985171f6bc384d653dd79",
+    "confscale/native_hpa.py": "526855b8c21dae45187a55210454d1e01d373acc52ea00b4b380aa1ca08dfbbe",
+    "confscale/planning_numpy.py": "f4ccfeaec93bcb046743da19c553b249e1a54f8779ec4183d57be3defa90a11e",
+    "confscale/verify.py": "2f11823ca0ec970d6f4697300e37fa0e8d44a4c91ea527e4dfac339533c53fb3",
+    "provenance/comparison_manifest.json": "42acbf6d583b3a25ab41ba3f61533b876ba0f0dc05017796ee05229cc4f97b62",
+    "provenance/comparison_runtime_adaptations.json": "2cca949e567128aa267b994806f9927b40d06928ee24c8ad8d05253576f9bd6d",
+    "provenance/source_manifest.json": "be0984fa982a9bd4c1043073b64200c2a5aa6ac05674b83d4fc819ffdb88ee0d",
+    "reference/stage3_scale/collector/collect.py": "287dc58c50bd6a7770d52ffe53181bab2096d3c09ae25c28c8eb524e3a32f5e7",
+    "reference/stage3_scale/orchestrator/controller.py": "7e3aa351ee8a1f79ac57b0c61ccc7c11b4079bd1cf6e4fc42ea4324e846f7b7a",
+    "reference/stage3_scale/orchestrator/methods.py": "daeddbf642ecfed75323cceb9fc03ca6616a1baac526aa8d0112c7ee330cadd6",
+    "scripts/validate.py": "80a671b738bcab01e9d14fcbfe62ff0c3e8d7a1002856820b80601727e5f9d91",
+    "tests/runtime/test_assurance_artifacts.py": "523da89982938d68a60b87a7655628e8b39303cb9521dd3810bb57e933ca7bf8",
+    "tests/runtime/test_comparison_methods.py": "3c67829a1be32ec61ccc18a5a1cbc089037d3ad3fd215f14a7d644f3368810fb",
+    "tests/runtime/test_native_hpa_presets.py": "a5077a3d8dff762c65c465317817ab781d6bd7558078e59eedbfa7e4f9890bae",
+    "tests/runtime/test_runtime_review_repairs.py": "efbd9e53a7b67ce7de38308bcd1df74e5a0b6d7e77687bd58df50bb3b8c2a305",
+    "tests/test_comparisons.py": "156f12608a12076ebb1781f9e35e9bfb66adb4f007bdf2da3b111672c8281164",
+    "tests/test_reproducibility.py": "0b482187a7fd034db1066fa0ad6c46250ea572341c1aab312c98054985c8d131"
+  },
+  "limitations": [
+    "New controller paths were tested offline with mocked APIs; no new cluster run or scientific replication.",
+    "The historical tuned-HPA batch has configuration records but no retained model-hash manifest.",
+    "Historical stock-HPA event-log and per-metric proposal observations are incomplete."
+  ],
+  "test_output_evidence": {
+    "pytest_summary": "350 passed, 90 subtests passed in 4.85s",
+    "pytest_stdout_sha256": "18da59943c1990c6579e82987fc930c80c142d4b11fbf46d6f093926e082aef7",
+    "unittest_summary": "Ran 44 tests in 0.926s; OK",
+    "unittest_stderr_sha256": "aa6c67c9ad59d1fc2dd9b5a9a6d7d1049199a85254865b4112a39f7ddf04fdf0"
+  }
+}

@@ -1,0 +1,1597 @@
+{
+  "batch": "point-vs-stock",
+  "cells": [
+    {
+      "id": "a-hpa-cpu-stock-rep-1",
+      "method": "hpa-cpu-stock",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "metrics": "a-hpa-cpu-stock-rep-1-metrics",
+        "run_configuration": "a-hpa-cpu-stock-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-stock-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 8.0,
+        "e2e_run_p95_ms": 559.3,
+        "overhead_replica_seconds_per_hour": 22020.0,
+        "tick_slo_violation_fraction": 0.9598
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-stock-rep-2",
+      "method": "hpa-cpu-stock",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "metrics": "a-hpa-cpu-stock-rep-2-metrics",
+        "run_configuration": "a-hpa-cpu-stock-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-stock-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 7.0,
+        "e2e_run_p95_ms": 564.9,
+        "overhead_replica_seconds_per_hour": 21401.88333333333,
+        "tick_slo_violation_fraction": 0.957
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-stock-rep-3",
+      "method": "hpa-cpu-stock",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "metrics": "a-hpa-cpu-stock-rep-3-metrics",
+        "run_configuration": "a-hpa-cpu-stock-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-stock-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 8.0,
+        "e2e_run_p95_ms": 513.8,
+        "overhead_replica_seconds_per_hour": 23610.0,
+        "tick_slo_violation_fraction": 0.9486
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-memory-rep-1",
+      "method": "hpa-cpu-memory",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "metrics": "a-hpa-cpu-memory-rep-1-metrics",
+        "run_configuration": "a-hpa-cpu-memory-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-memory-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 9.0,
+        "e2e_run_p95_ms": 559.8,
+        "overhead_replica_seconds_per_hour": 21480.0,
+        "tick_slo_violation_fraction": 0.9659
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-memory-rep-2",
+      "method": "hpa-cpu-memory",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "metrics": "a-hpa-cpu-memory-rep-2-metrics",
+        "run_configuration": "a-hpa-cpu-memory-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-memory-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 9.0,
+        "e2e_run_p95_ms": 527.2,
+        "overhead_replica_seconds_per_hour": 23713.166666666664,
+        "tick_slo_violation_fraction": 0.9592
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-hpa-cpu-memory-rep-3",
+      "method": "hpa-cpu-memory",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "metrics": "a-hpa-cpu-memory-rep-3-metrics",
+        "run_configuration": "a-hpa-cpu-memory-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-hpa-cpu-memory-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 6.0,
+        "e2e_run_p95_ms": 552.0,
+        "overhead_replica_seconds_per_hour": 21840.0,
+        "tick_slo_violation_fraction": 0.9497
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-1-controller",
+        "metrics": "a-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 16.0,
+        "e2e_run_p95_ms": 521.7,
+        "overhead_replica_seconds_per_hour": 24180.0,
+        "tick_slo_violation_fraction": 0.962
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-2-controller",
+        "metrics": "a-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 558.4,
+        "overhead_replica_seconds_per_hour": 24013.333333333336,
+        "tick_slo_violation_fraction": 0.9525
+      },
+      "zero_success": false
+    },
+    {
+      "id": "a-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "A",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "a-confscale-point-corrected-rep-3-controller",
+        "metrics": "a-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "a-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "a-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 568.0,
+        "overhead_replica_seconds_per_hour": 23880.0,
+        "tick_slo_violation_fraction": 0.9631
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-stock-rep-1",
+      "method": "hpa-cpu-stock",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "metrics": "b-hpa-cpu-stock-rep-1-metrics",
+        "run_configuration": "b-hpa-cpu-stock-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-stock-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 13.0,
+        "e2e_run_p95_ms": 1317.0,
+        "overhead_replica_seconds_per_hour": 42570.0,
+        "tick_slo_violation_fraction": 0.8401
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-stock-rep-2",
+      "method": "hpa-cpu-stock",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "metrics": "b-hpa-cpu-stock-rep-2-metrics",
+        "run_configuration": "b-hpa-cpu-stock-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-stock-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 951.3,
+        "overhead_replica_seconds_per_hour": 33270.0,
+        "tick_slo_violation_fraction": 0.8514
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-stock-rep-3",
+      "method": "hpa-cpu-stock",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "metrics": "b-hpa-cpu-stock-rep-3-metrics",
+        "run_configuration": "b-hpa-cpu-stock-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-stock-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 15.0,
+        "e2e_run_p95_ms": 987.2,
+        "overhead_replica_seconds_per_hour": 36890.48333333334,
+        "tick_slo_violation_fraction": 0.83
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-memory-rep-1",
+      "method": "hpa-cpu-memory",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "metrics": "b-hpa-cpu-memory-rep-1-metrics",
+        "run_configuration": "b-hpa-cpu-memory-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-memory-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 1329.1,
+        "overhead_replica_seconds_per_hour": 42990.0,
+        "tick_slo_violation_fraction": 0.8569
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-memory-rep-2",
+      "method": "hpa-cpu-memory",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "metrics": "b-hpa-cpu-memory-rep-2-metrics",
+        "run_configuration": "b-hpa-cpu-memory-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-memory-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 15.0,
+        "e2e_run_p95_ms": 928.3,
+        "overhead_replica_seconds_per_hour": 33930.0,
+        "tick_slo_violation_fraction": 0.8283
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-hpa-cpu-memory-rep-3",
+      "method": "hpa-cpu-memory",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "metrics": "b-hpa-cpu-memory-rep-3-metrics",
+        "run_configuration": "b-hpa-cpu-memory-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-hpa-cpu-memory-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 1020.9,
+        "overhead_replica_seconds_per_hour": 34860.0,
+        "tick_slo_violation_fraction": 0.7852
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-1-controller",
+        "metrics": "b-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 38.0,
+        "e2e_run_p95_ms": 1316.0,
+        "overhead_replica_seconds_per_hour": 32580.000000000004,
+        "tick_slo_violation_fraction": 0.8603
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-2-controller",
+        "metrics": "b-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 37.0,
+        "e2e_run_p95_ms": 937.4,
+        "overhead_replica_seconds_per_hour": 29550.000000000004,
+        "tick_slo_violation_fraction": 0.8342
+      },
+      "zero_success": false
+    },
+    {
+      "id": "b-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "B",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "b-confscale-point-corrected-rep-3-controller",
+        "metrics": "b-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "b-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "b-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 36.0,
+        "e2e_run_p95_ms": 1014.5,
+        "overhead_replica_seconds_per_hour": 26580.0,
+        "tick_slo_violation_fraction": 0.8259
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-stock-rep-1",
+      "method": "hpa-cpu-stock",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "metrics": "c-hpa-cpu-stock-rep-1-metrics",
+        "run_configuration": "c-hpa-cpu-stock-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-stock-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 1272.2,
+        "overhead_replica_seconds_per_hour": 46285.7,
+        "tick_slo_violation_fraction": 0.975
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-stock-rep-2",
+      "method": "hpa-cpu-stock",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "metrics": "c-hpa-cpu-stock-rep-2-metrics",
+        "run_configuration": "c-hpa-cpu-stock-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-stock-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 11.0,
+        "e2e_run_p95_ms": 1280.3,
+        "overhead_replica_seconds_per_hour": 45900.0,
+        "tick_slo_violation_fraction": 0.968
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-stock-rep-3",
+      "method": "hpa-cpu-stock",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "metrics": "c-hpa-cpu-stock-rep-3-metrics",
+        "run_configuration": "c-hpa-cpu-stock-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-stock-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 1224.1,
+        "overhead_replica_seconds_per_hour": 45873.40495867769,
+        "tick_slo_violation_fraction": 0.9736
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-memory-rep-1",
+      "method": "hpa-cpu-memory",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "metrics": "c-hpa-cpu-memory-rep-1-metrics",
+        "run_configuration": "c-hpa-cpu-memory-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-memory-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 1306.6,
+        "overhead_replica_seconds_per_hour": 45900.0,
+        "tick_slo_violation_fraction": 0.9711
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-memory-rep-2",
+      "method": "hpa-cpu-memory",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "metrics": "c-hpa-cpu-memory-rep-2-metrics",
+        "run_configuration": "c-hpa-cpu-memory-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-memory-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 12.0,
+        "e2e_run_p95_ms": 1224.5,
+        "overhead_replica_seconds_per_hour": 46495.816666666666,
+        "tick_slo_violation_fraction": 0.9735
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-hpa-cpu-memory-rep-3",
+      "method": "hpa-cpu-memory",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "metrics": "c-hpa-cpu-memory-rep-3-metrics",
+        "run_configuration": "c-hpa-cpu-memory-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-hpa-cpu-memory-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 14.0,
+        "e2e_run_p95_ms": 1228.7,
+        "overhead_replica_seconds_per_hour": 45505.26666666666,
+        "tick_slo_violation_fraction": 0.9632
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-1-controller",
+        "metrics": "c-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 35.0,
+        "e2e_run_p95_ms": 1252.1,
+        "overhead_replica_seconds_per_hour": 48206.76666666666,
+        "tick_slo_violation_fraction": 0.9632
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-2-controller",
+        "metrics": "c-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 26.0,
+        "e2e_run_p95_ms": 1272.0,
+        "overhead_replica_seconds_per_hour": 47940.0,
+        "tick_slo_violation_fraction": 0.9649
+      },
+      "zero_success": false
+    },
+    {
+      "id": "c-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "C",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "c-confscale-point-corrected-rep-3-controller",
+        "metrics": "c-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "c-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "c-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 27.0,
+        "e2e_run_p95_ms": 1281.8,
+        "overhead_replica_seconds_per_hour": 47760.0,
+        "tick_slo_violation_fraction": 0.9617
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-stock-rep-1",
+      "method": "hpa-cpu-stock",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "metrics": "d-hpa-cpu-stock-rep-1-metrics",
+        "run_configuration": "d-hpa-cpu-stock-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-stock-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 4.0,
+        "e2e_run_p95_ms": 1020.9,
+        "overhead_replica_seconds_per_hour": 47460.0,
+        "tick_slo_violation_fraction": 0.1919
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-stock-rep-2",
+      "method": "hpa-cpu-stock",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "metrics": "d-hpa-cpu-stock-rep-2-metrics",
+        "run_configuration": "d-hpa-cpu-stock-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-stock-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 4.0,
+        "e2e_run_p95_ms": 1012.9,
+        "overhead_replica_seconds_per_hour": 48540.0,
+        "tick_slo_violation_fraction": 0.1916
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-stock-rep-3",
+      "method": "hpa-cpu-stock",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "metrics": "d-hpa-cpu-stock-rep-3-metrics",
+        "run_configuration": "d-hpa-cpu-stock-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-stock-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 5.0,
+        "e2e_run_p95_ms": 945.1,
+        "overhead_replica_seconds_per_hour": 50280.0,
+        "tick_slo_violation_fraction": 0.1962
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-memory-rep-1",
+      "method": "hpa-cpu-memory",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "metrics": "d-hpa-cpu-memory-rep-1-metrics",
+        "run_configuration": "d-hpa-cpu-memory-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-memory-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 4.0,
+        "e2e_run_p95_ms": 1027.5,
+        "overhead_replica_seconds_per_hour": 47846.566666666666,
+        "tick_slo_violation_fraction": 0.1898
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-memory-rep-2",
+      "method": "hpa-cpu-memory",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "metrics": "d-hpa-cpu-memory-rep-2-metrics",
+        "run_configuration": "d-hpa-cpu-memory-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-memory-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 4.0,
+        "e2e_run_p95_ms": 939.4,
+        "overhead_replica_seconds_per_hour": 52140.0,
+        "tick_slo_violation_fraction": 0.1972
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-hpa-cpu-memory-rep-3",
+      "method": "hpa-cpu-memory",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "metrics": "d-hpa-cpu-memory-rep-3-metrics",
+        "run_configuration": "d-hpa-cpu-memory-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-hpa-cpu-memory-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 5.0,
+        "e2e_run_p95_ms": 1000.9,
+        "overhead_replica_seconds_per_hour": 47910.0,
+        "tick_slo_violation_fraction": 0.1931
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-1",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 1,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-1-controller",
+        "metrics": "d-confscale-point-corrected-rep-1-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-1-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-1-trace"
+      },
+      "values": {
+        "desired_count_changes": 19.0,
+        "e2e_run_p95_ms": 955.3,
+        "overhead_replica_seconds_per_hour": 13560.0,
+        "tick_slo_violation_fraction": 0.1945
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-2",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 2,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-2-controller",
+        "metrics": "d-confscale-point-corrected-rep-2-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-2-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-2-trace"
+      },
+      "values": {
+        "desired_count_changes": 18.0,
+        "e2e_run_p95_ms": 1015.5,
+        "overhead_replica_seconds_per_hour": 16620.0,
+        "tick_slo_violation_fraction": 0.1924
+      },
+      "zero_success": false
+    },
+    {
+      "id": "d-confscale-point-corrected-rep-3",
+      "method": "confscale-point-corrected",
+      "pattern": "D",
+      "replicate": 3,
+      "sources": {
+        "controller_configuration": "d-confscale-point-corrected-rep-3-controller",
+        "metrics": "d-confscale-point-corrected-rep-3-metrics",
+        "run_configuration": "d-confscale-point-corrected-rep-3-configuration",
+        "score": "point-vs-stock-aggregate",
+        "workload_trace": "d-confscale-point-corrected-rep-3-trace"
+      },
+      "values": {
+        "desired_count_changes": 21.0,
+        "e2e_run_p95_ms": 990.3,
+        "overhead_replica_seconds_per_hour": 15659.999999999998,
+        "tick_slo_violation_fraction": 0.1925
+      },
+      "zero_success": false
+    }
+  ],
+  "checkpoint_provenance": {
+    "files": [
+      {
+        "artifact_input_relation": "identical",
+        "artifact_input_sha256": "61981639f6bcc40fe0cf2832356e476224a591766ac9b6836a5ae9b890183f30",
+        "model": "batch_ramp/scp/base_model.pt",
+        "sha256": "61981639f6bcc40fe0cf2832356e476224a591766ac9b6836a5ae9b890183f30"
+      },
+      {
+        "artifact_input_relation": "LF-to-CRLF-only",
+        "artifact_input_sha256": "521a2e28fe1806596fd3703d3eadcc9b33ab35c841d5e6a05580992fad4b842b",
+        "model": "batch_ramp/scp/scp_config.yaml",
+        "sha256": "eeda054db2a2cee02940dec86695a1f1043c7856530455a89c372bae9364ce7f"
+      },
+      {
+        "artifact_input_relation": "identical",
+        "artifact_input_sha256": "3b38fe3ad0f1b2717564abb6ba9f1639b822f56fec5e4bfcaeaa10915a40b72e",
+        "model": "bursty/scp/base_model.pt",
+        "sha256": "3b38fe3ad0f1b2717564abb6ba9f1639b822f56fec5e4bfcaeaa10915a40b72e"
+      },
+      {
+        "artifact_input_relation": "LF-to-CRLF-only",
+        "artifact_input_sha256": "106726b22fa2ee4beed6d68c117089cc5acbc273ed7d0e8089bdd4fff8c3ffe1",
+        "model": "bursty/scp/scp_config.yaml",
+        "sha256": "ac96fc80c91e0cbd26ee3782046dbe46fba7e1f5a8f0c35b0b201a1ac9bd6a29"
+      },
+      {
+        "artifact_input_relation": "identical",
+        "artifact_input_sha256": "80cff986cdfe94afb0365a981d0da5175f76be3eb3eb33141ce7aedddd2db33c",
+        "model": "diurnal/scp/base_model.pt",
+        "sha256": "80cff986cdfe94afb0365a981d0da5175f76be3eb3eb33141ce7aedddd2db33c"
+      },
+      {
+        "artifact_input_relation": "LF-to-CRLF-only",
+        "artifact_input_sha256": "63d55a1554650328e5b9391df498f722889821c4eaa881f58be75d469748211e",
+        "model": "diurnal/scp/scp_config.yaml",
+        "sha256": "f0daa0dc6b8e638e96ff8dc2ef3addbf50333f194d58262e3910cce05e01175f"
+      },
+      {
+        "artifact_input_relation": "identical",
+        "artifact_input_sha256": "0cfd55c326e1272e8f9e3ed3c515b0ca2e42568b303c4b7014b931a4ffb15a0d",
+        "model": "signaling/scp/base_model.pt",
+        "sha256": "0cfd55c326e1272e8f9e3ed3c515b0ca2e42568b303c4b7014b931a4ffb15a0d"
+      },
+      {
+        "artifact_input_relation": "LF-to-CRLF-only",
+        "artifact_input_sha256": "2bb159c7749a29d8eed71ac40bb25a5a2abb35490107360b1f0c57da868dee32",
+        "model": "signaling/scp/scp_config.yaml",
+        "sha256": "934fc83062010b3334ef7b1a540753f952d5cd9b6db2539218b026e685467d2f"
+      }
+    ],
+    "status": "recorded-hashes"
+  },
+  "cohort": {
+    "admitted_cells": 36,
+    "complexity": 50000,
+    "duration_s": 1800,
+    "methods": [
+      "hpa-cpu-stock",
+      "hpa-cpu-memory",
+      "confscale-point-corrected"
+    ],
+    "patterns": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "pool_with_other_batches": false,
+    "replicates_per_method_pattern": 3
+  },
+  "kind": "STORED_RESULT_COMPARISON",
+  "method_configurations": {
+    "confscale-point-corrected": {
+      "recorded_settings": {
+        "coverage_monitor": false,
+        "h0_only": true,
+        "ladder": false,
+        "max_replicas": 20,
+        "min_replicas": 1,
+        "online_recal": false,
+        "point_bias_window": 10,
+        "policy": "tier",
+        "recalibrator": "none",
+        "safety_factor": 2.0,
+        "slo_capacity": 10.0,
+        "target_util": 0.7,
+        "uq_method": "scp"
+      },
+      "runtime_support": "supported-method"
+    },
+    "hpa-cpu-memory": {
+      "recorded_settings": {
+        "behavior_present": false,
+        "cpu_target_pct": 80,
+        "hpa_api_version": "autoscaling/v2",
+        "max_replicas": 20,
+        "memory_target_pct": 80,
+        "min_replicas": 1
+      },
+      "runtime_support": "stored-only"
+    },
+    "hpa-cpu-stock": {
+      "recorded_settings": {
+        "behavior_present": false,
+        "cpu_target_pct": 80,
+        "hpa_api_version": "autoscaling/v2",
+        "max_replicas": 20,
+        "min_replicas": 1
+      },
+      "runtime_support": "supported-method"
+    }
+  },
+  "metric_definitions": {
+    "desired_count_changes": {
+      "definition": "Saved metrics.resources.replica_churn: changes in sampled desired replica counts. This is not a count of Kubernetes HPA event-log records or completed resizes.",
+      "unit": "sampled desired-count changes/run"
+    },
+    "e2e_run_p95_ms": {
+      "definition": "Run-level 95th percentile of per-tick p95 latencies. Tick latencies use successful requests; a tick with no successful requests records zero. This is not the p95 of pooled requests.",
+      "unit": "ms"
+    },
+    "overhead_replica_seconds_per_hour": {
+      "definition": "Overhead replica-seconds above one minimum replica, divided by configured workload duration in hours.",
+      "unit": "replica-seconds/hour"
+    },
+    "tick_slo_violation_fraction": {
+      "definition": "Fraction of workload ticks whose successful-request p95 exceeds 200 ms; zero-success ticks have p95 zero and therefore do not count as violations.",
+      "threshold_ms": 200,
+      "unit": "fraction"
+    }
+  },
+  "qualifications": [
+    "Stored-result reproduction only: no independent raw-run rescore, new experiment, or scientific replication.",
+    "The batches are separate cohorts and must not be pooled.",
+    "Means are over admitted runs within each method and workload pattern.",
+    "Latency and tick-violation ordering can differ; neither metric establishes general superiority or fault resilience.",
+    "Reported Welch intervals are copied from saved summaries, unpaired and unadjusted; shared-host and block dependence are not modelled.",
+    "Definition-reference hashes identify code inspected during export; they do not prove which code bytes executed historically. The 200 ms tick threshold and run-p95 definition were checked against every retained workload trace.",
+    "All three original arms are retained, including CPU-plus-memory HPA as a stored-only arm; a two-arm rerun would not reproduce this cohort.",
+    "The admitted service/cost cohort is complete, but Kubernetes HPA event-log observation and per-metric proposal observation are incomplete. Sampled desired-count changes remain available and are a different measurement.",
+    "Memory-arm intervals are descriptive; a zero-spanning interval does not establish equivalence or absence of an effect.",
+    "Recorded model weights match the artifact input hashes byte-for-byte. Recorded YAML configuration hashes use LF; the artifact input hashes use CRLF for otherwise identical bytes."
+  ],
+  "recorded_comparisons": [
+    {
+      "candidate": "hpa-cpu-memory",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": 0.3333333333334849,
+          "relative_percent": 0.061050061050088825,
+          "welch_95": {
+            "df": 3.2988897966023143,
+            "high": 57.60942510109318,
+            "low": -56.94275843442621
+          }
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 0.42777777777519077,
+          "relative_percent": 0.0019145118255798755,
+          "welch_95": {
+            "df": 3.9895620302052697,
+            "high": 2654.2573805592483,
+            "low": -2653.401825003698
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.0031333333333334323,
+          "relative_percent": 0.3280519299225343,
+          "welch_95": {
+            "df": 3.6239347319471538,
+            "high": 0.019860742004889,
+            "low": -0.013594075338222135
+          }
+        }
+      },
+      "pattern": "A",
+      "recorded_gate": null,
+      "reference": "hpa-cpu-stock"
+    },
+    {
+      "candidate": "hpa-cpu-memory",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": 7.599999999999909,
+          "relative_percent": 0.7003532483489395,
+          "welch_95": {
+            "df": 3.9935539269736395,
+            "high": 474.323307851907,
+            "low": -459.12330785190716
+          }
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -316.82777777777665,
+          "relative_percent": -0.843146685109866,
+          "welch_95": {
+            "df": 3.9850750122220253,
+            "high": 10667.427534978428,
+            "low": -11301.08309053398
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.017033333333333345,
+          "relative_percent": -2.026571485227049,
+          "welch_95": {
+            "df": 2.3492008177766563,
+            "high": 0.06435243890873363,
+            "low": -0.09841910557540032
+          }
+        }
+      },
+      "pattern": "B",
+      "recorded_gate": null,
+      "reference": "hpa-cpu-stock"
+    },
+    {
+      "candidate": "hpa-cpu-memory",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -5.599999999999909,
+          "relative_percent": -0.4448445691892106,
+          "welch_95": {
+            "df": 3.4556247203938435,
+            "high": 88.8734413504119,
+            "low": -100.07344135041171
+          }
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": -52.67387511479319,
+          "relative_percent": -0.11445940156694252,
+          "welch_95": {
+            "df": 2.818914587852568,
+            "high": 994.6026153851019,
+            "low": -1099.9503656146883
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": -0.0029333333333333433,
+          "relative_percent": -0.3017211821984513,
+          "welch_95": {
+            "df": 3.544843765186179,
+            "high": 0.008101912026849062,
+            "low": -0.013968578693515749
+          }
+        }
+      },
+      "pattern": "C",
+      "recorded_gate": null,
+      "reference": "hpa-cpu-stock"
+    },
+    {
+      "candidate": "hpa-cpu-memory",
+      "differences": {
+        "e2e_run_p95_ms": {
+          "difference": -3.699999999999932,
+          "relative_percent": -0.372620766054577,
+          "welch_95": {
+            "df": 3.973653967235097,
+            "high": 95.06410586776911,
+            "low": -102.46410586776898
+          }
+        },
+        "overhead_replica_seconds_per_hour": {
+          "difference": 538.8555555555504,
+          "relative_percent": 1.1051180384650336,
+          "welch_95": {
+            "df": 3.2028696734207798,
+            "high": 5579.275866287833,
+            "low": -4501.564755176732
+          }
+        },
+        "tick_slo_violation_fraction": {
+          "difference": 0.0001333333333333464,
+          "relative_percent": 0.06900120752113838,
+          "welch_95": {
+            "df": 3.5643833395600844,
+            "high": 0.00772987870405963,
+            "low": -0.007463212037392937
+          }
+        }
+      },
+      "pattern": "D",
+      "recorded_gate": null,
+      "reference": "hpa-cpu-stock"
+    }
+  ],
+  "recorded_status": {
+    "cohort_complete": true,
+    "hpa_event_log_complete": false,
+    "overall_rule_verdict": null,
+    "proposal_observation_complete": false,
+    "rule_patterns_passed": null
+  },
+  "schema_version": 1,
+  "summaries": [
+    {
+      "method": "hpa-cpu-stock",
+      "n": 3,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 7.666666666666667,
+          "n": 3,
+          "values": [
+            8.0,
+            7.0,
+            8.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 545.9999999999999,
+          "n": 3,
+          "sd": 28.026237706834653,
+          "values": [
+            559.3,
+            564.9,
+            513.8
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 22343.96111111111,
+          "n": 3,
+          "sd": 1139.1478852796238,
+          "values": [
+            22020.0,
+            21401.88333333333,
+            23610.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9551333333333333,
+          "n": 3,
+          "sd": 0.005828664798505161,
+          "values": [
+            0.9598,
+            0.957,
+            0.9486
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-memory",
+      "n": 3,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 8.0,
+          "n": 3,
+          "values": [
+            9.0,
+            9.0,
+            6.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 546.3333333333334,
+          "n": 3,
+          "sd": 17.02272990249601,
+          "values": [
+            559.8,
+            527.2,
+            552.0
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 22344.388888888887,
+          "n": 3,
+          "sd": 1198.984759579412,
+          "values": [
+            21480.0,
+            23713.166666666664,
+            21840.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9582666666666667,
+          "n": 3,
+          "sd": 0.008140229316999203,
+          "values": [
+            0.9659,
+            0.9592,
+            0.9497
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 3,
+      "pattern": "A",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 14.666666666666666,
+          "n": 3,
+          "values": [
+            16.0,
+            14.0,
+            14.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 549.3666666666667,
+          "n": 3,
+          "sd": 24.436107164058104,
+          "values": [
+            521.7,
+            558.4,
+            568.0
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 24024.44444444445,
+          "n": 3,
+          "sd": 150.3083250940964,
+          "values": [
+            24180.0,
+            24013.333333333336,
+            23880.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9591999999999999,
+          "n": 3,
+          "sd": 0.005828378848359092,
+          "values": [
+            0.962,
+            0.9525,
+            0.9631
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-stock",
+      "n": 3,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 13.0,
+          "n": 3,
+          "values": [
+            13.0,
+            11.0,
+            15.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1085.1666666666667,
+          "n": 3,
+          "sd": 201.57436179567415,
+          "values": [
+            1317.0,
+            951.3,
+            987.2
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 37576.82777777778,
+          "n": 3,
+          "sd": 4687.835483708319,
+          "values": [
+            42570.0,
+            33270.0,
+            36890.48333333334
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.8405,
+          "n": 3,
+          "sd": 0.010705606008068901,
+          "values": [
+            0.8401,
+            0.8514,
+            0.83
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-memory",
+      "n": 3,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 12.333333333333334,
+          "n": 3,
+          "values": [
+            11.0,
+            15.0,
+            11.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1092.7666666666667,
+          "n": 3,
+          "sd": 209.8422582163405,
+          "values": [
+            1329.1,
+            928.3,
+            1020.9
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 37260.0,
+          "n": 3,
+          "sd": 4984.064606322835,
+          "values": [
+            42990.0,
+            33930.0,
+            34860.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.8234666666666667,
+          "n": 3,
+          "sd": 0.036093535894025856,
+          "values": [
+            0.8569,
+            0.8283,
+            0.7852
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 3,
+      "pattern": "B",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 37.0,
+          "n": 3,
+          "values": [
+            38.0,
+            37.0,
+            36.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1089.3,
+          "n": 3,
+          "sd": 200.0769102120482,
+          "values": [
+            1316.0,
+            937.4,
+            1014.5
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 29570.0,
+          "n": 3,
+          "sd": 3000.049999583342,
+          "values": [
+            32580.000000000004,
+            29550.000000000004,
+            26580.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.8401333333333333,
+          "n": 3,
+          "sd": 0.017951137382721256,
+          "values": [
+            0.8603,
+            0.8342,
+            0.8259
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-stock",
+      "n": 3,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 11.333333333333334,
+          "n": 3,
+          "values": [
+            11.0,
+            11.0,
+            12.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1258.8666666666666,
+          "n": 3,
+          "sd": 30.379982444585714,
+          "values": [
+            1272.2,
+            1280.3,
+            1224.1
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 46019.70165289257,
+          "n": 3,
+          "sd": 230.74480395807282,
+          "values": [
+            46285.7,
+            45900.0,
+            45873.40495867769
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9722,
+          "n": 3,
+          "sd": 0.0037040518354904384,
+          "values": [
+            0.975,
+            0.968,
+            0.9736
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-memory",
+      "n": 3,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 12.666666666666666,
+          "n": 3,
+          "values": [
+            12.0,
+            12.0,
+            14.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1253.2666666666667,
+          "n": 3,
+          "sd": 46.2357365393191,
+          "values": [
+            1306.6,
+            1224.5,
+            1228.7
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 45967.027777777774,
+          "n": 3,
+          "sd": 498.6650858746496,
+          "values": [
+            45900.0,
+            46495.816666666666,
+            45505.26666666666
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9692666666666666,
+          "n": 3,
+          "sd": 0.005389186704256379,
+          "values": [
+            0.9711,
+            0.9735,
+            0.9632
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 3,
+      "pattern": "C",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 29.333333333333332,
+          "n": 3,
+          "values": [
+            35.0,
+            26.0,
+            27.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 1268.6333333333332,
+          "n": 3,
+          "sd": 15.133516885817857,
+          "values": [
+            1252.1,
+            1272.0,
+            1281.8
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 47968.92222222222,
+          "n": 3,
+          "sd": 224.78319513436475,
+          "values": [
+            48206.76666666666,
+            47940.0,
+            47760.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.9632666666666667,
+          "n": 3,
+          "sd": 0.001601041327803035,
+          "values": [
+            0.9632,
+            0.9649,
+            0.9617
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-stock",
+      "n": 3,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 4.333333333333333,
+          "n": 3,
+          "values": [
+            4.0,
+            4.0,
+            5.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 992.9666666666667,
+          "n": 3,
+          "sd": 41.64628835002384,
+          "values": [
+            1020.9,
+            1012.9,
+            945.1
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 48760.0,
+          "n": 3,
+          "sd": 1422.8141129465928,
+          "values": [
+            47460.0,
+            48540.0,
+            50280.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.19323333333333334,
+          "n": 3,
+          "sd": 0.0025735837529276954,
+          "values": [
+            0.1919,
+            0.1916,
+            0.1962
+          ]
+        }
+      }
+    },
+    {
+      "method": "hpa-cpu-memory",
+      "n": 3,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 4.333333333333333,
+          "n": 3,
+          "values": [
+            4.0,
+            4.0,
+            5.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 989.2666666666668,
+          "n": 3,
+          "sd": 45.187424504316844,
+          "values": [
+            1027.5,
+            939.4,
+            1000.9
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 49298.85555555555,
+          "n": 3,
+          "sd": 2460.7076751602563,
+          "values": [
+            47846.566666666666,
+            52140.0,
+            47910.0
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.1933666666666667,
+          "n": 3,
+          "sd": 0.0037072002014098583,
+          "values": [
+            0.1898,
+            0.1972,
+            0.1931
+          ]
+        }
+      }
+    },
+    {
+      "method": "confscale-point-corrected",
+      "n": 3,
+      "pattern": "D",
+      "statistics": {
+        "desired_count_changes": {
+          "aggregation": "arithmetic_mean_of_exported_cells",
+          "mean": 19.333333333333332,
+          "n": 3,
+          "values": [
+            19.0,
+            18.0,
+            21.0
+          ]
+        },
+        "e2e_run_p95_ms": {
+          "aggregation": "saved_summary",
+          "mean": 987.0333333333333,
+          "n": 3,
+          "sd": 30.232653428591654,
+          "values": [
+            955.3,
+            1015.5,
+            990.3
+          ]
+        },
+        "overhead_replica_seconds_per_hour": {
+          "aggregation": "saved_summary",
+          "mean": 15280.0,
+          "n": 3,
+          "sd": 1564.9920127591704,
+          "values": [
+            13560.0,
+            16620.0,
+            15659.999999999998
+          ]
+        },
+        "tick_slo_violation_fraction": {
+          "aggregation": "saved_summary",
+          "mean": 0.19313333333333335,
+          "n": 3,
+          "sd": 0.0011846237095944636,
+          "values": [
+            0.1945,
+            0.1924,
+            0.1925
+          ]
+        }
+      }
+    }
+  ]
+}
